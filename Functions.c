@@ -73,5 +73,60 @@ void TxPacket()
 
 }
 
+void AT()
+{
+    byte bCount,bPacketLength;
+    byte TxBuffer[2];
+    TxBuffer[0] = 'A';                                 //Primers 2 bytes que indiquen inici de la trama FF, FF.
+    TxBuffer[1] = 'T';                                 //Primers 2 bytes que indiquen inici de la trama FF, FF.
+    bPacketLength = 2;
+//    bPacketLength = sizeof TxBuffer-1;
+    for(bCount=0; bCount<bPacketLength; bCount++)       //Aquest bucle es el que envia la trama al Modul Robot.
+    {
+        TxUAC0(TxBuffer[bCount]);
+    }
+
+    while(UCA1STAT & UCBUSY);                           //Espera fins que s'hagi transmes l'ulTim byte.
+
+
+}
+
+void AT_RESET()
+{
+    byte bCount,bPacketLength;
+//    byte TxBuffer[8];
+    byte TxBuffer[]={'A','T','+','R','E','S','E','T'};
+//    TxBuffer[0] = 'A';                                 //Primers 2 bytes que indiquen inici de la trama FF, FF.
+//    TxBuffer[1] = 'T';                                 //Primers 2 bytes que indiquen inici de la trama FF, FF.
+    bPacketLength = sizeof(TxBuffer);
+//    bPacketLength = sizeof TxBuffer-1;
+    for(bCount=0; bCount<bPacketLength; bCount++)       //Aquest bucle es el que envia la trama al Modul Robot.
+    {
+        TxUAC0(TxBuffer[bCount]);
+    }
+
+    while(UCA1STAT & UCBUSY);                           //Espera fins que s'hagi transmes l'ulTim byte.
+
+
+}
+
+void AT_RENEW()
+{
+    byte bCount,bPacketLength;
+//    byte TxBuffer[8];
+    byte TxBuffer[]={'A','T','+','R','E','N','E','W'};
+//    TxBuffer[0] = 'A';                                 //Primers 2 bytes que indiquen inici de la trama FF, FF.
+//    TxBuffer[1] = 'T';                                 //Primers 2 bytes que indiquen inici de la trama FF, FF.
+    bPacketLength = sizeof(TxBuffer);
+//    bPacketLength = sizeof TxBuffer-1;
+    for(bCount=0; bCount<bPacketLength; bCount++)       //Aquest bucle es el que envia la trama al Modul Robot.
+    {
+        TxUAC0(TxBuffer[bCount]);
+    }
+
+    while(UCA1STAT & UCBUSY);                           //Espera fins que s'hagi transmes l'ulTim byte.
+
+
+}
 
 

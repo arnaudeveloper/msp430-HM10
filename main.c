@@ -18,21 +18,25 @@
 //            |                 | 9600 - 8N1
 //            |     P3.4/UCA0RXD|<------------
 //
-//
+//----------------------------------------------------
+ * Dubtes:
+ * 1. Com puc saber quan la UART ha deixat de rebre dades.
+ *  Per exemple un cop s'hagi deixat de rebre dades executar una funcio.
  */
 #include <msp430.h>
+#include <stdio.h>
 
 #include <Functions.h>
 
-static char string1[8];
-static char ack[2]={'O','K'};
-static char message[];
+volatile static char answer[16];
+//static char ack[2]={'O','K'};
+//static char message;
 
 
 int hex;
 
 char i;
-char j=0;
+unsigned char j=0;
 
 
 int main(void)
@@ -46,6 +50,13 @@ int main(void)
 
   //GPIOs
   init_GPIOs();
+
+//  puts("Hello");
+//  printf("Hola");
+
+  AT();
+  AT_RENEW();
+  AT_RESET();
 
 
 
@@ -70,21 +81,39 @@ __interrupt void USCI_A0_ISR(void)
 //        //_delay_cycles(200000000);
 //        break;
 //    }
+//    message = UCA0RXBUF;
+//    puts(&message);
 
-    string1[j++] = UCA0RXBUF;
+    /* SysMin will only print to the console when you call flush or exit */
+   // System_flush();
+
+    answer[j++] = UCA0RXBUF;
+    //j++;
+    //if j==size of answer
+    //do
+
    // message[j++] = UCA0RXBUF;
-    if (j > sizeof string1-1)
+    if (j > sizeof answer-1)
     {
       i = 0;
       j = 0;
-//      TXBUF0 = string1[i++];
+//      TXBUF0 = answer[i++];
     }
 
-    if(string1[j-1]=='K' && string1[j-2]=='O' ) //OK es el que es el que es rep en el prinicpi de la resposta
+    if(answer[j-1]=='K' && answer[j-2]=='O' ) //OK es el que es el que es rep en el prinicpi de la resposta
     {
         //Detectem l'ack "OK"
         //HM-10 esta actiu
         P4OUT ^= BIT7;                          // P4.7 OFF
+    }
+
+    if(answer[j-2]=='O' && answer[j-1]=='K' && answer[j]=='+')
+    {
+        //codi
+//        j=0;
+        P1OUT ^= BIT0;                          // P4.7 OFF
+
+//        while(1);
     }
 
   }
@@ -98,7 +127,9 @@ __interrupt void Port_1(void)
    //P4OUT ^= BIT7;     //Canviem l'estat del LED verd Encenem/Apaguem
    //TxUAC0_char();
 
-   TxPacket();
+//   TxPacket();
+//   AT();
+   AT_RESET();
 
    P1IE |= BIT1;
 

@@ -6,8 +6,6 @@
  */
 #include <msp430.h>
 
-
-
 #ifndef FUNCTIONS_H_
 #define FUNCTIONS_H_
 
@@ -24,6 +22,13 @@ void TxUAC0_char(void);
 
 
 void TxPacket();
+
+void AT();
+
+void AT_RESET();
+
+void AT_RENEW();
+
 
 
 
