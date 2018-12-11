@@ -8,6 +8,7 @@
 #include <msp430.h>
 #include "Functions.h"
 
+byte word_check;
 
 void init_UART()
 {
@@ -87,8 +88,6 @@ void AT()
     }
 
     while(UCA1STAT & UCBUSY);                           //Espera fins que s'hagi transmes l'ulTim byte.
-
-
 }
 
 void AT_RESET()
@@ -100,6 +99,7 @@ void AT_RESET()
 //    TxBuffer[1] = 'T';                                 //Primers 2 bytes que indiquen inici de la trama FF, FF.
     bPacketLength = sizeof(TxBuffer);
 //    bPacketLength = sizeof TxBuffer-1;
+//    byte word_check[]={'R','E','S','E','T'};
     for(bCount=0; bCount<bPacketLength; bCount++)       //Aquest bucle es el que envia la trama al Modul Robot.
     {
         TxUAC0(TxBuffer[bCount]);
@@ -107,6 +107,7 @@ void AT_RESET()
 
     while(UCA1STAT & UCBUSY);                           //Espera fins que s'hagi transmes l'ulTim byte.
 
+//    return word_check;
 
 }
 
@@ -119,6 +120,8 @@ void AT_RENEW()
 //    TxBuffer[1] = 'T';                                 //Primers 2 bytes que indiquen inici de la trama FF, FF.
     bPacketLength = sizeof(TxBuffer);
 //    bPacketLength = sizeof TxBuffer-1;
+
+//    byte word_check[]={'R','E','N','E','W'};
     for(bCount=0; bCount<bPacketLength; bCount++)       //Aquest bucle es el que envia la trama al Modul Robot.
     {
         TxUAC0(TxBuffer[bCount]);
@@ -126,7 +129,23 @@ void AT_RENEW()
 
     while(UCA1STAT & UCBUSY);                           //Espera fins que s'hagi transmes l'ulTim byte.
 
-
+//    return word_check;
 }
 
+void AT_ADDR()
+{
+    byte bCount,bPacketLength;
 
+    byte TxBuffer[]={'A','T','+','A','D','D','R','?'};
+    bPacketLength = sizeof(TxBuffer);
+
+    for(bCount=0; bCount<bPacketLength; bCount++)       //Aquest bucle es el que envia la trama al Modul Robot.
+    {
+        TxUAC0(TxBuffer[bCount]);
+    }
+
+    while(UCA1STAT & UCBUSY);                           //Espera fins que s'hagi transmes l'ulTim byte.
+
+//    return word_check;
+
+}
