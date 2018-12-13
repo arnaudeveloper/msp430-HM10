@@ -13,6 +13,7 @@ main.obj: C:/ti/ccsv8/tools/compiler/ti-cgt-msp430_18.1.3.LTS/include/stdarg.h
 main.obj: C:/ti/ccsv8/tools/compiler/ti-cgt-msp430_18.1.3.LTS/include/sys/_types.h
 main.obj: C:/ti/ccsv8/tools/compiler/ti-cgt-msp430_18.1.3.LTS/include/sys/cdefs.h
 main.obj: C:/ti/ccsv8/tools/compiler/ti-cgt-msp430_18.1.3.LTS/include/machine/_types.h
+main.obj: C:/ti/ccsv8/tools/compiler/ti-cgt-msp430_18.1.3.LTS/include/string.h
 main.obj: C:/ti/Projects/HM10_Communication/Functions.h
 
 ../main.c: 
@@ -28,4 +29,5 @@ C:/ti/ccsv8/tools/compiler/ti-cgt-msp430_18.1.3.LTS/include/stdarg.h:
 C:/ti/ccsv8/tools/compiler/ti-cgt-msp430_18.1.3.LTS/include/sys/_types.h: 
 C:/ti/ccsv8/tools/compiler/ti-cgt-msp430_18.1.3.LTS/include/sys/cdefs.h: 
 C:/ti/ccsv8/tools/compiler/ti-cgt-msp430_18.1.3.LTS/include/machine/_types.h: 
+C:/ti/ccsv8/tools/compiler/ti-cgt-msp430_18.1.3.LTS/include/string.h: 
 C:/ti/Projects/HM10_Communication/Functions.h: 

@@ -93,12 +93,9 @@ void AT()
 void AT_RESET()
 {
     byte bCount,bPacketLength;
-//    byte TxBuffer[8];
     byte TxBuffer[]={'A','T','+','R','E','S','E','T'};
-//    TxBuffer[0] = 'A';                                 //Primers 2 bytes que indiquen inici de la trama FF, FF.
-//    TxBuffer[1] = 'T';                                 //Primers 2 bytes que indiquen inici de la trama FF, FF.
+
     bPacketLength = sizeof(TxBuffer);
-//    bPacketLength = sizeof TxBuffer-1;
 //    byte word_check[]={'R','E','S','E','T'};
     for(bCount=0; bCount<bPacketLength; bCount++)       //Aquest bucle es el que envia la trama al Modul Robot.
     {
@@ -114,14 +111,11 @@ void AT_RESET()
 void AT_RENEW()
 {
     byte bCount,bPacketLength;
-//    byte TxBuffer[8];
     byte TxBuffer[]={'A','T','+','R','E','N','E','W'};
-//    TxBuffer[0] = 'A';                                 //Primers 2 bytes que indiquen inici de la trama FF, FF.
-//    TxBuffer[1] = 'T';                                 //Primers 2 bytes que indiquen inici de la trama FF, FF.
-    bPacketLength = sizeof(TxBuffer);
-//    bPacketLength = sizeof TxBuffer-1;
-
 //    byte word_check[]={'R','E','N','E','W'};
+
+    bPacketLength = sizeof(TxBuffer);
+
     for(bCount=0; bCount<bPacketLength; bCount++)       //Aquest bucle es el que envia la trama al Modul Robot.
     {
         TxUAC0(TxBuffer[bCount]);
@@ -132,9 +126,11 @@ void AT_RENEW()
 //    return word_check;
 }
 
+//unsigned char AT_ADDR()
 void AT_ADDR()
 {
     byte bCount,bPacketLength;
+    //unsigned char lenght=20; //8+12 de MAC
 
     byte TxBuffer[]={'A','T','+','A','D','D','R','?'};
     bPacketLength = sizeof(TxBuffer);
@@ -147,5 +143,25 @@ void AT_ADDR()
     while(UCA1STAT & UCBUSY);                           //Espera fins que s'hagi transmes l'ulTim byte.
 
 //    return word_check;
+    //Hauriem de rotornar el nombre de Bytes que ens esperem capturar
+    //8+12=20
+    //return lenght
 
 }
+
+void AT_ROLE()
+{
+    byte bCount,bPacketLength;
+
+    byte TxBuffer[]={'A','T','+','R','O','L','E','?'};
+    bPacketLength = sizeof(TxBuffer);
+
+    for(bCount=0; bCount<bPacketLength; bCount++)       //Aquest bucle es el que envia la trama al Modul Robot.
+    {
+        TxUAC0(TxBuffer[bCount]);
+    }
+
+    while(UCA1STAT & UCBUSY);                           //Espera fins que s'hagi transmes l'ulTim byte.
+
+}
+

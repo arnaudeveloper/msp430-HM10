@@ -28,8 +28,11 @@ void AT();
 void AT_RESET();
 
 void AT_RENEW();
+//byte AT_RENEW();
 
 void AT_ADDR();
+
+void AT_ROLE();
 
 
 
