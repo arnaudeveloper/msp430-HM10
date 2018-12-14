@@ -48,7 +48,7 @@
 
 volatile static char answer[32];
 volatile static char word[8];
-volatile static char word_check[]={'R','E','N','E','W'};
+volatile static char word_check[8];
 volatile static char address[12];
 volatile static char parameter1[1];
 
@@ -67,6 +67,7 @@ int main(void)
 {
 //  volatile unsigned int i;
   i=j=k=0;
+//  volatile static char *puntero = &word_check[0];
 
   WDTCTL = WDTPW+WDTHOLD;                   // Stop WDT
 
@@ -78,13 +79,9 @@ int main(void)
 
   __enable_interrupt();                           //Habilitamos las interrupciones.
 
-
-//  puts("Hello");
-//  printf("Hola");
-
 //  AT();
   AT_RENEW();
-  __bis_SR_register(LPM3_bits);   // Enter LPM0
+  __bis_SR_register(LPM3_bits);   // Enter LPM0. Esperem a la interrupcio de la UART
   AT_RESET();
 
 
@@ -111,7 +108,7 @@ int main(void)
 #pragma vector=USCI_A0_VECTOR
 __interrupt void USCI_A0_ISR(void)
 {
-    unsigned int w, checks, match;
+//    unsigned int w, checks, match;
 
     switch(__even_in_range(UCA0IV,4))
     {
@@ -276,7 +273,7 @@ __interrupt void Port_1(void)
    //TxUAC0_char();
 
 //   TxPacket();
-//   AT();  //OK
+   AT();  //OK
 //   AT_RESET();  //OK
 //   AT_RENEW();    //OK
 //    AT_ADDR();    //No captura correctament l'adreça

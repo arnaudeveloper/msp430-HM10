@@ -10,6 +10,8 @@
 
 byte word_check;
 
+
+
 void init_UART()
 {
     P3SEL = BIT3+BIT4;  //P3.4 RX ; P3.3 TX
@@ -74,13 +76,17 @@ void TxPacket()
 
 }
 
+//void AT()
 void AT()
 {
     byte bCount,bPacketLength;
-    byte TxBuffer[2];
-    TxBuffer[0] = 'A';                                 //Primers 2 bytes que indiquen inici de la trama FF, FF.
-    TxBuffer[1] = 'T';                                 //Primers 2 bytes que indiquen inici de la trama FF, FF.
-    bPacketLength = 2;
+    byte TxBuffer[]={'A','T'};
+//    TxBuffer[0] = 'A';                                 //Primers 2 bytes que indiquen inici de la trama FF, FF.
+//    TxBuffer[1] = 'T';                                 //Primers 2 bytes que indiquen inici de la trama FF, FF.
+//    byte word_check[]={'O','K'};
+//    byte *pointer=&word_check[0];
+
+    bPacketLength = sizeof(TxBuffer);
 //    bPacketLength = sizeof TxBuffer-1;
     for(bCount=0; bCount<bPacketLength; bCount++)       //Aquest bucle es el que envia la trama al Modul Robot.
     {
@@ -88,7 +94,9 @@ void AT()
     }
 
     while(UCA1STAT & UCBUSY);                           //Espera fins que s'hagi transmes l'ulTim byte.
+//    return pointer;
 }
+
 
 void AT_RESET()
 {
@@ -123,7 +131,7 @@ void AT_RENEW()
 
     while(UCA1STAT & UCBUSY);                           //Espera fins que s'hagi transmes l'ulTim byte.
 
-//    return word_check;
+//    return &word_check;
 }
 
 //unsigned char AT_ADDR()
