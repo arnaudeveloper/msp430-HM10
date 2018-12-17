@@ -24,10 +24,14 @@ void TxUAC0_char(void);
 void TxPacket();
 
 void AT();
+int AT_2(char *punter);
 
 void AT_RESET();
+int AT_RESET2(char *punter);
 
 void AT_RENEW();
+
+int AT_RENEW2(char *punter);
 
 void AT_ADDR();
 

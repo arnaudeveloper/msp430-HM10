@@ -46,26 +46,41 @@
 #define TRUE 1
 #define FALSE 0
 
-volatile static char answer[32];
-volatile static char word[8];
-volatile static char word_check[8];
-volatile static char address[12];
-volatile static char parameter1[1];
+//volatile static char answer[32];
+//volatile static char word[8];
+//volatile static char word_check[8];
+//volatile static char address[12];
+//volatile static char parameter1[1];
+
+char answer[32];
+char word_cap[8];
+char word_check[8];
+char address[12];
+char parameter1[1];
+
+int n_letters;
+
+char match;
 
 
 //static char ack[2]={'O','K'};
 //static char message;
 
 
-int hex;
+//int hex;
 
-unsigned char i,j,k;
+//unsigned char i,j,k;
+unsigned int i,j,k;
 
 
 
 int main(void)
 {
 //  volatile unsigned int i;
+
+    char *punter;
+    punter = &word_check[0];
+
   i=j=k=0;
 //  volatile static char *puntero = &word_check[0];
 
@@ -79,10 +94,43 @@ int main(void)
 
   __enable_interrupt();                           //Habilitamos las interrupciones.
 
-//  AT();
-  AT_RENEW();
-  __bis_SR_register(LPM3_bits);   // Enter LPM0. Esperem a la interrupcio de la UART
-  AT_RESET();
+  //DEBUG: Falta crear una resposta per quan passa un cert temps i la UART no ha respost
+  match=0;
+  while(match==0)   //DEBUG: Sembla que ho fa correcte
+  {
+  n_letters=AT_2(punter);
+  __bis_SR_register(LPM3_bits);   // Enter LPM0
+  }
+
+//  AT_RENEW();
+//  __bis_SR_register(LPM3_bits);   // Enter LPM0
+
+
+  match=0;
+  while(match==0)   //RENEW: Sembla que ho fa correcte
+  {
+  n_letters=AT_RENEW2(punter);
+  __bis_SR_register(LPM3_bits);   // Enter LPM0
+  }
+
+  match=0;
+  while(match==0)   //RESET: Sembla que ho fa correcte
+  {
+  n_letters=AT_RESET2(punter);
+  __bis_SR_register(LPM3_bits);   // Enter LPM0
+  }
+
+  //DEBUG: Fa correcte la inicialitzacio!!
+
+//  match = FALSE;
+//  while(!match)
+//  {
+//      n_letters=AT(punter);
+//      __bis_SR_register(LPM3_bits);
+//  }
+//  AT_RENEW();
+//  __bis_SR_register(LPM3_bits);   // Enter LPM0. Esperem a la interrupcio de la UART
+//  AT_RESET();
 
 
 
@@ -108,7 +156,7 @@ int main(void)
 #pragma vector=USCI_A0_VECTOR
 __interrupt void USCI_A0_ISR(void)
 {
-//    unsigned int w, checks, match;
+    unsigned int w, checks;
 
     switch(__even_in_range(UCA0IV,4))
     {
@@ -116,7 +164,7 @@ __interrupt void USCI_A0_ISR(void)
     case 2:                                   // Vector 2 - RXIFG
       while (!(UCA0IFG & UCTXIFG));             // USCI_A0 TX buffer ready?
 
-      answer[j] = UCA0RXBUF;//Funciona molt bé
+      answer[j] = UCA0RXBUF;//Funciona molt bé Capturem la dada del buffer RX
       //if j==size of answer
       //do
      // message[j++] = UCA0RXBUF;
@@ -135,117 +183,139 @@ __interrupt void USCI_A0_ISR(void)
       {
           //Detectem l'ack "OK"
           //HM-10 esta actiu
+
           P4OUT ^= BIT7;                          // P4.7 OFF
+
+          //DEBUG: Aqui passa algo raro...Pero el match=1
+          if(answer[j]==word_check[1] && answer[j-1]==word_check[0])
+          {
+              match = TRUE;
+          }
+          else
+          {
+              match= FALSE;
+          }
+          j=0;  //Resetejem la j
+          __bic_SR_register_on_exit(LPM3_bits);
+          break;
       }
 
-      if(answer[0]=='O' && answer[1]=='K' && answer[2]=='+')
+//      if(answer[0]=='O' && answer[1]=='K' && answer[2]=='+')
+//      if(answer[j-2]=='O' && answer[j-1]=='K' && answer[j]=='+')	//Capturem la resposta d'una instruccio
+      if(answer[0]=='+')
       {
-          if(j==2)  //Ens serveix per avaçar una posicio i guardar la dada que succeix a '+'
+//          if(j==2)  //Ens serveix per avaçar una posicio i guardar la dada que succeix a '+'
+          if(answer[j]=='+')  //Ens serveix per avaçar una posicio i guardar la dada que succeix a '+'
           {
               j++;
               break;
           }
-
-          word[i]=answer[j];
-          i++;
-
-
-     //--RENEW------
-          if(word[0]=='R' && word[1]=='E' && word[2]=='N' && word[3]=='E' && word[4]=='W')
+          else
           {
-              //TENIM UNA COINCIDENCIA => Executem bucle de comprobacio
-//              for(w=0;w<i;w++)
-//              {
-//                  if(word_check[w]==word[w])    //Si la cadena word_check i word tenen el mateix valor tenim check!
-//                  {
-//                      checks++;     //El nombre de checks total ha de ser igual al nombre de lletres de la paraula
-//                  }
-//              }
-//
-//              if(checks==w)
-//              {
-//                  match= TRUE;      //Nombre de checks IGUALS
-//              }
-//              else{
-//                  match = FALSE;    //Nombre de checks DIFERENTS
-//              }
 
-              i=j=k=0;      //Hem acabat l'adquisicó de dades
-              memset(&answer,0, sizeof answer);
-              memset(&word,0,sizeof word);
-
-              __bic_SR_register_on_exit(LPM3_bits);
-              break;
-          }
-
-     //--RESET-------
-//          if(word[0]=='R' && word[1]=='E' && word[2]=='S' && word[3]=='E' && word[4]=='T')
-          if(word[0]=='R' && word[1]=='E' && word[2]=='S' && word[3]=='E' && word[4]=='T')
-          {
-              //Codi
-              /*
-               * for per comprobar que la word check i la word son iguals, tamany del for igual a la i-1
-               */
-//              for(w=0;w<i;w++)
-//              {
-//                  if(word_check[w]==word[w])
-//                  {
-//                      checks++;
-//                  }
-//              }
-//              if(checks==w)
-//              {
-//                  match= TRUE;
-//              }
-//              else{
-//                  match = FALSE;
-//              }
-              i=j=k=0;
-              memset(&answer,0, sizeof answer);
-              memset(&word,0,sizeof word);
-              __bic_SR_register_on_exit(LPM3_bits);
-
-              break;
-          }
+              word_cap[i]=answer[j];
+              i++;
 
 
-          //ADDR
-          if(word[0]=='A' && word[1]=='D' && word[2]=='D' && word[3]=='R')
-//          if(word=="0x00242C")
-          {
-              if(i==4)
+         //--RENEW------
+              if(word_cap[0]=='R' && word_cap[1]=='E' && word_cap[2]=='N' && word_cap[3]=='E' && word_cap[4]=='W')
               {
-                  i++;
+                  checks=0;
+                  //TENIM UNA COINCIDENCIA => Executem bucle de comprobacio
+                  for(w=0;w<i;w++)
+                  {
+                      if(word_check[w]==word_cap[w])    //Si la cadena word_check i word tenen el mateix valor tenim check!
+                      {
+                          checks++;     //El nombre de checks total ha de ser igual al nombre de lletres de la paraula
+                      }
+                  }
+    //
+                  if(checks==w)
+                  {
+                      match= TRUE;      //Nombre de checks IGUALS
+                  }
+                  else{
+                      match = FALSE;    //Nombre de checks DIFERENTS
+                  }
+
+                  i=j=k=0;      //Hem acabat l'adquisicó de dades
+                  memset(&answer,0, sizeof answer);     //Esborrem les dades de la variable answer
+                  memset(&word_cap,0,sizeof word_cap);  //Esborrem les dades de la varaible word_cap
+
+                  __bic_SR_register_on_exit(LPM3_bits);
                   break;
               }
-              address[k]=answer[j];
-              k++;
-              if(k==12)
+
+         //--RESET-------
+    //          if(word[0]=='R' && word[1]=='E' && word[2]=='S' && word[3]=='E' && word[4]=='T')
+              if(word_cap[0]=='R' && word_cap[1]=='E' && word_cap[2]=='S' && word_cap[3]=='E' && word_cap[4]=='T')
               {
-                  //Ja tenim l'adreça
+                  //Codi
+                  /*
+                   * for per comprobar que la word check i la word son iguals, tamany del for igual a la i-1
+                   */
+                  checks=0;
+                  for(w=0;w<i;w++)
+                  {
+                      if(word_check[w]==word_cap[w])
+                      {
+                          checks++;
+                      }
+                  }
+                  if(checks==w)
+                  {
+                      match= TRUE;
+                  }
+                  else{
+                      match = FALSE;
+                  }
                   i=j=k=0;
+                  memset(&answer,0, sizeof answer);
+                  memset(&word_cap,0,sizeof word_cap);
+                  __bic_SR_register_on_exit(LPM3_bits);
+
+                  break;
               }
 
+
+              //ADDR
+              if(word_cap[0]=='A' && word_cap[1]=='D' && word_cap[2]=='D' && word_cap[3]=='R')
+    //          if(word=="0x00242C")
+              {
+                  if(i==4)
+                  {
+                      i++;
+                      break;
+                  }
+                  address[k]=answer[j];
+                  k++;
+                  if(k==12)
+                  {
+                      //Ja tenim l'adreça
+                      i=j=k=0;
+                  }
+
+              }
+
+    //          if(word[0]=='G' && word[1]=='E' && word[2]=='T')
+    //          {
+    //              if(i==3)
+    //              {
+    //                  i++;
+    //                  break;
+    //              }
+    //              parameter1[k]=answer[j]; //Ja tenim el parametre
+    //              i=j=k=0;
+    //          }
+
+    //          else
+    //          {
+    //              word[i]=answer[j];
+    //              i++;
+    //          }
+
+      //        while(1);
           }
-
-//          if(word[0]=='G' && word[1]=='E' && word[2]=='T')
-//          {
-//              if(i==3)
-//              {
-//                  i++;
-//                  break;
-//              }
-//              parameter1[k]=answer[j]; //Ja tenim el parametre
-//              i=j=k=0;
-//          }
-
-//          else
-//          {
-//              word[i]=answer[j];
-//              i++;
-//          }
-
-  //        while(1);
       }
 
       j++;  //Al final
@@ -273,9 +343,9 @@ __interrupt void Port_1(void)
    //TxUAC0_char();
 
 //   TxPacket();
-   AT();  //OK
+//   AT();  //OK
 //   AT_RESET();  //OK
-//   AT_RENEW();    //OK
+   AT_RENEW();    //OK
 //    AT_ADDR();    //No captura correctament l'adreça
 //    AT_ROLE();
 
