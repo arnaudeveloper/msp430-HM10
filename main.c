@@ -55,8 +55,8 @@
 char answer[32];
 char word_cap[8];
 char word_check[8];
-char address[12];
-char parameter1[1];
+char address[32];
+char parameter1;
 
 int n_letters;
 
@@ -89,6 +89,9 @@ int main(void)
   //UART
   init_UART();
 
+  //Timer
+  init_Timer();
+
   //GPIOs
   init_GPIOs();
 
@@ -96,20 +99,18 @@ int main(void)
 
   //DEBUG: Falta crear una resposta per quan passa un cert temps i la UART no ha respost
   match=0;
-  while(match==0)   //DEBUG: Sembla que ho fa correcte
+  while(match==0)   //AT: Sembla que ho fa correcte
   {
   n_letters=AT_2(punter);
+  TA0CCTL0 = CCIE;                          //Iniciem el Timer
   __bis_SR_register(LPM3_bits);   // Enter LPM0
   }
-
-//  AT_RENEW();
-//  __bis_SR_register(LPM3_bits);   // Enter LPM0
-
 
   match=0;
   while(match==0)   //RENEW: Sembla que ho fa correcte
   {
   n_letters=AT_RENEW2(punter);
+  TA0CCTL0 = CCIE;                          //Iniciem el Timer
   __bis_SR_register(LPM3_bits);   // Enter LPM0
   }
 
@@ -117,6 +118,39 @@ int main(void)
   while(match==0)   //RESET: Sembla que ho fa correcte
   {
   n_letters=AT_RESET2(punter);
+  TA0CCTL0 = CCIE;                          //Iniciem el Timer
+  __bis_SR_register(LPM3_bits);   // Enter LPM0
+  }
+
+  match=0;
+  while(match==0)   //DEBUG: Sembla que ho fa correcte
+  {
+  n_letters=AT_2(punter);
+  TA0CCTL0 = CCIE;                          //Iniciem el Timer
+  __bis_SR_register(LPM3_bits);   // Enter LPM0
+  }
+
+  match=0;
+  while(match==0)   //IMME:
+  {
+  n_letters=AT_IMME2(punter);
+  TA0CCTL0 = CCIE;                          //Iniciem el Timer
+  __bis_SR_register(LPM3_bits);   // Enter LPM0
+  }
+
+  match=0;
+  while(match==0)   //ROLE:
+  {
+  n_letters=AT_ROLE2(punter);
+  TA0CCTL0 = CCIE;                          //Iniciem el Timer
+  __bis_SR_register(LPM3_bits);   // Enter LPM0
+  }
+
+  match=0;
+  while(match==0)   //ROLE:
+  {
+  n_letters=AT_DISC(punter);
+//  TA0CCTL0 = CCIE;                          //Iniciem el Timer
   __bis_SR_register(LPM3_bits);   // Enter LPM0
   }
 
@@ -189,7 +223,7 @@ __interrupt void USCI_A0_ISR(void)
           //DEBUG: Aqui passa algo raro...Pero el match=1
           if(answer[j]==word_check[1] && answer[j-1]==word_check[0])
           {
-              match = TRUE;
+              match = TRUE;     //Això pot donar algun FLAS POSITIU. Ex: OK+
           }
           else
           {
@@ -210,12 +244,10 @@ __interrupt void USCI_A0_ISR(void)
               j++;
               break;
           }
-          else
+          else	//Capturem les dades que venen despres del +
           {
-
               word_cap[i]=answer[j];
               i++;
-
 
          //--RENEW------
               if(word_cap[0]=='R' && word_cap[1]=='E' && word_cap[2]=='N' && word_cap[3]=='E' && word_cap[4]=='W')
@@ -229,7 +261,7 @@ __interrupt void USCI_A0_ISR(void)
                           checks++;     //El nombre de checks total ha de ser igual al nombre de lletres de la paraula
                       }
                   }
-    //
+
                   if(checks==w)
                   {
                       match= TRUE;      //Nombre de checks IGUALS
@@ -277,8 +309,7 @@ __interrupt void USCI_A0_ISR(void)
                   break;
               }
 
-
-              //ADDR
+         //--ADDR------
               if(word_cap[0]=='A' && word_cap[1]=='D' && word_cap[2]=='D' && word_cap[3]=='R')
     //          if(word=="0x00242C")
               {
@@ -296,6 +327,62 @@ __interrupt void USCI_A0_ISR(void)
                   }
 
               }
+			  
+		//--Set:---	  
+			  if(word_cap[0]=='S' && word_cap[1]=='e' && word_cap[2]=='t' && word_cap[3]==':')
+			  {
+			      if(answer[j]==':')
+			      {
+			          j++;
+			          break;
+			      }
+			      else
+			      {
+			          parameter1=answer[j];
+
+			          if(parameter1=='1')
+			          {
+
+			              match=TRUE;
+
+		                  i=j=k=0;
+		                  parameter1=0;
+		                  memset(&answer,0, sizeof answer);
+		                  memset(&word_cap,0,sizeof word_cap);
+		                  __bic_SR_register_on_exit(LPM3_bits);
+		                  break;
+			          }
+			          else
+			          {
+			              match=FALSE;
+			          }
+
+                     i=j=k=0;
+                     parameter1=0;
+//                     memset(&parameter1,0, sizeof parameter1);
+                     memset(&answer,0, sizeof answer);
+                     memset(&word_cap,0,sizeof word_cap);
+                     __bic_SR_register_on_exit(LPM3_bits);
+			      }
+			  }
+		//--DIS----
+			  if(word_cap[0]=='D' && word_cap[1]=='I' && word_cap[2]=='S')
+     //          if(word=="0x00242C")
+              {
+                  if(i==3)
+                  {
+                      i++;
+                      break;
+                  }
+                  address[k]=answer[j];
+                  k++;
+//                  if(k==12)
+//                  {
+//                      //Ja tenim l'adreça
+//                      i=j=k=0;
+//                  }
+              }
+
 
     //          if(word[0]=='G' && word[1]=='E' && word[2]=='T')
     //          {
@@ -345,12 +432,28 @@ __interrupt void Port_1(void)
 //   TxPacket();
 //   AT();  //OK
 //   AT_RESET();  //OK
-   AT_RENEW();    //OK
+//   AT_RENEW();    //OK
 //    AT_ADDR();    //No captura correctament l'adreça
 //    AT_ROLE();
+//   AT_IMME();
+//   AT_DISC();
+
 
 
    P1IE |= BIT1;
+
+
+}
+
+// Timer0 A0 interrupt service routine
+#pragma vector=TIMER0_A0_VECTOR
+__interrupt void TIMER0_A0_ISR(void)
+{
+  P1OUT ^= 0x01;                            // Toggle P1.0
+  TA0CTL |= TACLR;                           //  clear TAR
+  TA0CCTL0 &= ~CCIE;                         // CCR0 interrupt disabled
+  __bic_SR_register_on_exit(LPM3_bits);     //Exit LPM
+
 
 
 }
