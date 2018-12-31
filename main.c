@@ -147,12 +147,14 @@ int main(void)
   }
 
   match=0;
-  while(match==0)   //ROLE:
+  while(match==0)   //DISC:
   {
   n_letters=AT_DISC(punter);
 //  TA0CCTL0 = CCIE;                          //Iniciem el Timer
   __bis_SR_register(LPM3_bits);   // Enter LPM0
   }
+
+  while(1);//Bucle infinit
 
   //DEBUG: Fa correcte la inicialitzacio!!
 
@@ -230,9 +232,11 @@ __interrupt void USCI_A0_ISR(void)
               match= FALSE;
           }
           j=0;  //Resetejem la j
+          //DEBUG: En la instruccio AT+DISC? es queda penjat en aquest punt
+          //        No captura el '+'.
           __bic_SR_register_on_exit(LPM3_bits);
           break;
-      }
+      }//Fi if OK
 
 //      if(answer[0]=='O' && answer[1]=='K' && answer[2]=='+')
 //      if(answer[j-2]=='O' && answer[j-1]=='K' && answer[j]=='+')	//Capturem la resposta d'una instruccio
@@ -276,7 +280,7 @@ __interrupt void USCI_A0_ISR(void)
 
                   __bic_SR_register_on_exit(LPM3_bits);
                   break;
-              }
+              }//--RENEW------
 
          //--RESET-------
     //          if(word[0]=='R' && word[1]=='E' && word[2]=='S' && word[3]=='E' && word[4]=='T')
@@ -307,7 +311,7 @@ __interrupt void USCI_A0_ISR(void)
                   __bic_SR_register_on_exit(LPM3_bits);
 
                   break;
-              }
+              }//--RESET---
 
          //--ADDR------
               if(word_cap[0]=='A' && word_cap[1]=='D' && word_cap[2]=='D' && word_cap[3]=='R')
@@ -326,7 +330,7 @@ __interrupt void USCI_A0_ISR(void)
                       i=j=k=0;
                   }
 
-              }
+              }//--ADDR---
 			  
 		//--Set:---	  
 			  if(word_cap[0]=='S' && word_cap[1]=='e' && word_cap[2]=='t' && word_cap[3]==':')
@@ -364,46 +368,59 @@ __interrupt void USCI_A0_ISR(void)
                      memset(&word_cap,0,sizeof word_cap);
                      __bic_SR_register_on_exit(LPM3_bits);
 			      }
-			  }
+			  }//--SET--
 		//--DIS----
-			  if(word_cap[0]=='D' && word_cap[1]=='I' && word_cap[2]=='S')
-     //          if(word=="0x00242C")
+//			  if(word_cap[0]=='D' && word_cap[1]=='I' && word_cap[2]=='S' && word_cap[3]=='C' )//Fixat que d'aquesta manera no capturem el OK+DIS
+			  if(word_cap[0]=='D' && word_cap[1]=='I' && word_cap[2]=='S')//Fixat que d'aquesta manera no capturem el OK+DIS
               {
-                  if(i==3)
-                  {
-                      i++;
-                      break;
-                  }
-                  address[k]=answer[j];
-                  k++;
-//                  if(k==12)
-//                  {
-//                      //Ja tenim l'adreça
-//                      i=j=k=0;
-//                  }
-              }
+			      if(word_cap[4]=='C')
+			      {
+                      if(i==4)
+                      {
+                          i++;
+                          j++;
+                          break;
+                      }
 
+	                  //Captura del Start
+	                  if(word_cap[5]=='S')
+	                  {
+	                      //START
+	                      i=k=0;
+	                      break;
+	                      //DEBUG: Captura l'start pero es queda penjat un cop rep del OK
+	                  }
+	                  if(word_cap[5]=='E')
+	                  {
+	                      //END
+	                      i=0;
+	                      break;
+	                  }
+			      }
+			      else
+			      {
+                      if(i==3)
+                      {
+                          i++;
+                          j++;
+                          break;
+                      }
 
-    //          if(word[0]=='G' && word[1]=='E' && word[2]=='T')
-    //          {
-    //              if(i==3)
-    //              {
-    //                  i++;
-    //                  break;
-    //              }
-    //              parameter1[k]=answer[j]; //Ja tenim el parametre
-    //              i=j=k=0;
-    //          }
+                      address[k]=answer[j];
+                      k++;
+                      k++;
+                      if(k==12)
+                      {
+                          //Ja tenim l'adreça
+                          i=j=k=0;
+                      }
 
-    //          else
-    //          {
-    //              word[i]=answer[j];
-    //              i++;
-    //          }
+			      }
 
-      //        while(1);
+              }//--DIS---
+
           }
-      }
+      }//Fi if +
 
       j++;  //Al final
 
@@ -412,13 +429,13 @@ __interrupt void USCI_A0_ISR(void)
     case 4:break;                             // Vector 4 - TXIFG
 
     default: break;
-    }
+    }//switch
 
     /* SysMin will only print to the console when you call flush or exit */
    // System_flush();
 
 
-  }
+  }//USCI_A0_ISR
 
 // Pragrama per quan s'activi la interrupcio del Port 1
 #pragma vector=PORT1_VECTOR
@@ -430,7 +447,7 @@ __interrupt void Port_1(void)
    //TxUAC0_char();
 
 //   TxPacket();
-//   AT();  //OK
+   AT();  //OK
 //   AT_RESET();  //OK
 //   AT_RENEW();    //OK
 //    AT_ADDR();    //No captura correctament l'adreça
