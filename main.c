@@ -231,7 +231,9 @@ __interrupt void USCI_A0_ISR(void)
           {
               match= FALSE;
           }
+
           j=0;  //Resetejem la j
+                //DEBUG: Aquesta linia es conflictiva
           //DEBUG: En la instruccio AT+DISC? es queda penjat en aquest punt
           //        No captura el '+'.
           __bic_SR_register_on_exit(LPM3_bits);
