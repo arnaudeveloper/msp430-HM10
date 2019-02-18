@@ -159,6 +159,22 @@ int main(void)
   __bis_SR_register(LPM3_bits);   // Enter LPM0
   }
 
+  match=0;
+  while(match==0)   //ROLE:
+  {
+  n_letters= AT_CONN(punter);
+  TA0CCTL0 = CCIE;                          //Iniciem el Timer
+  __bis_SR_register(LPM3_bits);   // Enter LPM0
+  }
+
+  //Configuracio completa
+
+  SEND();   //Enviem dades
+
+
+
+
+
   while(1);//Bucle infinit
 
   //DEBUG: Fa correcte la inicialitzacio!!
@@ -438,7 +454,32 @@ __interrupt void USCI_A0_ISR(void)
 
               }//--DIS---
 
-          }
+			  //--CONN---
+			  if(word_cap[0]=='C' && word_cap[1]=='O' && word_cap[2]=='N' && word_cap[3]=='N')
+			  {
+                  if(i==4)  //Ens serveix per saltar a la seguent posicio
+                   {
+                       i++;
+                       j++;
+                       break;
+                   }
+                  else
+                  {
+                      if (word_cap[5] == 'E' || word_cap[5] == 'F')
+                      {
+                          //ERROR
+                      }
+                      match=TRUE;
+                      i=k=j=0;      //DEBUG: Prova
+
+                      memset(&answer,0, sizeof answer);
+                      memset(&word_cap,0,sizeof word_cap);
+                      __bic_SR_register_on_exit(LPM3_bits);
+                      break;
+                  }
+			  }//--CONN--
+
+          }//else que inclou totes les funcions
       }//Fi if +
 
       j++;  //Al final

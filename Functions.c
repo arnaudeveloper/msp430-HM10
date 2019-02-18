@@ -387,6 +387,47 @@ int AT_DISC(char *punter)
 
 }
 
+int AT_CONN(char *punter)
+{
+    int i=0;
+
+    byte bCount,bPacketLength;
+    byte TxBuffer[]={'A','T','+','C','O','N','N','0'}; //En connectem al dispositiu 1
+    byte word[]={'C','O','N','N'};
+
+    for(i=0;i< sizeof(word);i++)
+    {
+        *punter=word[i];
+        punter++;
+    }
+
+    bPacketLength = sizeof(TxBuffer);
+
+    for(bCount=0; bCount<bPacketLength; bCount++)       //Aquest bucle es el que envia la trama al Modul Robot.
+    {
+        TxUAC0(TxBuffer[bCount]);
+    }
+
+    while(UCA1STAT & UCBUSY);                           //Espera fins que s'hagi transmes l'ulTim byte.
+
+    return i;
+
+}
+
+void SEND()
+{
+    byte bCount,bPacketLength;
+    byte TxBuffer[]={'#','H','O','L','A','1'};
+
+    bPacketLength = sizeof(TxBuffer);
+    for(bCount=0; bCount<bPacketLength; bCount++)       //Aquest bucle es el que envia la trama al Modul Robot.
+    {
+        TxUAC0(TxBuffer[bCount]);
+    }
+
+    while(UCA1STAT & UCBUSY);                           //Espera fins que s'hagi transmes l'ulTim byte.
+}
+
 
 
 

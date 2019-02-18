@@ -49,6 +49,10 @@ int AT_DISC(char *punter);
 
 void AT_ROLE();
 
+int AT_CONN(char *punter);
+
+void SEND();
+
 
 
 
