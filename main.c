@@ -62,6 +62,7 @@ int n_letters;
 
 char match;
 char dis_ok=FALSE;
+char get_address=FALSE;
 
 
 //static char ack[2]={'O','K'};
@@ -107,6 +108,9 @@ int main(void)
   __bis_SR_register(LPM3_bits);   // Enter LPM0
   }
 
+  __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
+
+
   match=0;
   while(match==0)   //RENEW: Sembla que ho fa correcte
   {
@@ -114,6 +118,9 @@ int main(void)
   TA0CCTL0 = CCIE;                          //Iniciem el Timer
   __bis_SR_register(LPM3_bits);   // Enter LPM0
   }
+
+  __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
+
 
   match=0;
   while(match==0)   //RESET: Sembla que ho fa correcte
@@ -123,6 +130,9 @@ int main(void)
   __bis_SR_register(LPM3_bits);   // Enter LPM0
   }
 
+  __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
+
+
   match=0;
   while(match==0)   //DEBUG: Sembla que ho fa correcte
   {
@@ -130,6 +140,9 @@ int main(void)
   TA0CCTL0 = CCIE;                          //Iniciem el Timer
   __bis_SR_register(LPM3_bits);   // Enter LPM0
   }
+
+  __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
+
 
   match=0;
   while(match==0)   //IMME:
@@ -139,6 +152,9 @@ int main(void)
   __bis_SR_register(LPM3_bits);   // Enter LPM0
   }
 
+  __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
+
+
   match=0;
   while(match==0)   //ROLE:
   {
@@ -147,25 +163,37 @@ int main(void)
   __bis_SR_register(LPM3_bits);   // Enter LPM0
   }
 
+
+  __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
+                                  //Prova de posar delay
+
   match=0;
   //DEBUG: El timer dona mol pel cul
   TA0CCTL0 &= ~CCIE;                         // CCR0 interrupt disabled
   dis_ok=TRUE;
 
-  while(match==0)   //DISC:
+//  while(match==0 && get_address==0)   //DISC:
+  while(match==0 || get_address==0)   //DISC:
+
   {
+  __delay_cycles(1000000);        //DEBUG: Amb breack points si que ho fa, sense no
   n_letters=AT_DISC(punter);
 //  TA0CCTL0 = CCIE;                          //Iniciem el Timer
   __bis_SR_register(LPM3_bits);   // Enter LPM0
   }
 
+  __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
+
   match=0;
-  while(match==0)   //ROLE:
+  while(match==0)   //CONN:
   {
   n_letters= AT_CONN(punter);
   TA0CCTL0 = CCIE;                          //Iniciem el Timer
   __bis_SR_register(LPM3_bits);   // Enter LPM0
   }
+
+  __delay_cycles(500000);        //DEBUG: Amb breack points si que ho fa, sense no
+
 
   //Configuracio completa
 
@@ -423,7 +451,7 @@ __interrupt void USCI_A0_ISR(void)
 	                  if(word_cap[5]=='E')
 	                  {
 	                      //END
-	                      match=TRUE;
+	                      match=TRUE;   //DEBUG:Passar-ho a address
                           i=k=j=0;      //DEBUG: Prova
 
                           memset(&answer,0, sizeof answer);
@@ -447,6 +475,8 @@ __interrupt void USCI_A0_ISR(void)
                       if(k==14)
                       {
                           //Ja tenim l'adreça
+                          get_address=TRUE;
+                          match=FALSE;      //despres hem d'anar a END
                           i=j=k=0;
                       }
 
