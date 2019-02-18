@@ -61,6 +61,7 @@ char parameter1;
 int n_letters;
 
 char match;
+char dis_ok=FALSE;
 
 
 //static char ack[2]={'O','K'};
@@ -147,6 +148,10 @@ int main(void)
   }
 
   match=0;
+  //DEBUG: El timer dona mol pel cul
+  TA0CCTL0 &= ~CCIE;                         // CCR0 interrupt disabled
+  dis_ok=TRUE;
+
   while(match==0)   //DISC:
   {
   n_letters=AT_DISC(punter);
@@ -233,10 +238,14 @@ __interrupt void USCI_A0_ISR(void)
           }
 
           j=0;  //Resetejem la j
+          i=0;  //DEBUG: PROVA. No capturavem correctament la word_cap
                 //DEBUG: Aquesta linia es conflictiva
           //DEBUG: En la instruccio AT+DISC? es queda penjat en aquest punt
           //        No captura el '+'.
-          __bic_SR_register_on_exit(LPM3_bits);
+          if(!dis_ok)
+          {
+              __bic_SR_register_on_exit(LPM3_bits);
+          }
           break;
       }//Fi if OK
 
@@ -388,20 +397,28 @@ __interrupt void USCI_A0_ISR(void)
 	                  if(word_cap[5]=='S')
 	                  {
 	                      //START
-	                      i=k=0;
+//	                      i=k=0;
+	                      i=k=j=0;      //DEBUG: Prova
+//	                      memset(&answer,0, sizeof answer);
+	                      memset(&word_cap,0,sizeof word_cap);
 	                      break;
 	                      //DEBUG: Captura l'start pero es queda penjat un cop rep del OK
 	                  }
 	                  if(word_cap[5]=='E')
 	                  {
 	                      //END
-	                      i=0;
+	                      match=TRUE;
+                          i=k=j=0;      //DEBUG: Prova
+
+                          memset(&answer,0, sizeof answer);
+                          memset(&word_cap,0,sizeof word_cap);
+                          __bic_SR_register_on_exit(LPM3_bits);
 	                      break;
 	                  }
 			      }
 			      else
 			      {
-                      if(i==3)
+                      if(i==3)  //Ens serveix per saltar a la seguent posicio
                       {
                           i++;
                           j++;
@@ -410,8 +427,8 @@ __interrupt void USCI_A0_ISR(void)
 
                       address[k]=answer[j];
                       k++;
-                      k++;
-                      if(k==12)
+//                      k++;
+                      if(k==14)
                       {
                           //Ja tenim l'adreça
                           i=j=k=0;
@@ -443,19 +460,23 @@ __interrupt void USCI_A0_ISR(void)
 #pragma vector=PORT1_VECTOR
 __interrupt void Port_1(void)
 {
+    char *punter;
+    punter = &word_check[0];
+
    P1IFG &= ~BIT1;  //Baixem la FLAG
 
    //P4OUT ^= BIT7;     //Canviem l'estat del LED verd Encenem/Apaguem
    //TxUAC0_char();
 
 //   TxPacket();
-   AT();  //OK
+//   AT();  //OK
 //   AT_RESET();  //OK
 //   AT_RENEW();    //OK
 //    AT_ADDR();    //No captura correctament l'adreça
 //    AT_ROLE();
 //   AT_IMME();
 //   AT_DISC();
+   AT_DISC(punter);
 
 
 
@@ -472,7 +493,5 @@ __interrupt void TIMER0_A0_ISR(void)
   TA0CTL |= TACLR;                           //  clear TAR
   TA0CCTL0 &= ~CCIE;                         // CCR0 interrupt disabled
   __bic_SR_register_on_exit(LPM3_bits);     //Exit LPM
-
-
 
 }
