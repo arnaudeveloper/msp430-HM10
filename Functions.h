@@ -9,7 +9,32 @@
 #ifndef FUNCTIONS_H_
 #define FUNCTIONS_H_
 
+#define TRUE 1
+#define FALSE 0
+
 typedef unsigned char byte;
+
+char answer[32];
+char word_cap[8];
+char word_check[8];
+char address[32];
+char parameter1;
+
+int n_letters;
+
+char match;
+
+//char dis_ok=FALSE;
+//char get_address=FALSE;
+//char enviar = FALSE;
+char dis_ok;
+char get_address;
+char enviar;
+
+char *punter;
+
+unsigned int i,j,k;
+
 
 
 void init_UART();
@@ -17,6 +42,10 @@ void init_UART();
 void init_Timer();
 
 void init_GPIOs();
+
+void config_INITIAL();
+
+void config_SEND();
 
 void TxUAC1(byte TXData);
 

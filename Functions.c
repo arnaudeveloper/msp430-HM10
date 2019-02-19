@@ -8,7 +8,7 @@
 #include <msp430.h>
 #include "Functions.h"
 
-byte word_check;
+//byte word_check;
 
 
 
@@ -51,6 +51,184 @@ void init_GPIOs()
     P1IES |= BIT1;              // Indiquem el canvi de High a Low per P1.3
     P1IFG &= ~BIT1;             // Posem a zero la Flag del boto
 }
+
+void config_SEND()
+{
+//    //DEBUG: Falta crear una resposta per quan passa un cert temps i la UART no ha respost
+//    match=0;
+//    while(match==0)   //AT: Sembla que ho fa correcte
+//    {
+//    n_letters=AT_2(punter);
+//    TA0CCTL0 = CCIE;                          //Iniciem el Timer
+//    __bis_SR_register(LPM3_bits);   // Enter LPM0
+//    }
+//
+//    __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
+//
+//
+//    match=0;
+//    while(match==0)   //RENEW: Sembla que ho fa correcte
+//    {
+//    n_letters=AT_RENEW2(punter);
+//    TA0CCTL0 = CCIE;                          //Iniciem el Timer
+//    __bis_SR_register(LPM3_bits);   // Enter LPM0
+//    }
+//
+//    __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
+//
+//
+//    match=0;
+//    while(match==0)   //RESET: Sembla que ho fa correcte
+//    {
+//    n_letters=AT_RESET2(punter);
+//    TA0CCTL0 = CCIE;                          //Iniciem el Timer
+//    __bis_SR_register(LPM3_bits);   // Enter LPM0
+//    }
+//
+//    __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
+//
+//
+//    match=0;
+//    while(match==0)   //DEBUG: Sembla que ho fa correcte
+//    {
+//    n_letters=AT_2(punter);
+//    TA0CCTL0 = CCIE;                          //Iniciem el Timer
+//    __bis_SR_register(LPM3_bits);   // Enter LPM0
+//    }
+
+    __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
+
+
+    match=0;
+    while(match==0)   //IMME:
+    {
+    n_letters=AT_IMME2(punter);
+    TA0CCTL0 = CCIE;                          //Iniciem el Timer
+    __bis_SR_register(LPM3_bits);   // Enter LPM0
+    }
+
+    __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
+
+
+    match=0;
+    while(match==0)   //ROLE:
+    {
+    n_letters=AT_ROLE2(punter);
+    TA0CCTL0 = CCIE;                          //Iniciem el Timer
+    __bis_SR_register(LPM3_bits);   // Enter LPM0
+    }
+
+
+    __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
+                                    //Prova de posar delay
+
+    match=0;
+    //DEBUG: El timer dona mol pel cul
+    TA0CCTL0 &= ~CCIE;                         // CCR0 interrupt disabled
+    dis_ok=TRUE;
+
+  //  while(match==0 && get_address==0)   //DISC:
+    while(match==0 || get_address==0)   //DISC:
+
+    {
+    __delay_cycles(1000000);        //DEBUG: Amb breack points si que ho fa, sense no
+    n_letters=AT_DISC(punter);
+  //  TA0CCTL0 = CCIE;                          //Iniciem el Timer
+    __bis_SR_register(LPM3_bits);   // Enter LPM0
+    }
+
+    __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
+
+    match=0;
+    while(match==0)   //CONN:
+    {
+    n_letters= AT_CONN(punter);
+    TA0CCTL0 = CCIE;                          //Iniciem el Timer
+    __bis_SR_register(LPM3_bits);   // Enter LPM0
+    }
+
+    __delay_cycles(500000);        //DEBUG: Amb breack points si que ho fa, sense no
+
+
+    //Configuracio completa
+
+    SEND();   //Enviem dades
+
+}
+
+void config_INITIAL()
+{
+    dis_ok=FALSE;
+    get_address=FALSE;
+    enviar = FALSE;
+
+    punter = &word_check[0];
+
+    i=j=k=0;
+
+    //DEBUG: Falta crear una resposta per quan passa un cert temps i la UART no ha respost
+    match=0;
+    while(match==0)   //AT: Sembla que ho fa correcte
+    {
+    n_letters=AT_2(punter);
+    TA0CCTL0 = CCIE;                          //Iniciem el Timer
+    __bis_SR_register(LPM3_bits);   // Enter LPM0
+    }
+
+    __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
+
+
+    match=0;
+    while(match==0)   //RENEW: Sembla que ho fa correcte
+    {
+    n_letters=AT_RENEW2(punter);
+    TA0CCTL0 = CCIE;                          //Iniciem el Timer
+    __bis_SR_register(LPM3_bits);   // Enter LPM0
+    }
+
+    __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
+
+
+    match=0;
+    while(match==0)   //RESET: Sembla que ho fa correcte
+    {
+    n_letters=AT_RESET2(punter);
+    TA0CCTL0 = CCIE;                          //Iniciem el Timer
+    __bis_SR_register(LPM3_bits);   // Enter LPM0
+    }
+
+    __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
+
+
+    match=0;
+    while(match==0)   //DEBUG: Sembla que ho fa correcte
+    {
+    n_letters=AT_2(punter);
+    TA0CCTL0 = CCIE;                          //Iniciem el Timer
+    __bis_SR_register(LPM3_bits);   // Enter LPM0
+    }
+
+    __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
+
+    match=0;
+    while(match==0)   //DEBUG: Sembla que ho fa correcte
+    {
+    n_letters=AT_NOTI(punter);
+    TA0CCTL0 = CCIE;                          //Iniciem el Timer
+    __bis_SR_register(LPM3_bits);   // Enter LPM0
+    }
+
+    __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
+
+
+
+}
+
+
+
+
+
+
 
 //Funcio TxUAC0(): envia una dada per la UART 0
 void TxUAC0_char(void)
