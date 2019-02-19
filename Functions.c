@@ -54,47 +54,6 @@ void init_GPIOs()
 
 void config_SEND()
 {
-//    //DEBUG: Falta crear una resposta per quan passa un cert temps i la UART no ha respost
-//    match=0;
-//    while(match==0)   //AT: Sembla que ho fa correcte
-//    {
-//    n_letters=AT_2(punter);
-//    TA0CCTL0 = CCIE;                          //Iniciem el Timer
-//    __bis_SR_register(LPM3_bits);   // Enter LPM0
-//    }
-//
-//    __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
-//
-//
-//    match=0;
-//    while(match==0)   //RENEW: Sembla que ho fa correcte
-//    {
-//    n_letters=AT_RENEW2(punter);
-//    TA0CCTL0 = CCIE;                          //Iniciem el Timer
-//    __bis_SR_register(LPM3_bits);   // Enter LPM0
-//    }
-//
-//    __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
-//
-//
-//    match=0;
-//    while(match==0)   //RESET: Sembla que ho fa correcte
-//    {
-//    n_letters=AT_RESET2(punter);
-//    TA0CCTL0 = CCIE;                          //Iniciem el Timer
-//    __bis_SR_register(LPM3_bits);   // Enter LPM0
-//    }
-//
-//    __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
-//
-//
-//    match=0;
-//    while(match==0)   //DEBUG: Sembla que ho fa correcte
-//    {
-//    n_letters=AT_2(punter);
-//    TA0CCTL0 = CCIE;                          //Iniciem el Timer
-//    __bis_SR_register(LPM3_bits);   // Enter LPM0
-//    }
 
     __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
 
@@ -220,76 +179,69 @@ void config_INITIAL()
 
     __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
 
-
-
 }
-
-
-
-
-
-
 
 //Funcio TxUAC0(): envia una dada per la UART 0
-void TxUAC0_char(void)
-{
-    while (!(UCA0IFG & UCTXIFG)); //Espera a que estigui preparat el buffer de transmissio.
-    UCA0TXBUF = 'a';
-}
-
+//void TxUAC0_char(void)
+//{
+//    while (!(UCA0IFG & UCTXIFG)); //Espera a que estigui preparat el buffer de transmissio.
+//    UCA0TXBUF = 'a';
+//}
+//
 void TxUAC0(byte TXData)
 {
     while (!(UCA0IFG & UCTXIFG)); //Espera a que estigui preparat el buffer de transmissio.
     UCA0TXBUF = TXData;
 }
-
-void TxPacket()
-{
-    byte bCount,bPacketLength;
-    byte TxBuffer[2];
-//    byte TxBuffer[]={'A','T','+','R','E','S','E','T'};
-    TxBuffer[0] = 'A';                                 //Primers 2 bytes que indiquen inici de la trama FF, FF.
-    TxBuffer[1] = 'T';                                 //Primers 2 bytes que indiquen inici de la trama FF, FF.
-    bPacketLength = 2;
-//    bPacketLength = sizeof TxBuffer-1;
-    for(bCount=0; bCount<bPacketLength; bCount++)       //Aquest bucle es el que envia la trama al Modul Robot.
-    {
-        TxUAC0(TxBuffer[bCount]);
-    }
-
-    while(UCA1STAT & UCBUSY);                           //Espera fins que s'hagi transmes l'ulTim byte.
-
-
-}
-
-void AT()
-{
-//    int i=0;
-    byte bCount,bPacketLength;
-    byte TxBuffer[]={'A','T'};
+//
+//void TxPacket()
+//{
+//    byte bCount,bPacketLength;
+//    byte TxBuffer[2];
+////    byte TxBuffer[]={'A','T','+','R','E','S','E','T'};
 //    TxBuffer[0] = 'A';                                 //Primers 2 bytes que indiquen inici de la trama FF, FF.
 //    TxBuffer[1] = 'T';                                 //Primers 2 bytes que indiquen inici de la trama FF, FF.
-//    byte word[]={'O','K'};
-//    byte *pointer=&word_check[0];
-
-//    for(i=0;i< sizeof(word);i++)
+//    bPacketLength = 2;
+////    bPacketLength = sizeof TxBuffer-1;
+//    for(bCount=0; bCount<bPacketLength; bCount++)       //Aquest bucle es el que envia la trama al Modul Robot.
 //    {
-//        *punter=word[i];
-//        punter++;
+//        TxUAC0(TxBuffer[bCount]);
 //    }
+//
+//    while(UCA1STAT & UCBUSY);                           //Espera fins que s'hagi transmes l'ulTim byte.
+//
+//
+//}
 
-    bPacketLength = sizeof(TxBuffer);
-//    bPacketLength = sizeof TxBuffer-1;
-    for(bCount=0; bCount<bPacketLength; bCount++)       //Aquest bucle es el que envia la trama al Modul Robot.
-    {
-        TxUAC0(TxBuffer[bCount]);
-    }
+//void AT()
+//{
+////    int i=0;
+//    byte bCount,bPacketLength;
+//    byte TxBuffer[]={'A','T'};
+////    TxBuffer[0] = 'A';                                 //Primers 2 bytes que indiquen inici de la trama FF, FF.
+////    TxBuffer[1] = 'T';                                 //Primers 2 bytes que indiquen inici de la trama FF, FF.
+////    byte word[]={'O','K'};
+////    byte *pointer=&word_check[0];
+//
+////    for(i=0;i< sizeof(word);i++)
+////    {
+////        *punter=word[i];
+////        punter++;
+////    }
+//
+//    bPacketLength = sizeof(TxBuffer);
+////    bPacketLength = sizeof TxBuffer-1;
+//    for(bCount=0; bCount<bPacketLength; bCount++)       //Aquest bucle es el que envia la trama al Modul Robot.
+//    {
+//        TxUAC0(TxBuffer[bCount]);
+//    }
+//
+//    while(UCA1STAT & UCBUSY);                           //Espera fins que s'hagi transmes l'ulTim byte.
+//
+////    return i;
+//}
 
-    while(UCA1STAT & UCBUSY);                           //Espera fins que s'hagi transmes l'ulTim byte.
-
-//    return i;
-}
-
+//ok
 int AT_2(char *punter)
 {
     int i=0;
@@ -319,24 +271,25 @@ int AT_2(char *punter)
 }
 
 
-void AT_RESET()
-{
-    byte bCount,bPacketLength;
-    byte TxBuffer[]={'A','T','+','R','E','S','E','T'};
+//void AT_RESET()
+//{
+//    byte bCount,bPacketLength;
+//    byte TxBuffer[]={'A','T','+','R','E','S','E','T'};
+//
+//    bPacketLength = sizeof(TxBuffer);
+////    byte word_check[]={'R','E','S','E','T'};
+//    for(bCount=0; bCount<bPacketLength; bCount++)       //Aquest bucle es el que envia la trama al Modul Robot.
+//    {
+//        TxUAC0(TxBuffer[bCount]);
+//    }
+//
+//    while(UCA1STAT & UCBUSY);                           //Espera fins que s'hagi transmes l'ulTim byte.
+//
+////    return word_check;
+//
+//}
 
-    bPacketLength = sizeof(TxBuffer);
-//    byte word_check[]={'R','E','S','E','T'};
-    for(bCount=0; bCount<bPacketLength; bCount++)       //Aquest bucle es el que envia la trama al Modul Robot.
-    {
-        TxUAC0(TxBuffer[bCount]);
-    }
-
-    while(UCA1STAT & UCBUSY);                           //Espera fins que s'hagi transmes l'ulTim byte.
-
-//    return word_check;
-
-}
-
+//ok
 int AT_RESET2(char *punter)
 {
     int i;
@@ -363,24 +316,25 @@ int AT_RESET2(char *punter)
 
 }
 
-void AT_RENEW()
-{
-    byte bCount,bPacketLength;
-    byte TxBuffer[]={'A','T','+','R','E','N','E','W'};
-//    byte word_check[]={'R','E','N','E','W'};
+//void AT_RENEW()
+//{
+//    byte bCount,bPacketLength;
+//    byte TxBuffer[]={'A','T','+','R','E','N','E','W'};
+////    byte word_check[]={'R','E','N','E','W'};
+//
+//    bPacketLength = sizeof(TxBuffer);
+//
+//    for(bCount=0; bCount<bPacketLength; bCount++)       //Aquest bucle es el que envia la trama al Modul Robot.
+//    {
+//        TxUAC0(TxBuffer[bCount]);
+//    }
+//
+//    while(UCA1STAT & UCBUSY);                           //Espera fins que s'hagi transmes l'ulTim byte.
+//
+////    return &word_check;
+//}
 
-    bPacketLength = sizeof(TxBuffer);
-
-    for(bCount=0; bCount<bPacketLength; bCount++)       //Aquest bucle es el que envia la trama al Modul Robot.
-    {
-        TxUAC0(TxBuffer[bCount]);
-    }
-
-    while(UCA1STAT & UCBUSY);                           //Espera fins que s'hagi transmes l'ulTim byte.
-
-//    return &word_check;
-}
-
+//ok
 int AT_RENEW2(char *punter)
 {
     int i=0;
@@ -430,33 +384,34 @@ void AT_ADDR()
 
 }
 
-void AT_IMME()
-{
-//    int i=0;
-
-     byte bCount,bPacketLength;
-     byte TxBuffer[]={'A','T','+','I','M','M','E','1'};
-//     byte word[]={'1'};
+//void AT_IMME()
+//{
+////    int i=0;
 //
-//     for(i=0;i< sizeof(word);i++)
+//     byte bCount,bPacketLength;
+//     byte TxBuffer[]={'A','T','+','I','M','M','E','1'};
+////     byte word[]={'1'};
+////
+////     for(i=0;i< sizeof(word);i++)
+////     {
+////         *punter=word[i];
+////         punter++;
+////     }
+//
+//     bPacketLength = sizeof(TxBuffer);
+//
+//     for(bCount=0; bCount<bPacketLength; bCount++)       //Aquest bucle es el que envia la trama al Modul Robot.
 //     {
-//         *punter=word[i];
-//         punter++;
+//         TxUAC0(TxBuffer[bCount]);
 //     }
+//
+//     while(UCA1STAT & UCBUSY);                           //Espera fins que s'hagi transmes l'ulTim byte.
+//
+////     return i;
+//
+//}
 
-     bPacketLength = sizeof(TxBuffer);
-
-     for(bCount=0; bCount<bPacketLength; bCount++)       //Aquest bucle es el que envia la trama al Modul Robot.
-     {
-         TxUAC0(TxBuffer[bCount]);
-     }
-
-     while(UCA1STAT & UCBUSY);                           //Espera fins que s'hagi transmes l'ulTim byte.
-
-//     return i;
-
-}
-
+//ok
 int AT_IMME2(char *punter)
 {
     int i=0;
@@ -511,6 +466,7 @@ void AT_ROLE()
 
 }
 
+//ok
 int AT_ROLE2(char *punter)
 {
     int i=0;
@@ -538,6 +494,7 @@ int AT_ROLE2(char *punter)
 
 }
 
+//ok
 int AT_NOTI(char *punter)
 {
     int i=0;
@@ -565,6 +522,7 @@ int AT_NOTI(char *punter)
 
 }
 
+//ok
 int AT_DISC(char *punter)
 {
     int i=0;
@@ -592,6 +550,7 @@ int AT_DISC(char *punter)
 
 }
 
+//ok
 int AT_CONN(char *punter)
 {
     int i=0;
@@ -619,6 +578,7 @@ int AT_CONN(char *punter)
 
 }
 
+//ok
 void SEND()
 {
     byte bCount,bPacketLength;

@@ -43,53 +43,9 @@
 
 #include <Functions.h>
 
-//#define TRUE 1
-//#define FALSE 0
-
-//volatile static char answer[32];
-//volatile static char word[8];
-//volatile static char word_check[8];
-//volatile static char address[12];
-//volatile static char parameter1[1];
-
-//char answer[32];
-//char word_cap[8];
-//char word_check[8];
-//char address[32];
-//char parameter1;
-//
-//int n_letters;
-//
-//char match;
-//char dis_ok=FALSE;
-//char get_address=FALSE;
-//char enviar = FALSE;
-//
-//char *punter;
-
-
-//static char ack[2]={'O','K'};
-//static char message;
-
-
-//int hex;
-
-//unsigned char i,j,k;
-//unsigned int i,j,k;
-
-//void config_SEND();
-//void config_INITIAL();
-
-
 
 int main(void)
 {
-//  volatile unsigned int i;
-
-//  punter = &word_check[0];
-//
-//  i=j=k=0;
-//  volatile static char *puntero = &word_check[0];
 
   WDTCTL = WDTPW+WDTHOLD;                   // Stop WDT
 
@@ -109,10 +65,8 @@ int main(void)
 
   while(1)
       {
-
-          TA0CCTL0 = CCIE;                          //Iniciem el Timer
+          TA0CCTL0 = CCIE;                //Iniciem el Timer
           __bis_SR_register(LPM3_bits);   // Enter LPM0
-
       }
 }
 
@@ -376,28 +330,6 @@ __interrupt void USCI_A0_ISR(void)
                   __bic_SR_register_on_exit(LPM3_bits);
                   break;
 
-//                  if(i==4)  //Ens serveix per saltar a la seguent posicio
-//                   {
-//                       i++;
-//                       j++;
-//                       P4OUT |= BIT7;
-//                       break;
-//                   }
-//                  else
-//                  {
-//                      if (word_cap[5] == 'E' || word_cap[5] == 'F')
-//                      {
-//                          //ERROR
-//                      }
-//                      match=TRUE;
-//                      i=k=j=0;      //DEBUG: Prova
-//
-//                      memset(&answer,0, sizeof answer);
-//                      memset(&word_cap,0,sizeof word_cap);
-//                      __bic_SR_register_on_exit(LPM3_bits);
-//                      break;
-//                  }
-
 			  }//--CONN--
 		      //--LOST---
               if(word_cap[0]=='L' && word_cap[1]=='O' && word_cap[2]=='S' && word_cap[3]=='T')
@@ -426,36 +358,18 @@ __interrupt void USCI_A0_ISR(void)
     default: break;
     }//switch
 
-    /* SysMin will only print to the console when you call flush or exit */
-   // System_flush();
-
-
   }//USCI_A0_ISR
 
 // Pragrama per quan s'activi la interrupcio del Port 1
 #pragma vector=PORT1_VECTOR
 __interrupt void Port_1(void)
 {
-//    char *punter;
-    punter = &word_check[0];
+   punter = &word_check[0]; //Crec que es pot treure
 
    P1IFG &= ~BIT1;  //Baixem la FLAG
 
-   //P4OUT ^= BIT7;     //Canviem l'estat del LED verd Encenem/Apaguem
-   //TxUAC0_char();
-
-//   TxPacket();
-//   AT();  //OK
-//   AT_RESET();  //OK
-//   AT_RENEW();    //OK
-//    AT_ADDR();    //No captura correctament l'adreça
-//    AT_ROLE();
-//   AT_IMME();
-//   AT_DISC();
-//   AT_DISC(punter);
-
-//   config_SEND();
    SEND();
+
    P1IE |= BIT1;
 
 
@@ -471,167 +385,3 @@ __interrupt void TIMER0_A0_ISR(void)
   __bic_SR_register_on_exit(LPM3_bits);     //Exit LPM
 
 }
-
-//void config_SEND()
-//{
-////    //DEBUG: Falta crear una resposta per quan passa un cert temps i la UART no ha respost
-////    match=0;
-////    while(match==0)   //AT: Sembla que ho fa correcte
-////    {
-////    n_letters=AT_2(punter);
-////    TA0CCTL0 = CCIE;                          //Iniciem el Timer
-////    __bis_SR_register(LPM3_bits);   // Enter LPM0
-////    }
-////
-////    __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
-////
-////
-////    match=0;
-////    while(match==0)   //RENEW: Sembla que ho fa correcte
-////    {
-////    n_letters=AT_RENEW2(punter);
-////    TA0CCTL0 = CCIE;                          //Iniciem el Timer
-////    __bis_SR_register(LPM3_bits);   // Enter LPM0
-////    }
-////
-////    __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
-////
-////
-////    match=0;
-////    while(match==0)   //RESET: Sembla que ho fa correcte
-////    {
-////    n_letters=AT_RESET2(punter);
-////    TA0CCTL0 = CCIE;                          //Iniciem el Timer
-////    __bis_SR_register(LPM3_bits);   // Enter LPM0
-////    }
-////
-////    __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
-////
-////
-////    match=0;
-////    while(match==0)   //DEBUG: Sembla que ho fa correcte
-////    {
-////    n_letters=AT_2(punter);
-////    TA0CCTL0 = CCIE;                          //Iniciem el Timer
-////    __bis_SR_register(LPM3_bits);   // Enter LPM0
-////    }
-//
-//    __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
-//
-//
-//    match=0;
-//    while(match==0)   //IMME:
-//    {
-//    n_letters=AT_IMME2(punter);
-//    TA0CCTL0 = CCIE;                          //Iniciem el Timer
-//    __bis_SR_register(LPM3_bits);   // Enter LPM0
-//    }
-//
-//    __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
-//
-//
-//    match=0;
-//    while(match==0)   //ROLE:
-//    {
-//    n_letters=AT_ROLE2(punter);
-//    TA0CCTL0 = CCIE;                          //Iniciem el Timer
-//    __bis_SR_register(LPM3_bits);   // Enter LPM0
-//    }
-//
-//
-//    __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
-//                                    //Prova de posar delay
-//
-//    match=0;
-//    //DEBUG: El timer dona mol pel cul
-//    TA0CCTL0 &= ~CCIE;                         // CCR0 interrupt disabled
-//    dis_ok=TRUE;
-//
-//  //  while(match==0 && get_address==0)   //DISC:
-//    while(match==0 || get_address==0)   //DISC:
-//
-//    {
-//    __delay_cycles(1000000);        //DEBUG: Amb breack points si que ho fa, sense no
-//    n_letters=AT_DISC(punter);
-//  //  TA0CCTL0 = CCIE;                          //Iniciem el Timer
-//    __bis_SR_register(LPM3_bits);   // Enter LPM0
-//    }
-//
-//    __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
-//
-//    match=0;
-//    while(match==0)   //CONN:
-//    {
-//    n_letters= AT_CONN(punter);
-//    TA0CCTL0 = CCIE;                          //Iniciem el Timer
-//    __bis_SR_register(LPM3_bits);   // Enter LPM0
-//    }
-//
-//    __delay_cycles(500000);        //DEBUG: Amb breack points si que ho fa, sense no
-//
-//
-//    //Configuracio completa
-//
-//    SEND();   //Enviem dades
-//
-//}
-//
-//void config_INITIAL()
-//{
-//    //DEBUG: Falta crear una resposta per quan passa un cert temps i la UART no ha respost
-//    match=0;
-//    while(match==0)   //AT: Sembla que ho fa correcte
-//    {
-//    n_letters=AT_2(punter);
-//    TA0CCTL0 = CCIE;                          //Iniciem el Timer
-//    __bis_SR_register(LPM3_bits);   // Enter LPM0
-//    }
-//
-//    __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
-//
-//
-//    match=0;
-//    while(match==0)   //RENEW: Sembla que ho fa correcte
-//    {
-//    n_letters=AT_RENEW2(punter);
-//    TA0CCTL0 = CCIE;                          //Iniciem el Timer
-//    __bis_SR_register(LPM3_bits);   // Enter LPM0
-//    }
-//
-//    __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
-//
-//
-//    match=0;
-//    while(match==0)   //RESET: Sembla que ho fa correcte
-//    {
-//    n_letters=AT_RESET2(punter);
-//    TA0CCTL0 = CCIE;                          //Iniciem el Timer
-//    __bis_SR_register(LPM3_bits);   // Enter LPM0
-//    }
-//
-//    __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
-//
-//
-//    match=0;
-//    while(match==0)   //DEBUG: Sembla que ho fa correcte
-//    {
-//    n_letters=AT_2(punter);
-//    TA0CCTL0 = CCIE;                          //Iniciem el Timer
-//    __bis_SR_register(LPM3_bits);   // Enter LPM0
-//    }
-//
-//    __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
-//
-//    match=0;
-//    while(match==0)   //DEBUG: Sembla que ho fa correcte
-//    {
-//    n_letters=AT_NOTI(punter);
-//    TA0CCTL0 = CCIE;                          //Iniciem el Timer
-//    __bis_SR_register(LPM3_bits);   // Enter LPM0
-//    }
-//
-//    __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
-//
-//
-//
-//}
