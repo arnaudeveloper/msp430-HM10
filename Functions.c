@@ -360,6 +360,33 @@ int AT_ROLE2(char *punter)
 
 }
 
+int AT_NOTI(char *punter)
+{
+    int i=0;
+
+    byte bCount,bPacketLength;
+    byte TxBuffer[]={'A','T','+','N','O','T','I','1'}; //Definim com a Master
+    byte word[]={'1'};
+
+    for(i=0;i< sizeof(word);i++)
+    {
+        *punter=word[i];
+        punter++;
+    }
+
+    bPacketLength = sizeof(TxBuffer);
+
+    for(bCount=0; bCount<bPacketLength; bCount++)       //Aquest bucle es el que envia la trama al Modul Robot.
+    {
+        TxUAC0(TxBuffer[bCount]);
+    }
+
+    while(UCA1STAT & UCBUSY);                           //Espera fins que s'hagi transmes l'ulTim byte.
+
+    return i;
+
+}
+
 int AT_DISC(char *punter)
 {
     int i=0;

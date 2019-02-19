@@ -44,6 +44,8 @@ int AT_IMME2(char *punter);
 void AT_ROLE();
 int AT_ROLE2(char *punter);
 
+int AT_NOTI(char *punter);
+
 int AT_DISC(char *punter);
 
 
