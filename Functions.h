@@ -19,6 +19,7 @@ char word_cap[8];
 char word_check[8];
 char address[32];
 char parameter1;
+char estat;
 
 int n_letters;
 
@@ -55,7 +56,7 @@ void config_SEND();
 //void TxPacket();
 
 //--AT COMMANDS---
-//void AT();
+void AT();
 int AT_2(char *punter);
 
 //void AT_RESET();
@@ -83,6 +84,7 @@ int AT_DISC(char *punter);
 int AT_CONN(char *punter);
 
 void SEND();
+void DISCONNECT();
 
 
 

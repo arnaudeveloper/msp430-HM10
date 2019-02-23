@@ -61,12 +61,37 @@ int main(void)
   __enable_interrupt();                           //Habilitamos las interrupciones.
 
   config_INITIAL();
-  config_SEND();
+//  config_SEND();
 
   while(1)
       {
-          TA0CCTL0 = CCIE;                //Iniciem el Timer
-          __bis_SR_register(LPM3_bits);   // Enter LPM0
+          switch(estat)
+          {
+          case 1:
+              //Codi per connectarse
+              config_SEND();
+              estat=0;
+              break;
+          case 2:
+              //codi per desconnectarse
+              config_INITIAL();
+              estat=0;
+              break;
+          case 3:
+              //codi per connectarse enviar i desconectarse
+              config_SEND();
+              SEND();
+              config_INITIAL();
+              estat=0;
+              break;
+          default:
+              //codi
+              TA0CCTL0 = CCIE;                //Iniciem el Timer
+              __bis_SR_register(LPM3_bits);   // Enter LPM0
+              break;
+
+          }
+
       }
 }
 
@@ -74,7 +99,7 @@ int main(void)
 #pragma vector=USCI_A0_VECTOR
 __interrupt void USCI_A0_ISR(void)
 {
-    unsigned int w, checks;
+    unsigned int w, checks;     //DEBUG: Comprobar la utilitat d'aquestes variables
 
     switch(__even_in_range(UCA0IV,4))
     {
@@ -364,14 +389,26 @@ __interrupt void USCI_A0_ISR(void)
 #pragma vector=PORT1_VECTOR
 __interrupt void Port_1(void)
 {
-   punter = &word_check[0]; //Crec que es pot treure
+//   punter = &word_check[0]; //Crec que es pot treure
 
    P1IFG &= ~BIT1;  //Baixem la FLAG
 
-   SEND();
+//   config_SEND();
+//   SEND();
+
+   estat=1;
 
    P1IE |= BIT1;
+}
 
+// Pragrama per quan s'activi la interrupcio del Port 1
+#pragma vector=PORT2_VECTOR
+__interrupt void Port_2(void)
+{
+   P2IFG &= ~BIT1;  //Baixem la FLAG
+   estat=2;
+
+   P2IE |= BIT1;
 
 }
 
