@@ -335,6 +335,24 @@ __interrupt void USCI_A0_ISR(void)
                       {
                           //Ja tenim l'adreça
                           get_address=TRUE;
+                          //Codi per guardar l'adresa en una variable global
+                          if(contador==0)
+                          {
+                              memcpy(address1, &address[2], 12); //DEBUG: funciona
+                              contador++;
+                          }
+                          else if(contador==1)
+                          {
+                              memcpy(address2, &address[4], 12); //DEBUG: Funciona. No entenc pq captura 4 valors anteriors?
+                              contador++;
+                          }
+                          else if(contador==2)
+                          {
+                              memcpy(address3, &address[2], 12); //DEBUG:  funciona
+                              contador++;
+                          }
+
+
                           match=FALSE;      //despres hem d'anar a END
                           i=j=k=0;
                       }

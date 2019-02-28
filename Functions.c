@@ -135,7 +135,9 @@ void config_INITIAL()
 
     punter = &word_check[0];
 
-    i=j=k=0;
+    i=j=k=u=0;
+
+    contador =0; //Varaible per contar les adreces trobades
 
     //DEBUG: Falta crear una resposta per quan passa un cert temps i la UART no ha respost
     match=0;

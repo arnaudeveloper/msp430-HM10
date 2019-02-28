@@ -18,6 +18,11 @@ char answer[32];
 char word_cap[8];
 char word_check[8];
 char address[32];
+char address1[12];//Variable per guardar el valor de les adreces
+char address2[12];//Variable per guardar el valor de les adreces
+char address3[12];//Variable per guardar el valor de les adreces
+char address4[12];//Variable per guardar el valor de les adreces
+
 char parameter1;
 char estat;
 
@@ -34,7 +39,8 @@ char enviar;
 
 char *punter;
 
-unsigned int i,j,k;
+unsigned int i,j,k,u;
+unsigned int contador;
 
 
 
