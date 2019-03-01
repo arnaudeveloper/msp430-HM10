@@ -18,7 +18,8 @@ char answer[32];
 char word_cap[8];
 char word_check[8];
 char address[32];
-char address1[12];//Variable per guardar el valor de les adreces
+
+char address1[12];//Variable per guardar el valor de l'adresa propia
 char address2[12];//Variable per guardar el valor de les adreces
 char address3[12];//Variable per guardar el valor de les adreces
 char address4[12];//Variable per guardar el valor de les adreces
@@ -81,6 +82,7 @@ int AT_IMME2(char *punter);
 int AT_ROLE2(char *punter);
 
 int AT_NOTI(char *punter);
+int AT_NOTI_0(char *punter);
 
 int AT_DISC(char *punter);
 
@@ -88,6 +90,8 @@ int AT_DISC(char *punter);
 //void AT_ROLE();
 
 int AT_CONN(char *punter);
+
+int AT_CON(char *punter);
 
 void SEND();
 void DISCONNECT();

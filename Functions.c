@@ -6,6 +6,7 @@
  */
 
 #include <msp430.h>
+#include <string.h>
 #include "Functions.h"
 
 //byte word_check;
@@ -109,10 +110,18 @@ void config_SEND()
 
     __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
 
+//    match=0;
+//    while(match==0)   //CONN:
+//    {
+//    n_letters= AT_CONN(punter);
+//    TA0CCTL0 = CCIE;                          //Iniciem el Timer
+//    __bis_SR_register(LPM3_bits);   // Enter LPM0
+//    }
+
     match=0;
     while(match==0)   //CONN:
     {
-    n_letters= AT_CONN(punter);
+    n_letters= AT_CON(punter);
     TA0CCTL0 = CCIE;                          //Iniciem el Timer
     __bis_SR_register(LPM3_bits);   // Enter LPM0
     }
@@ -603,6 +612,53 @@ int AT_CONN(char *punter)
     {
         TxUAC0(TxBuffer[bCount]);
     }
+
+    while(UCA1STAT & UCBUSY);                           //Espera fins que s'hagi transmes l'ulTim byte.
+
+    return i;
+
+}
+
+//Connect to a MAC
+//Si no rep resposta vol dir que li he enviat malament
+int AT_CON(char *punter)
+{
+    int i=0;
+
+    byte bCount,bPacketLength;
+    byte TxBuffer[]={'A','T','+','C','O','0','6','0','6','4','0','5','C','F','C','D','4','F'}; //En connectem al dispositiu 1
+    byte word[]={'C','O','N','N'};
+//    byte addrex[]={'6','0','6','4','0','5','C','F','C','D','4','F'};
+
+    for(i=0;i< sizeof(word);i++)
+    {
+        *punter=word[i];
+        punter++;
+    }
+
+    //Juntar en una sola string
+
+    bPacketLength = sizeof(TxBuffer);
+
+//    TxBuffer[6+1]='2';
+
+//    TxBuffer[bPacketLength+1]=address1[0];
+
+
+    for(bCount=0; bCount<bPacketLength; bCount++)       //Aquest bucle es el que envia la trama al Modul Robot.
+    {
+        TxUAC0(TxBuffer[bCount]);
+    }
+
+    //Enviem l'adresa
+
+//    bPacketLength = sizeof(addrex);
+//
+//    for(bCount=0; bCount<bPacketLength; bCount++)       //Aquest bucle es el que envia la trama al Modul Robot.
+//    {
+//        TxUAC0(addrex[bCount]);
+//    }
+
 
     while(UCA1STAT & UCBUSY);                           //Espera fins que s'hagi transmes l'ulTim byte.
 

@@ -338,17 +338,17 @@ __interrupt void USCI_A0_ISR(void)
                           //Codi per guardar l'adresa en una variable global
                           if(contador==0)
                           {
-                              memcpy(address1, &address[2], 12); //DEBUG: funciona
+                              memcpy(address2, &address[2], 12); //DEBUG: funciona
                               contador++;
                           }
                           else if(contador==1)
                           {
-                              memcpy(address2, &address[4], 12); //DEBUG: Funciona. No entenc pq captura 4 valors anteriors?
+                              memcpy(address3, &address[4], 12); //DEBUG: Funciona. No entenc pq captura 4 valors anteriors?
                               contador++;
                           }
                           else if(contador==2)
                           {
-                              memcpy(address3, &address[2], 12); //DEBUG:  funciona
+                              memcpy(address4, &address[2], 12); //DEBUG:  funciona
                               contador++;
                           }
 
