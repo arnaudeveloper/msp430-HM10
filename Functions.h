@@ -91,7 +91,7 @@ int AT_DISC(char *punter);
 
 int AT_CONN(char *punter);
 
-int AT_CON(char *punter);
+int AT_CON(char *punter, char addrex[12]);
 
 void SEND();
 void DISCONNECT();

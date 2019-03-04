@@ -120,8 +120,27 @@ __interrupt void USCI_A0_ISR(void)
       if(answer[j]=='#')
       {
           P1OUT ^= 0x01;                            // ON LED P1.0
+          answer[0]=answer[j];
+          j=1;//Ja hem omplert la posico zero d'answer
 
       }
+
+//      if(answer[0]=='#')
+//      {
+//          if(answer[1]=='?')//Pregunta
+//          {
+//              //Codi per detectar la pregunta
+//              if(answer[2]=='M')//Ens pregunten si som master
+//              {
+//                  //Codi per resposndre a la pregunta
+//
+//              }
+//          }
+//          if(answer[1]=='!')//resposta
+//          {
+//              //Codi per detectar la resposta
+//          }
+//      }
 
       if(answer[j-1]=='O' && answer[j]=='K') //OK es el que es el que es rep en el prinicpi de la resposta
       {

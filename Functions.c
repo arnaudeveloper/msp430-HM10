@@ -121,12 +121,62 @@ void config_SEND()
     match=0;
     while(match==0)   //CONN:
     {
-    n_letters= AT_CON(punter);
+    n_letters= AT_CON(punter,address2);
     TA0CCTL0 = CCIE;                          //Iniciem el Timer
     __bis_SR_register(LPM3_bits);   // Enter LPM0
     }
 
     __delay_cycles(500000);        //DEBUG: Amb breack points si que ho fa, sense no
+
+//    match=0;
+//    while(match==0)   //CONN:
+//    {
+    n_letters= AT_2(punter);        //Ho utilitzem per desconnectar-se
+//    TA0CCTL0 = CCIE;                          //Iniciem el Timer
+//    __bis_SR_register(LPM3_bits);   // Enter LPM0
+//    }
+
+    __delay_cycles(500000);        //DEBUG: Amb breack points si que ho fa, sense no
+
+    match=0;
+    while(match==0)   //CONN:
+    {
+    n_letters= AT_CON(punter,address3);
+    TA0CCTL0 = CCIE;                          //Iniciem el Timer
+    __bis_SR_register(LPM3_bits);   // Enter LPM0
+    }
+
+    __delay_cycles(500000);        //DEBUG: Amb breack points si que ho fa, sense no
+
+//    match=0;
+//    while(match==0)   //CONN:
+//    {
+    n_letters= AT_2(punter);
+//    TA0CCTL0 = CCIE;                          //Iniciem el Timer
+//    __bis_SR_register(LPM3_bits);   // Enter LPM0
+//    }
+
+    __delay_cycles(500000);        //DEBUG: Amb breack points si que ho fa, sense no
+
+    match=0;
+    while(match==0)   //CONN:
+    {
+    n_letters= AT_CON(punter,address4);
+    TA0CCTL0 = CCIE;                          //Iniciem el Timer
+    __bis_SR_register(LPM3_bits);   // Enter LPM0
+    }
+
+    __delay_cycles(500000);        //DEBUG: Amb breack points si que ho fa, sense no
+
+//    match=0;
+//    while(match==0)   //CONN:
+//    {
+//    n_letters= AT_2(punter);
+//    TA0CCTL0 = CCIE;                          //Iniciem el Timer
+//    __bis_SR_register(LPM3_bits);   // Enter LPM0
+//    }
+//
+//    __delay_cycles(500000);        //DEBUG: Amb breack points si que ho fa, sense no
 
 
     //Configuracio completa
@@ -621,14 +671,15 @@ int AT_CONN(char *punter)
 
 //Connect to a MAC
 //Si no rep resposta vol dir que li he enviat malament
-int AT_CON(char *punter)
+int AT_CON(char *punter,char addrex[12])
 {
     int i=0;
 
     byte bCount,bPacketLength;
-    byte TxBuffer[]={'A','T','+','C','O','0','6','0','6','4','0','5','C','F','C','D','4','F'}; //En connectem al dispositiu 1
+    byte TxBuffer[18]={'A','T','+','C','O','0'}; //En connectem a una MAC estil 0
     byte word[]={'C','O','N','N'};
-//    byte addrex[]={'6','0','6','4','0','5','C','F','C','D','4','F'};
+
+    memcpy(TxBuffer+6, addrex,12);    //Generem l'array per enviar-lo
 
     for(i=0;i< sizeof(word);i++)
     {
@@ -640,25 +691,10 @@ int AT_CON(char *punter)
 
     bPacketLength = sizeof(TxBuffer);
 
-//    TxBuffer[6+1]='2';
-
-//    TxBuffer[bPacketLength+1]=address1[0];
-
-
     for(bCount=0; bCount<bPacketLength; bCount++)       //Aquest bucle es el que envia la trama al Modul Robot.
     {
         TxUAC0(TxBuffer[bCount]);
     }
-
-    //Enviem l'adresa
-
-//    bPacketLength = sizeof(addrex);
-//
-//    for(bCount=0; bCount<bPacketLength; bCount++)       //Aquest bucle es el que envia la trama al Modul Robot.
-//    {
-//        TxUAC0(addrex[bCount]);
-//    }
-
 
     while(UCA1STAT & UCBUSY);                           //Espera fins que s'hagi transmes l'ulTim byte.
 
@@ -670,7 +706,7 @@ int AT_CON(char *punter)
 void SEND()
 {
     byte bCount,bPacketLength;
-    byte TxBuffer[]={'#','H','O','L','A','1'};
+    byte TxBuffer[]={'#','?','M'};
 
     bPacketLength = sizeof(TxBuffer);
     for(bCount=0; bCount<bPacketLength; bCount++)       //Aquest bucle es el que envia la trama al Modul Robot.
