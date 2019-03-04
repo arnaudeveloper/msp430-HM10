@@ -128,6 +128,8 @@ void config_SEND()
 
     __delay_cycles(500000);        //DEBUG: Amb breack points si que ho fa, sense no
 
+    SEND();   //Enviem dades
+
 //    match=0;
 //    while(match==0)   //CONN:
 //    {
@@ -148,6 +150,9 @@ void config_SEND()
 
     __delay_cycles(500000);        //DEBUG: Amb breack points si que ho fa, sense no
 
+    SEND();   //Enviem dades
+
+
 //    match=0;
 //    while(match==0)   //CONN:
 //    {
@@ -167,17 +172,6 @@ void config_SEND()
     }
 
     __delay_cycles(500000);        //DEBUG: Amb breack points si que ho fa, sense no
-
-//    match=0;
-//    while(match==0)   //CONN:
-//    {
-//    n_letters= AT_2(punter);
-//    TA0CCTL0 = CCIE;                          //Iniciem el Timer
-//    __bis_SR_register(LPM3_bits);   // Enter LPM0
-//    }
-//
-//    __delay_cycles(500000);        //DEBUG: Amb breack points si que ho fa, sense no
-
 
     //Configuracio completa
 
@@ -733,7 +727,9 @@ int AT_CON(char *punter,char addrex[12])
 void SEND()
 {
     byte bCount,bPacketLength;
-    byte TxBuffer[]={'#','?','M'};
+    byte TxBuffer[15]={'#','?','M'};
+
+    memcpy(TxBuffer+3,address1,12); //Enviem l'adresa
 
     bPacketLength = sizeof(TxBuffer);
     for(bCount=0; bCount<bPacketLength; bCount++)       //Aquest bucle es el que envia la trama al Modul Robot.
