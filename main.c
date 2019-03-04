@@ -257,10 +257,12 @@ __interrupt void USCI_A0_ISR(void)
                   }
                   address[k]=answer[j];
                   k++;
-                  if(k==12)
+                  if(k==18)
                   {
                       //Ja tenim l'adreça
+                      memcpy(address1, &address[1], 12); //DEBUG: funciona
                       i=j=k=0;
+                      match=1;
                   }
 
               }//--ADDR---

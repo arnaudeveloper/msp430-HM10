@@ -252,6 +252,29 @@ void config_INITIAL()
 
     __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
 
+    match=0;
+    while(match==0)   //DEBUG: Sembla que ho fa correcte
+    {
+    n_letters=AT_2(punter);
+    TA0CCTL0 = CCIE;                          //Iniciem el Timer
+    __bis_SR_register(LPM3_bits);   // Enter LPM0
+    }
+
+    __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
+
+//    TA0CCTL0 &= ~CCIE;                         // CCR0 interrupt disabled
+
+    match=0;
+    while(match==0)   //DEBUG: Sembla que ho fa correcte
+    {
+    __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
+    n_letters=AT_ADDR(punter);
+    TA0CCTL0 = CCIE;                          //Iniciem el Timer
+    __bis_SR_register(LPM3_bits);   // Enter LPM0
+    }
+
+    __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
+
 }
 
 //Funcio TxUAC0(): envia una dada per la UART 0
@@ -443,12 +466,18 @@ int AT_RENEW2(char *punter)
 /*
  * SEND: AT+ADDR?
  */
-void AT_ADDR()
+int AT_ADDR(char *punter)
 {
     byte bCount,bPacketLength;
-    //unsigned char lenght=20; //8+12 de MAC
-
     byte TxBuffer[]={'A','T','+','A','D','D','R','?'};
+    byte word[]={'A','D','D','R'};
+
+    for(i=0;i< sizeof(word);i++)
+    {
+        *punter=word[i];
+        punter++;
+    }
+
     bPacketLength = sizeof(TxBuffer);
 
     for(bCount=0; bCount<bPacketLength; bCount++)       //Aquest bucle es el que envia la trama al Modul Robot.
@@ -457,11 +486,9 @@ void AT_ADDR()
     }
 
     while(UCA1STAT & UCBUSY);                           //Espera fins que s'hagi transmes l'ulTim byte.
+    return i;
 
-//    return word_check;
-    //Hauriem de rotornar el nombre de Bytes que ens esperem capturar
-    //8+12=20
-    //return lenght
+
 
 }
 

@@ -73,7 +73,7 @@ int AT_RESET2(char *punter);
 
 int AT_RENEW2(char *punter);
 
-void AT_ADDR();
+int AT_ADDR(char *punter);
 
 //void AT_IMME();
 int AT_IMME2(char *punter);
