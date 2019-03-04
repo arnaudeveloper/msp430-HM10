@@ -22,13 +22,14 @@
  *
  *
  */
+
 #include <msp430.h>
-//#include <stdio.h>
 /*Important Library for mem functions*/
 #include <string.h>
 
 /*HM-10 Library*/
 #include <Functions.h>
+
 
 /*
  * main
@@ -94,7 +95,6 @@ int main(void)
           }
       }
     }
-
 
 //Echo back RX charcter, confirm TX buffer is ready first
 #pragma vector=USCI_A0_VECTOR
@@ -434,39 +434,45 @@ __interrupt void USCI_A0_ISR(void)
 
               }//--End of DIS---
 
-			  //--CONN---
+		//--CONN---
+              /* If word_cap[] is equal to "CONN" we have a coincidence */
 			  if(word_cap[0]=='C' && word_cap[1]=='O' && word_cap[2]=='N' && word_cap[3]=='N')
 			  {
-                  P4OUT |= BIT7;
-                  match=TRUE;
-                  i=k=j=0;      //DEBUG: Prova
+                  /*Connection established*/
+			      match=TRUE;
 
+			      P4OUT |= BIT7;        //Green LED ON
+
+                  /* Reset */
+			      i=k=j=0;
                   memset(&answer,0, sizeof answer);
                   memset(&word_cap,0,sizeof word_cap);
                   __bic_SR_register_on_exit(LPM3_bits);
                   break;
 
-			  }//--CONN--
+			  }//--End of CONN--
 
-		      //--LOST---
+		  //--LOST---
+              /* If word_cap[] is equal to "LOST" we have a coincidence */
               if(word_cap[0]=='L' && word_cap[1]=='O' && word_cap[2]=='S' && word_cap[3]=='T')
               {
-                  P4OUT &= ~BIT7;
-                  i=k=j=0;      //DEBUG: Prova
+                  /* Connection LOST*/
 
+                  P4OUT &= ~BIT7;   //Green LED OFF
+
+                  /* Reset */
+                  i=k=j=0;
                   memset(&answer,0, sizeof answer);
                   memset(&word_cap,0,sizeof word_cap);
                   __bic_SR_register_on_exit(LPM3_bits);
                   break;
 
-              }//--LOST--
+              }//--End of LOST--
 
+          }//--End of else--
+      }//--End of if + ---
 
-
-          }//else que inclou totes les funcions
-      }//Fi if +
-
-      j++;  //Al final
+      j++;  //Increment RX array position
 
       break;
 
