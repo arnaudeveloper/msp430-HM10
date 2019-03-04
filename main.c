@@ -19,51 +19,53 @@
 //            |     P3.4/UCA0RXD|<------------
 //
 //----------------------------------------------------
- * Dubtes:
- * 1. Com puc saber quan la UART ha deixat de rebre dades.
- *  Per exemple un cop s'hagi deixat de rebre dades executar una funcio.
  *
- *  word check serveix per comprobar que el dispostiu ha rebut la comanda
- *  funcio per cridar les instruccions
- *  ----------------------------------------------------
- *  Instruccions AT
- *  1. AT -> OK
- *  2. AT+RENEW -> OK+RENEW
- *  3. AT+RESET -> OK+RESET
- *  4. AT+IMME[P1] -> OK+Set:[P1]
- *  5. AT+ROLE[P1] -> OK+Set:[P1]
- *  6. AT+DISC? -> OK+DIS[P0][P1]
- *  7. AT+CON[MAC] -> OK+CONNA
- *  8.AT+ADDR? -> OK+ADDR[MAC]
  *
  */
 #include <msp430.h>
-#include <stdio.h>
+//#include <stdio.h>
+/*Important Library for mem functions*/
 #include <string.h>
 
+/*HM-10 Library*/
 #include <Functions.h>
 
-
+/*
+ * main
+ * 1st. Initial config
+ * 2on. Enter in an infinite loop.
+ *      In this state program is go to sleep, wake up by an interrupt timer and toogle a LED continuosly.
+ *      An interrupt could change the default state for transmit data, or establish connection with another device.
+ *      There are 3 possible states:
+ *      1. Connections mode. In this mode the module establish an stable connection with another device.
+ *      2. Send data mode. In this mode the module establish connection only for send stream data, and then return to normal mode.
+ *      3.Disconnect mode. This mode is used for disconnect from and established connection.
+ */
 int main(void)
 {
+    /* Stop WDT*/
+    WDTCTL = WDTPW+WDTHOLD;
 
-  WDTCTL = WDTPW+WDTHOLD;                   // Stop WDT
+    /*Initialize UART to establish communication between the HM-10 and msp430*/
+    init_UART();
 
-  //UART
-  init_UART();
+    /* Initialize Timer for create a preiodic clock to wake up the msp
+    * This Timer is important because it's used in internal functions to resend AT commands
+    * that have not been answered.
+    * */
+    init_Timer();
 
-  //Timer
-  init_Timer();
+    /*Initialize GPIO. LEDs and Buttons. Only for test*/
+    init_GPIOs();
 
-  //GPIOs
-  init_GPIOs();
+    /* Enable interrupts*/
+    __enable_interrupt();
 
-  __enable_interrupt();                           //Habilitamos las interrupciones.
+    /*Initial config for HM-10*/
+    config_INITIAL();
 
-  config_INITIAL();
-//  config_SEND();
-
-  while(1)
+    /*Infinit loop*/
+    while(1)
       {
           switch(estat)
           {
@@ -89,34 +91,33 @@ int main(void)
               TA0CCTL0 = CCIE;                //Iniciem el Timer
               __bis_SR_register(LPM3_bits);   // Enter LPM0
               break;
-
           }
-
       }
-}
+    }
+
 
 //Echo back RX charcter, confirm TX buffer is ready first
 #pragma vector=USCI_A0_VECTOR
 __interrupt void USCI_A0_ISR(void)
 {
-    unsigned int w, checks;     //DEBUG: Comprobar la utilitat d'aquestes variables
+    unsigned int w;         // "for" counter
+    unsigned int checks;    // Used for count the equal number of letters captured
 
     switch(__even_in_range(UCA0IV,4))
     {
-    case 0:break;                             // Vector 0 - no interrupt
-    case 2:                                   // Vector 2 - RXIFG
-      while (!(UCA0IFG & UCTXIFG));             // USCI_A0 TX buffer ready?
+    case 0:break;                           // Vector 0 - no interrupt
+    case 2:                                 // Vector 2 - RXIFG
+      while (!(UCA0IFG & UCTXIFG));         // USCI_A0 TX buffer ready?
 
-      answer[j] = UCA0RXBUF;//Funciona molt bé Capturem la dada del buffer RX
-      //if j==size of answer
-      //do
-     // message[j++] = UCA0RXBUF;
-      if (j > sizeof answer-1)
+      answer[j] = UCA0RXBUF;				//RX data captured 
+											//Saved to answer[j]
+
+      if (j > sizeof answer-1)              //If RX data recived is greater than asnwer[], restart count.
       {
         j = 0;
-  //      TXBUF0 = answer[i++];
       }
 
+      /* Used to detect the owner protocol */
       if(answer[j]=='#')
       {
           P1OUT ^= 0x01;                            // ON LED P1.0
@@ -142,28 +143,20 @@ __interrupt void USCI_A0_ISR(void)
 //          }
 //      }
 
-      if(answer[j-1]=='O' && answer[j]=='K') //OK es el que es el que es rep en el prinicpi de la resposta
+      /* Used to capture an "OK" response from HM-10 */
+      if(answer[j-1]=='O' && answer[j]=='K')
       {
-          //Detectem l'ack "OK"
-          //HM-10 esta actiu
-
-//          P4OUT ^= BIT7;                          // P4.7 OFF
-
-          //DEBUG: Aqui passa algo raro...Pero el match=1
           if(answer[j]==word_check[1] && answer[j-1]==word_check[0])
           {
-              match = TRUE;     //Això pot donar algun FLAS POSITIU. Ex: OK+
+              match = TRUE;
           }
           else
           {
               match= FALSE;
           }
 
-          j=0;  //Resetejem la j
-          i=0;  //DEBUG: PROVA. No capturavem correctament la word_cap
-                //DEBUG: Aquesta linia es conflictiva
-          //DEBUG: En la instruccio AT+DISC? es queda penjat en aquest punt
-          //        No captura el '+'.
+          i=j=0;            //Reset
+
           if(!dis_ok)
           {
               __bic_SR_register_on_exit(LPM3_bits);
@@ -171,111 +164,142 @@ __interrupt void USCI_A0_ISR(void)
           break;
       }//Fi if OK
 
-//      if(answer[0]=='O' && answer[1]=='K' && answer[2]=='+')
-//      if(answer[j-2]=='O' && answer[j-1]=='K' && answer[j]=='+')	//Capturem la resposta d'una instruccio
+
+      /*
+       * Used to detect the AT command response
+       * Initialize the AT command response protocol
+       */
       if(answer[0]=='+')
       {
-//          if(j==2)  //Ens serveix per avaçar una posicio i guardar la dada que succeix a '+'
-          if(answer[j]=='+')  //Ens serveix per avaçar una posicio i guardar la dada que succeix a '+'
+          /* Used to move along and save successive data to '+' */
+          if(answer[j]=='+')
           {
               j++;
               break;
           }
-          else	//Capturem les dades que venen despres del +
+
+          /* Capturing successive data to '+'. In this bloc we analyze the capture data to identify a response*/
+          else
           {
               word_cap[i]=answer[j];
               i++;
 
          //--RENEW------
+              /* If word_cap[] is equal to "RENEW" we have a coincidence */
               if(word_cap[0]=='R' && word_cap[1]=='E' && word_cap[2]=='N' && word_cap[3]=='E' && word_cap[4]=='W')
               {
-                  checks=0;
-                  //TENIM UNA COINCIDENCIA => Executem bucle de comprobacio
+                  checks=0;     //reset
+
+                  //Checking if is the correct answer
                   for(w=0;w<i;w++)
                   {
-                      if(word_check[w]==word_cap[w])    //Si la cadena word_check i word tenen el mateix valor tenim check!
+                      if(word_check[w]==word_cap[w])    // If word_check chain and word_cap chain are equal we have a check.
                       {
-                          checks++;     //El nombre de checks total ha de ser igual al nombre de lletres de la paraula
+                          checks++;     //The total number of checks must be equal to the total number of letters of the word
                       }
                   }
 
                   if(checks==w)
                   {
-                      match= TRUE;      //Nombre de checks IGUALS
+                      match= TRUE;      // Total number are EQUAL
                   }
-                  else{
-                      match = FALSE;    //Nombre de checks DIFERENTS
+                  else
+                  {
+                      match = FALSE;    // Total number are DIFFERENT
                   }
 
-                  i=j=k=0;      //Hem acabat l'adquisicó de dades
-                  memset(&answer,0, sizeof answer);     //Esborrem les dades de la variable answer
-                  memset(&word_cap,0,sizeof word_cap);  //Esborrem les dades de la varaible word_cap
+                  /* The adquisition is over*/
 
-                  __bic_SR_register_on_exit(LPM3_bits);
+                  i=j=k=0;      //Reset
+                  memset(&answer,0, sizeof answer);     //Reset of the answer variable
+                  memset(&word_cap,0,sizeof word_cap);  //Reset of the word_cap variable
+
+                  __bic_SR_register_on_exit(LPM3_bits); //Exit of the LPM
                   break;
-              }//--RENEW------
+
+              }//-- End of RENEW------
 
          //--RESET-------
-    //          if(word[0]=='R' && word[1]=='E' && word[2]=='S' && word[3]=='E' && word[4]=='T')
+              /* If word_cap[] is equal to "RESET" we have a coincidence */
               if(word_cap[0]=='R' && word_cap[1]=='E' && word_cap[2]=='S' && word_cap[3]=='E' && word_cap[4]=='T')
               {
-                  //Codi
-                  /*
-                   * for per comprobar que la word check i la word son iguals, tamany del for igual a la i-1
-                   */
-                  checks=0;
+                  checks=0;     //reset
+
+                  //Checking if is the correct answer
                   for(w=0;w<i;w++)
                   {
-                      if(word_check[w]==word_cap[w])
+                      if(word_check[w]==word_cap[w])    // If word_check chain and word_cap chain are equal we have a check.
                       {
-                          checks++;
+                          checks++;     //The total number of checks must be equal to the total number of letters of the word
                       }
                   }
+
                   if(checks==w)
                   {
-                      match= TRUE;
+                      match= TRUE;      // Total number are EQUAL
                   }
-                  else{
-                      match = FALSE;
+                  else
+                  {
+                      match = FALSE;    // Total number are DIFFERENT
                   }
-                  i=j=k=0;
-                  memset(&answer,0, sizeof answer);
-                  memset(&word_cap,0,sizeof word_cap);
-                  __bic_SR_register_on_exit(LPM3_bits);
 
+                  /* The adquisition is over*/
+
+                  i=j=k=0;      //Reset
+                  memset(&answer,0, sizeof answer);     //Reset of the answer variable
+                  memset(&word_cap,0,sizeof word_cap);  //Reset of the word_cap variable
+
+                  __bic_SR_register_on_exit(LPM3_bits); //Exit of the LPM
                   break;
-              }//--RESET---
+
+              }//--End of RESET---
 
          //--ADDR------
+              /* If word_cap[] is equal to "ADDR" we have a coincidence */
               if(word_cap[0]=='A' && word_cap[1]=='D' && word_cap[2]=='D' && word_cap[3]=='R')
-    //          if(word=="0x00242C")
               {
+                  /*Just move forward*/
                   if(i==4)
                   {
                       i++;
                       break;
                   }
+
                   address[k]=answer[j];
-                  k++;
-                  if(k==18)
+
+                  /* Address captured*/
+                  if(k==12)
                   {
-                      //Ja tenim l'adreça
-                      //DEBUG: pilla el ":"
-                      memcpy(address1, &address[2], 12); //DEBUG: funciona
-                      i=j=k=0;
-                      match=1;
+                      match=TRUE;                           //We have an address
+
+                      memcpy(address1, &address[1], 12);    //Save owner MAC address
+
+                      i=j=k=0;                              //Reset
+                      memset(&answer,0, sizeof answer);     //Reset of the answer variable
+                      memset(&word_cap,0,sizeof word_cap);  //Reset of the word_cap variable
+
+                      __bic_SR_register_on_exit(LPM3_bits); //Exit of the LPM
+                      break;
                   }
 
-              }//--ADDR---
+                  k++;  //one more
+
+              }//--End of ADDR---
 			  
 		//--Set:---	  
+              /* If word_cap[] is equal to "Set:" we have a coincidence */
 			  if(word_cap[0]=='S' && word_cap[1]=='e' && word_cap[2]=='t' && word_cap[3]==':')
 			  {
+			      /* Just move forward*/
 			      if(answer[j]==':')
 			      {
 			          j++;
 			          break;
 			      }
+
+			      /* Capturing the parameter
+			       * In that case all paramenters must be 1
+			       */
 			      else
 			      {
 			          parameter1=answer[j];
@@ -297,50 +321,69 @@ __interrupt void USCI_A0_ISR(void)
 			              match=FALSE;
 			          }
 
+			         //Reset all paramenters
                      i=j=k=0;
                      parameter1=0;
-//                     memset(&parameter1,0, sizeof parameter1);
                      memset(&answer,0, sizeof answer);
                      memset(&word_cap,0,sizeof word_cap);
                      __bic_SR_register_on_exit(LPM3_bits);
 			      }
-			  }//--SET--
+			  }//--End of SET--
+
 		//--DIS----
-//			  if(word_cap[0]=='D' && word_cap[1]=='I' && word_cap[2]=='S' && word_cap[3]=='C' )//Fixat que d'aquesta manera no capturem el OK+DIS
-			  if(word_cap[0]=='D' && word_cap[1]=='I' && word_cap[2]=='S')//Fixat que d'aquesta manera no capturem el OK+DIS
+              /* If word_cap[] is equal to "DIS" we have a coincidence
+               * In taht case we have more possibilities
+               * 1. DISCS: Start
+               * 2. DISCE: End
+               * 3. DIS0[MAC]: differents values and lengths
+               *
+               * Example: OK+DISCSOK+DIS0:90E202020A47OK+DIS0:341513CE6FF6OK+DIS0:90E202020100OK+DISCE
+               *
+               * See Datasheet HM-10 for more info
+               */
+			  if(word_cap[0]=='D' && word_cap[1]=='I' && word_cap[2]=='S')
               {
+			      /* 1rst and 2nd case*/
 			      if(word_cap[4]=='C')
 			      {
-                      if(i==4)
+                      /* Move forward*/
+			          if(i==4)
                       {
                           i++;
                           j++;
                           break;
                       }
 
-	                  //Captura del Start
+			          /*Capturing the Start*/
+			          //DEBUG: Aixo esta be?
 	                  if(word_cap[5]=='S')
 	                  {
-	                      //START
-//	                      i=k=0;
-	                      i=k=j=0;      //DEBUG: Prova
-//	                      memset(&answer,0, sizeof answer);
-	                      memset(&word_cap,0,sizeof word_cap);
+	                      i=k=j=0;                                  // Reset
+	                      memset(&word_cap,0,sizeof word_cap);      // Reset word_cap but not answer, because we will not recive OK. See Datasheet HM-10
+	                      //memset(&answer,0, sizeof answer);   //DEBUG: jo afegiria aquesta linia
+	                      //__bic_SR_register_on_exit(LPM3_bits); //DEBUG: jo afegiria aquesta linia
 	                      break;
-	                      //DEBUG: Captura l'start pero es queda penjat un cop rep del OK
 	                  }
+
+	                  /*Capturing the End*/
 	                  if(word_cap[5]=='E')
 	                  {
 	                      //END
-	                      match=TRUE;   //DEBUG:Passar-ho a address
-                          i=k=j=0;      //DEBUG: Prova
+	                      match=TRUE;   // We captured the End, so we must to finish this acquisition
 
+	                      /* Reset and end */
+	                      i=k=j=0;
                           memset(&answer,0, sizeof answer);
                           memset(&word_cap,0,sizeof word_cap);
                           __bic_SR_register_on_exit(LPM3_bits);
 	                      break;
 	                  }
-			      }
+			      }//End of 1st and 2nd case
+
+			      /*3rd case
+			       * In that case could be various values
+			       * OK+DIS0:90E202020A47OK+DIS0:341513CE6FF6OK+DIS0:90E202020100
+			       * */
 			      else
 			      {
                       if(i==3)  //Ens serveix per saltar a la seguent posicio
@@ -352,7 +395,7 @@ __interrupt void USCI_A0_ISR(void)
 
                       address[k]=answer[j];
                       k++;
-//                      k++;
+
                       if(k==14)
                       {
                           //Ja tenim l'adreça
@@ -374,9 +417,14 @@ __interrupt void USCI_A0_ISR(void)
                               contador++;
                           }
 
-
+                          //DEBUG: Aquesta linia no faria falta
                           match=FALSE;      //despres hem d'anar a END
+
                           i=j=k=0;
+                          //DEBUG: Afegiria les seguents linies
+//                          memset(&answer,0, sizeof answer);
+//                          memset(&word_cap,0,sizeof word_cap);
+//                          __bic_SR_register_on_exit(LPM3_bits);
                       }
 
 			      }
@@ -425,31 +473,22 @@ __interrupt void USCI_A0_ISR(void)
 
   }//USCI_A0_ISR
 
-// Pragrama per quan s'activi la interrupcio del Port 1
+// Port1 interrupt service routine
 #pragma vector=PORT1_VECTOR
 __interrupt void Port_1(void)
 {
-//   punter = &word_check[0]; //Crec que es pot treure
-
-   P1IFG &= ~BIT1;  //Baixem la FLAG
-
-//   config_SEND();
-//   SEND();
-
-   estat=1;
-
-   P1IE |= BIT1;
+   P1IFG &= ~BIT1;      // Clear the flag
+   estat=1;             // Change state to connect
+   P1IE |= BIT1;        // Enable interrupt for Button P1.1
 }
 
-// Pragrama per quan s'activi la interrupcio del Port 1
+// Port2 interrupt service routine
 #pragma vector=PORT2_VECTOR
 __interrupt void Port_2(void)
 {
-   P2IFG &= ~BIT1;  //Baixem la FLAG
-   estat=2;
-
-   P2IE |= BIT1;
-
+   P2IFG &= ~BIT1;      // Clear the flag
+   estat=2;             // Change state to disconnect
+   P2IE |= BIT1;        // Enable interrupt for Botton P2.1
 }
 
 // Timer0 A0 interrupt service routine
@@ -457,8 +496,8 @@ __interrupt void Port_2(void)
 __interrupt void TIMER0_A0_ISR(void)
 {
   P1OUT ^= 0x01;                            // Toggle P1.0
-  TA0CTL |= TACLR;                           //  clear TAR
-  TA0CCTL0 &= ~CCIE;                         // CCR0 interrupt disabled
-  __bic_SR_register_on_exit(LPM3_bits);     //Exit LPM
+  TA0CTL |= TACLR;                          // Clear TAR
+  TA0CCTL0 &= ~CCIE;                        // CCR0 interrupt disabled
+  __bic_SR_register_on_exit(LPM3_bits);     // Exit LPM
 
 }
