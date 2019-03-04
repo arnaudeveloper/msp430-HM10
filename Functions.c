@@ -290,6 +290,12 @@ void config_SEND()
 
     SEND();   //Enviem dades
 
+    n_letters= AT_2(punter);
+
+    __delay_cycles(500000);        //DEBUG: Amb breack points si que ho fa, sense no
+
+
+
 }
 
 /*

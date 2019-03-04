@@ -359,9 +359,9 @@ __interrupt void USCI_A0_ISR(void)
 	                  if(word_cap[5]=='S')
 	                  {
 	                      i=k=j=0;                                  // Reset
-	                      memset(&word_cap,0,sizeof word_cap);      // Reset word_cap but not answer, because we will not recive OK. See Datasheet HM-10
-	                      memset(&answer,0, sizeof answer);   //DEBUG: jo afegiria aquesta linia
-	                      __bic_SR_register_on_exit(LPM3_bits); //DEBUG: jo afegiria aquesta linia
+	                      memset(&word_cap,0,sizeof word_cap);
+	                      memset(&answer,0, sizeof answer);
+	                      __bic_SR_register_on_exit(LPM3_bits);
 	                      break;
 	                  }
 
@@ -386,42 +386,44 @@ __interrupt void USCI_A0_ISR(void)
 			       * */
 			      else
 			      {
-                      if(i==3)  //Ens serveix per saltar a la seguent posicio
+                      /* Move forward */
+			          if(i==3)
                       {
                           i++;
                           j++;
                           break;
                       }
 
-                      address[k]=answer[j];
+                      /* Capturing the address */
+			          address[k]=answer[j];
                       k++;
 
                       if(k==14)
                       {
-                          //Ja tenim l'adreça
+                          /* Address captured */
                           get_address=TRUE;
-                          //Codi per guardar l'adresa en una variable global
+
+                          /* Saving MAC addres in a global variable*/
                           if(contador==0)
                           {
-                              memcpy(address2, &address[2], 12); //DEBUG: funciona
+                              memcpy(address2, &address[2], 12);
                               contador++;
                           }
                           else if(contador==1)
                           {
-                              memcpy(address3, &address[2], 12); //DEBUG: Funciona. No entenc pq captura 4 valors anteriors?
+                              memcpy(address3, &address[2], 12);
                               contador++;
                           }
                           else if(contador==2)
                           {
-                              memcpy(address4, &address[2], 12); //DEBUG:  funciona
+                              memcpy(address4, &address[2], 12);
                               contador++;
                           }
 
-                          //DEBUG: Aquesta linia no faria falta
-                          match=FALSE;      //despres hem d'anar a END
+                          match=FALSE;      //Only if we first captured an address we will finish the loop
 
+                          /* Reset all*/
                           i=j=k=0;
-                          //DEBUG: Afegiria les seguents linies
                           memset(&answer,0, sizeof answer);
                           memset(&word_cap,0,sizeof word_cap);
                           memset(&address,0,sizeof address);
@@ -430,7 +432,7 @@ __interrupt void USCI_A0_ISR(void)
 
 			      }
 
-              }//--DIS---
+              }//--End of DIS---
 
 			  //--CONN---
 			  if(word_cap[0]=='C' && word_cap[1]=='O' && word_cap[2]=='N' && word_cap[3]=='N')
@@ -445,6 +447,7 @@ __interrupt void USCI_A0_ISR(void)
                   break;
 
 			  }//--CONN--
+
 		      //--LOST---
               if(word_cap[0]=='L' && word_cap[1]=='O' && word_cap[2]=='S' && word_cap[3]=='T')
               {
