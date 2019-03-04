@@ -360,8 +360,8 @@ __interrupt void USCI_A0_ISR(void)
 	                  {
 	                      i=k=j=0;                                  // Reset
 	                      memset(&word_cap,0,sizeof word_cap);      // Reset word_cap but not answer, because we will not recive OK. See Datasheet HM-10
-	                      //memset(&answer,0, sizeof answer);   //DEBUG: jo afegiria aquesta linia
-	                      //__bic_SR_register_on_exit(LPM3_bits); //DEBUG: jo afegiria aquesta linia
+	                      memset(&answer,0, sizeof answer);   //DEBUG: jo afegiria aquesta linia
+	                      __bic_SR_register_on_exit(LPM3_bits); //DEBUG: jo afegiria aquesta linia
 	                      break;
 	                  }
 
@@ -408,7 +408,7 @@ __interrupt void USCI_A0_ISR(void)
                           }
                           else if(contador==1)
                           {
-                              memcpy(address3, &address[4], 12); //DEBUG: Funciona. No entenc pq captura 4 valors anteriors?
+                              memcpy(address3, &address[2], 12); //DEBUG: Funciona. No entenc pq captura 4 valors anteriors?
                               contador++;
                           }
                           else if(contador==2)
@@ -422,9 +422,10 @@ __interrupt void USCI_A0_ISR(void)
 
                           i=j=k=0;
                           //DEBUG: Afegiria les seguents linies
-//                          memset(&answer,0, sizeof answer);
-//                          memset(&word_cap,0,sizeof word_cap);
-//                          __bic_SR_register_on_exit(LPM3_bits);
+                          memset(&answer,0, sizeof answer);
+                          memset(&word_cap,0,sizeof word_cap);
+                          memset(&address,0,sizeof address);
+                          __bic_SR_register_on_exit(LPM3_bits);
                       }
 
 			      }

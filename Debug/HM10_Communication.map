@@ -1,10 +1,10 @@
 ******************************************************************************
                   MSP430 Linker PC v18.1.3                     
 ******************************************************************************
->> Linked Mon Mar  4 17:00:58 2019
+>> Linked Mon Mar  4 17:32:08 2019
 
 OUTPUT FILE NAME:   <HM10_Communication.out>
-ENTRY POINT SYMBOL: "_c_int00_noargs"  address: 000048ea
+ENTRY POINT SYMBOL: "_c_int00_noargs"  address: 0000492c
 
 
 MEMORY CONFIGURATION
@@ -20,7 +20,7 @@ MEMORY CONFIGURATION
   INFOA                 00001980   00000080  00000000  00000080  RWIX
   USBRAM                00001c00   00000800  00000000  00000800  RWIX
   RAM                   00002400   00002000  00000136  00001eca  RWIX
-  FLASH                 00004400   0000bb80  000005cd  0000b5b3  RWIX
+  FLASH                 00004400   0000bb80  0000060f  0000b571  RWIX
   INT00                 0000ff80   00000002  00000000  00000002  RWIX
   INT01                 0000ff82   00000002  00000000  00000002  RWIX
   INT02                 0000ff84   00000002  00000000  00000002  RWIX
@@ -121,50 +121,50 @@ section   page    origin      length       input sections
                   00004364    0000009c     --HOLE--
 
 .text:_isr 
-*          0    00004400    00000540     
-                  00004400    000004ea     main.obj (.text:_isr:USCI_A0_ISR)
-                  000048ea    0000001c     rts430x_lc_rd_eabi.lib : boot.c.obj (.text:_isr:_c_int00_noargs)
-                  00004906    00000016     main.obj (.text:_isr:TIMER0_A0_ISR)
-                  0000491c    0000000e     main.obj (.text:_isr:Port_1)
-                  0000492a    0000000e     main.obj (.text:_isr:Port_2)
-                  00004938    00000008     rts430x_lc_rd_eabi.lib : isr_trap.asm.obj (.text:_isr:__TI_ISR_TRAP)
+*          0    00004400    00000582     
+                  00004400    0000052c     main.obj (.text:_isr:USCI_A0_ISR)
+                  0000492c    0000001c     rts430x_lc_rd_eabi.lib : boot.c.obj (.text:_isr:_c_int00_noargs)
+                  00004948    00000016     main.obj (.text:_isr:TIMER0_A0_ISR)
+                  0000495e    0000000e     main.obj (.text:_isr:Port_1)
+                  0000496c    0000000e     main.obj (.text:_isr:Port_2)
+                  0000497a    00000008     rts430x_lc_rd_eabi.lib : isr_trap.asm.obj (.text:_isr:__TI_ISR_TRAP)
 
-.cinit     0    000049bc    00000012     
-                  000049bc    00000006     (.cinit..bss.load) [load image, compression = zero_init]
-                  000049c2    00000004     (__TI_handler_table)
-                  000049c6    00000008     (__TI_cinit_table)
+.cinit     0    000049fe    00000012     
+                  000049fe    00000006     (.cinit..bss.load) [load image, compression = zero_init]
+                  00004a04    00000004     (__TI_handler_table)
+                  00004a08    00000008     (__TI_cinit_table)
 
 .binit     0    00004400    00000000     
 
 .init_array 
 *          0    00004400    00000000     UNINITIALIZED
 
-.const     0    00004940    0000007b     
-                  00004940    00000012     AT_Commands.obj (.const:.string:$P$T18$19)
-                  00004952    0000000f     Functions.obj (.const:.string:$P$T0$1)
-                  00004961    00000001     --HOLE-- [fill = 0]
-                  00004962    00000008     AT_Commands.obj (.const:.string:$P$T10$11)
-                  0000496a    00000008     AT_Commands.obj (.const:.string:$P$T12$13)
-                  00004972    00000008     AT_Commands.obj (.const:.string:$P$T14$15)
-                  0000497a    00000008     AT_Commands.obj (.const:.string:$P$T2$3)
-                  00004982    00000008     AT_Commands.obj (.const:.string:$P$T4$5)
-                  0000498a    00000008     AT_Commands.obj (.const:.string:$P$T6$7)
-                  00004992    00000008     AT_Commands.obj (.const:.string:$P$T8$9)
-                  0000499a    00000005     AT_Commands.obj (.const:.string:$P$T3$4)
-                  0000499f    00000001     --HOLE-- [fill = 0]
-                  000049a0    00000005     AT_Commands.obj (.const:.string:$P$T5$6)
-                  000049a5    00000001     --HOLE-- [fill = 0]
-                  000049a6    00000004     AT_Commands.obj (.const:.string:$P$T19$20)
-                  000049aa    00000004     AT_Commands.obj (.const:.string:$P$T7$8)
-                  000049ae    00000003     AT_Commands.obj (.const:.string:$P$T15$16)
-                  000049b1    00000001     --HOLE-- [fill = 0]
-                  000049b2    00000002     AT_Commands.obj (.const:.string:$P$T0$1)
-                  000049b4    00000002     AT_Commands.obj (.const:.string:$P$T1$2)
-                  000049b6    00000001     AT_Commands.obj (.const:.string:$P$T11$12)
-                  000049b7    00000001     --HOLE-- [fill = 0]
-                  000049b8    00000001     AT_Commands.obj (.const:.string:$P$T13$14)
-                  000049b9    00000001     --HOLE-- [fill = 0]
-                  000049ba    00000001     AT_Commands.obj (.const:.string:$P$T9$10)
+.const     0    00004982    0000007b     
+                  00004982    00000012     AT_Commands.obj (.const:.string:$P$T18$19)
+                  00004994    0000000f     Functions.obj (.const:.string:$P$T0$1)
+                  000049a3    00000001     --HOLE-- [fill = 0]
+                  000049a4    00000008     AT_Commands.obj (.const:.string:$P$T10$11)
+                  000049ac    00000008     AT_Commands.obj (.const:.string:$P$T12$13)
+                  000049b4    00000008     AT_Commands.obj (.const:.string:$P$T14$15)
+                  000049bc    00000008     AT_Commands.obj (.const:.string:$P$T2$3)
+                  000049c4    00000008     AT_Commands.obj (.const:.string:$P$T4$5)
+                  000049cc    00000008     AT_Commands.obj (.const:.string:$P$T6$7)
+                  000049d4    00000008     AT_Commands.obj (.const:.string:$P$T8$9)
+                  000049dc    00000005     AT_Commands.obj (.const:.string:$P$T3$4)
+                  000049e1    00000001     --HOLE-- [fill = 0]
+                  000049e2    00000005     AT_Commands.obj (.const:.string:$P$T5$6)
+                  000049e7    00000001     --HOLE-- [fill = 0]
+                  000049e8    00000004     AT_Commands.obj (.const:.string:$P$T19$20)
+                  000049ec    00000004     AT_Commands.obj (.const:.string:$P$T7$8)
+                  000049f0    00000003     AT_Commands.obj (.const:.string:$P$T15$16)
+                  000049f3    00000001     --HOLE-- [fill = 0]
+                  000049f4    00000002     AT_Commands.obj (.const:.string:$P$T0$1)
+                  000049f6    00000002     AT_Commands.obj (.const:.string:$P$T1$2)
+                  000049f8    00000001     AT_Commands.obj (.const:.string:$P$T11$12)
+                  000049f9    00000001     --HOLE-- [fill = 0]
+                  000049fa    00000001     AT_Commands.obj (.const:.string:$P$T13$14)
+                  000049fb    00000001     --HOLE-- [fill = 0]
+                  000049fc    00000001     AT_Commands.obj (.const:.string:$P$T9$10)
 
 RTC        0    0000ffd2    00000002     
                   0000ffd2    00000002     rts430x_lc_rd_eabi.lib : int41.asm.obj (.int41)
@@ -274,11 +274,11 @@ MODULE SUMMARY
        Module                 code   ro data   rw data
        ------                 ----   -------   -------
     .\
-       main.obj               1406   8         0      
+       main.obj               1472   8         0      
        AT_Commands.obj        1070   102       150    
        Functions.obj          1088   15        0      
     +--+----------------------+------+---------+---------+
-       Total:                 3564   125       150    
+       Total:                 3630   125       150    
                                                       
     C:\ti\ccsv8\tools\compiler\ti-cgt-msp430_18.1.3.LTS\lib\rts430x_lc_rd_eabi.lib
        autoinit.c.obj         84     0         0      
@@ -314,18 +314,18 @@ MODULE SUMMARY
        Stack:                 0      0         160    
        Linker Generated:      0      18        0      
     +--+----------------------+------+---------+---------+
-       Grand Total:           3774   181       310    
+       Grand Total:           3840   181       310    
 
 
 LINKER GENERATED COPY TABLES
 
-__TI_cinit_table @ 000049c6 records: 1, size/record: 8, table size: 8
-	.bss: load addr=000049bc, load size=00000006 bytes, run addr=00002400, run size=00000096 bytes, compression=zero_init
+__TI_cinit_table @ 00004a08 records: 1, size/record: 8, table size: 8
+	.bss: load addr=000049fe, load size=00000006 bytes, run addr=00002400, run size=00000096 bytes, compression=zero_init
 
 
 LINKER GENERATED HANDLER TABLE
 
-__TI_handler_table @ 000049c2 records: 1, size/record: 4, table size: 4
+__TI_handler_table @ 00004a04 records: 1, size/record: 4, table size: 4
 	index: 0, handler: __TI_zero_init
 
 
@@ -689,8 +689,8 @@ address   name
 0000012e  PMMRIE                                 
 0000012f  PMMRIE_H                               
 0000012e  PMMRIE_L                               
-0000491c  Port_1                                 
-0000492a  Port_2                                 
+0000495e  Port_1                                 
+0000496c  Port_2                                 
 00000158  RCCTL0                                 
 00000159  RCCTL0_H                               
 00000158  RCCTL0_L                               
@@ -856,7 +856,7 @@ address   name
 000003e0  TB0EX0                                 
 000003ee  TB0IV                                  
 000003d0  TB0R                                   
-00004906  TIMER0_A0_ISR                          
+00004948  TIMER0_A0_ISR                          
 00010966  TxUAC0                                 
 000005d0  UCA0ABCTL                              
 000005c6  UCA0BRW                                
@@ -1099,11 +1099,11 @@ address   name
 0000015c  WDTCTL_L                               
 00004400  __STACK_END                            
 000000a0  __STACK_SIZE                           
-000049c6  __TI_CINIT_Base                        
-000049ce  __TI_CINIT_Limit                       
-000049c2  __TI_Handler_Table_Base                
-000049c6  __TI_Handler_Table_Limit               
-00004938  __TI_ISR_TRAP                          
+00004a08  __TI_CINIT_Base                        
+00004a10  __TI_CINIT_Limit                       
+00004a04  __TI_Handler_Table_Base                
+00004a08  __TI_Handler_Table_Limit               
+0000497a  __TI_ISR_TRAP                          
 000107fe  __TI_auto_init_nobinit_nopinit_hold_wdt
 0000ffd2  __TI_int41                             
 0000ffd4  __TI_int42                             
@@ -1132,7 +1132,7 @@ ffffffff  __TI_prof_data_size
 ffffffff  __TI_prof_data_start                   
 00010904  __TI_zero_init_nomemset                
 ffffffff  __c_args__                             
-000048ea  _c_int00_noargs                        
+0000492c  _c_int00_noargs                        
 0000fffe  _reset_vector                          
 00004360  _stack                                 
 0001097c  _system_post_cinit                     
@@ -1946,15 +1946,15 @@ address   name
 00004360  _stack                                 
 00004400  USCI_A0_ISR                            
 00004400  __STACK_END                            
-000048ea  _c_int00_noargs                        
-00004906  TIMER0_A0_ISR                          
-0000491c  Port_1                                 
-0000492a  Port_2                                 
-00004938  __TI_ISR_TRAP                          
-000049c2  __TI_Handler_Table_Base                
-000049c6  __TI_CINIT_Base                        
-000049c6  __TI_Handler_Table_Limit               
-000049ce  __TI_CINIT_Limit                       
+0000492c  _c_int00_noargs                        
+00004948  TIMER0_A0_ISR                          
+0000495e  Port_1                                 
+0000496c  Port_2                                 
+0000497a  __TI_ISR_TRAP                          
+00004a04  __TI_Handler_Table_Base                
+00004a08  __TI_CINIT_Base                        
+00004a08  __TI_Handler_Table_Limit               
+00004a10  __TI_CINIT_Limit                       
 0000ffd2  __TI_int41                             
 0000ffd4  __TI_int42                             
 0000ffd6  __TI_int43                             
