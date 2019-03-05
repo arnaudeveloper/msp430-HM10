@@ -33,9 +33,13 @@ char address4[12];      // MAC address 3
 
 char address_M[12];     // Master MAC address
 
-unsigned int contador;  // Used for count the number of MAC address captured
+char contador;  // Used for count the number of MAC address captured
 
 char match;             // Used for matching a desired/correct answer
+
+char lost;              // Per indicar que em perdut una connexio
+
+char master_detected;   // Per indicar que hem trobat el master
 
 char get_address;       // Used for inform of the acquisition of a MAC address
                         // Combined with match is used to control the resend of the AT command

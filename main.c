@@ -122,27 +122,43 @@ __interrupt void USCI_A0_ISR(void)
       {
           P1OUT ^= 0x01;                            // ON LED P1.0
           answer[0]=answer[j];
-          j=1;//Ja hem omplert la posico zero d'answer
-              //DEBUG: hauria de ser j=0, ja que al final incrementem el valor de j
+//          j=1;//Ja hem omplert la posico zero d'answer
+          j=0; //DEBUG: hauria de ser j=0, ja que al final incrementem el valor de j
 
       }
 
-//      if(answer[0]=='#')
-//      {
-//          if(answer[1]=='?')//Pregunta
-//          {
-//              //Codi per detectar la pregunta
-//              if(answer[2]=='M')//Ens pregunten si som master
-//              {
-//                  //Codi per resposndre a la pregunta
-//
-//              }
-//          }
-//          if(answer[1]=='!')//resposta
-//          {
-//              //Codi per detectar la resposta
-//          }
-//      }
+      if(answer[0]=='#')
+      {
+          if(answer[1]=='?')//Pregunta
+          {
+              //Codi per detectar la pregunta
+              if(answer[2]=='M')//Ens pregunten si som master
+              {
+                  //Codi per resposndre a la pregunta
+                  P1OUT ^= 0x01;                            // ON LED P1.0
+
+              }
+          }
+          if(answer[1]=='!')//resposta
+          {
+              //Codi per detectar la resposta
+              //Codi per detectar la pregunta
+              if(answer[2]=='M')//Ens pregunten si som master
+              {
+                  //Codi per resposndre a la pregunta
+                  P1OUT ^= 0x01;                            // ON LED P1.0
+                  master_detected = TRUE; //Per identificar que hem trobat el master
+
+                  i=j=k=0;      //Reset
+                  memset(&answer,0, sizeof answer);     //Reset of the answer variable
+                  memset(&word_cap,0,sizeof word_cap);  //Reset of the word_cap variable
+
+                  __bic_SR_register_on_exit(LPM3_bits);
+
+
+              }
+          }
+      }
 
       /* Used to capture an "OK" response from HM-10 */
       if(answer[j-1]=='O' && answer[j]=='K')
@@ -448,7 +464,7 @@ __interrupt void USCI_A0_ISR(void)
 			      i=k=j=0;
                   memset(&answer,0, sizeof answer);
                   memset(&word_cap,0,sizeof word_cap);
-                  __bic_SR_register_on_exit(LPM3_bits);
+                  __bic_SR_register_on_exit(LPM3_bits);     //exit
                   break;
 
 			  }//--End of CONN--
@@ -458,6 +474,7 @@ __interrupt void USCI_A0_ISR(void)
               if(word_cap[0]=='L' && word_cap[1]=='O' && word_cap[2]=='S' && word_cap[3]=='T')
               {
                   /* Connection LOST*/
+                  lost = TRUE; //DEBUG: variable que serveix per controlar si em perdut la senyal
 
                   P4OUT &= ~BIT7;   //Green LED OFF
 

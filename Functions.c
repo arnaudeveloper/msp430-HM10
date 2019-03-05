@@ -88,6 +88,7 @@ void config_INITIAL()
     get_address=FALSE;
     enviar = FALSE;
     estat=0;
+    lost= FALSE;
 
     punter = &word_check[0];
 
@@ -236,11 +237,21 @@ void config_SEND()
 
     /* In order to use AT_CONN command. See datasheet */
 //    match=0;                          // Set match = 0
-//    while(match==0)                   // Resend the command is the communication fail
+//    for(x=contador;x>0;x--)
 //    {
-//    n_letters= AT_CONN(punter);       //AT_CONN command
-//    TA0CCTL0 = CCIE;                  //Start Timer
-//    __bis_SR_register(LPM3_bits);     // Enter LPM0
+//        while(match==0)                   // Resend the command is the communication fail
+//        {
+//
+//            n_letters= AT_CONN(punter,x-1);       //AT_CONN command
+//            TA0CCTL0 = CCIE;                  //Start Timer
+//            __bis_SR_register(LPM3_bits);     // Enter LPM0
+//        }
+//        __delay_cycles(500000);             // Used to pause the data streaming and give enough time to process data
+//
+//        SEND();
+//        __delay_cycles(500000);             // Used to pause the data streaming and give enough time to process data
+//
+//        n_letters= AT_2(punter);            //Used to cut off communication
 //    }
 
 
@@ -255,6 +266,7 @@ void config_SEND()
     x=0;
 
     /* Set AT_CON*/
+    //DEBUG: si ho faig tot seguit sense breakpoint, envia merda
     while(match==0)                     // Resend the command is the communication fail
     {
     n_letters= AT_CON(punter,address2); // AT_CON0 command. Connect to addres2
@@ -268,7 +280,24 @@ void config_SEND()
 
     /* Send data and disonnect*/
     SEND();
+    //DEBUG: ESPERAR LA RESPOSTA
+//    TA0CCTL0 = CCIE;                    // DEBUG: Per si de cas
+    __bis_SR_register(LPM3_bits);       // DEBUG: Aquesta lina es perillosa ja que si l'enviem a dormir sense estar segur que la connexio es fiable, potser no rebra mai una resposta
+    if(master_detected)
+    {
+//        address_M = address2;
+        memcpy(address_M, address2,12);
+    }
+//    n_letters= AT_2(punter);            //Used to cut off communication
+    //DEBUG: hauriem d'esperar rebre LOST
+    while(lost==0)                     // Resend the command is the communication fail
+    {
     n_letters= AT_2(punter);            //Used to cut off communication
+    TA0CCTL0 = CCIE;                    // Start Timer
+    __bis_SR_register(LPM3_bits);       // Enter LPM0
+//    if(x>10)match=1;                   // Used for bad communications
+//    x++;
+    }
 
     __delay_cycles(500000);             // Used to pause the data streaming and give enough time to process data
 

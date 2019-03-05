@@ -28,7 +28,7 @@ int AT_NOTI(char *punter);
 
 int AT_DISC(char *punter);
 
-int AT_CONN(char *punter);
+int AT_CONN(char *punter, char dis);
 
 int AT_CON(char *punter, char addrex[12]);
 

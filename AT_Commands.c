@@ -251,12 +251,14 @@ int AT_DISC(char *punter)
 /*
  * SEND: AT+CONN0
  */
-int AT_CONN(char *punter)
+int AT_CONN(char *punter, char dis)
 {
     int i=0;
+    char s[1]=dis;
 
     byte bCount,bPacketLength;
-    byte TxBuffer[]={'A','T','+','C','O','N','N','0'}; //En connectem al dispositiu 1
+//    byte TxBuffer[]={'A','T','+','C','O','N','N','0'}; //En connectem al dispositiu 1
+    byte TxBuffer[8]={'A','T','+','C','O','N','N'}; //En connectem al dispositiu 1
     byte word[]={'C','O','N','N'};
 
     for(i=0;i< sizeof(word);i++)
@@ -265,6 +267,7 @@ int AT_CONN(char *punter)
         punter++;
     }
 
+    memcpy(TxBuffer+7, s, 1);
     bPacketLength = sizeof(TxBuffer);
 
     for(bCount=0; bCount<bPacketLength; bCount++)       //Aquest bucle es el que envia la trama al Modul Robot.
