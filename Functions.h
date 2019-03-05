@@ -38,6 +38,7 @@ char contador;  // Used for count the number of MAC address captured
 char match;             // Used for matching a desired/correct answer
 
 char lost;              // Per indicar que em perdut una connexio
+char connection;        // Per indicar que hem realitzat una connexio
 
 char master_detected;   // Per indicar que hem trobat el master
 

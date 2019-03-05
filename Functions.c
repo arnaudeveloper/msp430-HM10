@@ -35,8 +35,10 @@ void init_Timer()
 {
 //    P1DIR |= 0x01;                            // P1.0 output
     TA0CCTL0 &= ~CCIE;                          // CCR0 interrupt disabled
-    TA0CCR0 = 50000;
-    TA0CTL = TASSEL_2 + MC_1 + TACLR;         // SMCLK, upmode, clear TAR
+//    TA0CCR0 = 50000;
+    TA0CCR0 = 3200;
+//    TA0CTL = TASSEL_2 + MC_1 + TACLR;         // SMCLK, upmode, clear TAR
+    TA0CTL = TASSEL_1 + MC_1 + TACLR;         // ACLK, upmode, clear TAR
 }
 
 /*
@@ -89,6 +91,7 @@ void config_INITIAL()
     enviar = FALSE;
     estat=0;
     lost= FALSE;
+    connection= FALSE;
 
     punter = &word_check[0];
 
@@ -262,45 +265,66 @@ void config_SEND()
 //        //Codi
 //    }
 
+    //Cambiem la velocitat del rellotge per donar mes temps de resposta
+    TA0CCR0 = 12800;    //PROVA, sembla que guai
+
     match=0;                            // Set match = 0
     x=0;
 
+
     /* Set AT_CON*/
     //DEBUG: si ho faig tot seguit sense breakpoint, envia merda
+    //DEBUG: Executa dues vagades el bucle, abans de rebre la resposta
+    //1er intentem establir connexio, si ho aconseguim pregutem si es el master
     while(match==0)                     // Resend the command is the communication fail
     {
-    n_letters= AT_CON(punter,address2); // AT_CON0 command. Connect to addres2
-    TA0CCTL0 = CCIE;                    // Start Timer
-    __bis_SR_register(LPM3_bits);       // Enter LPM0
-    if(x>10)match=1;                   // Used for bad communications
-    x++;
+        //DEBUG: WAIT FOR A RESPONSE!!
+        n_letters= AT_CON(punter,address2); // AT_CON0 command. Connect to addres2
+        TA0CCTL0 = CCIE;                    // Start Timer
+        __bis_SR_register(LPM3_bits);       // Enter LPM0
+        if(x>10)match=1;                   // Used for bad communications
+        x++;
+
+//        __delay_cycles(100000);             // Used to pause the data streaming and give enough time to process data
     }
 
     __delay_cycles(500000);             // Used to pause the data streaming and give enough time to process data
 
-    /* Send data and disonnect*/
-    SEND();
-    //DEBUG: ESPERAR LA RESPOSTA
-//    TA0CCTL0 = CCIE;                    // DEBUG: Per si de cas
-    __bis_SR_register(LPM3_bits);       // DEBUG: Aquesta lina es perillosa ja que si l'enviem a dormir sense estar segur que la connexio es fiable, potser no rebra mai una resposta
-    if(master_detected)
+    if(connection)      //ens serveix per detectar si hem sortit pq hem fet una connexio o pq a passat l'estona
     {
-//        address_M = address2;
-        memcpy(address_M, address2,12);
+        /* Send data and disonnect*/
+        SEND();
+        //DEBUG: ESPERAR LA RESPOSTA
+    //    TA0CCTL0 = CCIE;                    // DEBUG: Per si de cas
+        __bis_SR_register(LPM3_bits);       // DEBUG: Aquesta lina es perillosa ja que si l'enviem a dormir sense estar segur que la connexio es fiable, potser no rebra mai una resposta
+        if(master_detected)
+        {
+            memcpy(address_M, address2,12);
+        }
+
+        while(lost==0)                     // Resend the command is the communication fail
+        {
+            n_letters= AT_2(punter);            //Used to cut off communication
+            TA0CCTL0 = CCIE;                    // Start Timer
+            __bis_SR_register(LPM3_bits);       // Enter LPM0
+        }
     }
+
+    //Ho fico adalt
+////    n_letters= AT_2(punter);            //Used to cut off communication
+//    //DEBUG: hauriem d'esperar rebre LOST
+//    while(lost==0)                     // Resend the command is the communication fail
+//    {
 //    n_letters= AT_2(punter);            //Used to cut off communication
-    //DEBUG: hauriem d'esperar rebre LOST
-    while(lost==0)                     // Resend the command is the communication fail
-    {
-    n_letters= AT_2(punter);            //Used to cut off communication
-    TA0CCTL0 = CCIE;                    // Start Timer
-    __bis_SR_register(LPM3_bits);       // Enter LPM0
-//    if(x>10)match=1;                   // Used for bad communications
-//    x++;
-    }
+//    TA0CCTL0 = CCIE;                    // Start Timer
+//    __bis_SR_register(LPM3_bits);       // Enter LPM0
+////    if(x>10)match=1;                   // Used for bad communications
+////    x++;
+//    }
 
     __delay_cycles(500000);             // Used to pause the data streaming and give enough time to process data
 
+    connection = FALSE;
     match=0;                            // Set match = 0
     x=0;
 

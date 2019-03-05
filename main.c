@@ -457,6 +457,7 @@ __interrupt void USCI_A0_ISR(void)
 			  {
                   /*Connection established*/
 			      match=TRUE;
+			      connection=TRUE;
 
 			      P4OUT |= BIT7;        //Green LED ON
 

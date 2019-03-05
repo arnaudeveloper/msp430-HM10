@@ -1,10 +1,10 @@
 ******************************************************************************
                   MSP430 Linker PC v18.1.3                     
 ******************************************************************************
->> Linked Tue Mar  5 13:16:07 2019
+>> Linked Tue Mar  5 15:42:03 2019
 
 OUTPUT FILE NAME:   <HM10_Communication.out>
-ENTRY POINT SYMBOL: "_c_int00_noargs"  address: 00004994
+ENTRY POINT SYMBOL: "_c_int00_noargs"  address: 00004998
 
 
 MEMORY CONFIGURATION
@@ -19,8 +19,8 @@ MEMORY CONFIGURATION
   INFOB                 00001900   00000080  00000000  00000080  RWIX
   INFOA                 00001980   00000080  00000000  00000080  RWIX
   USBRAM                00001c00   00000800  00000000  00000800  RWIX
-  RAM                   00002400   00002000  00000143  00001ebd  RWIX
-  FLASH                 00004400   0000bb80  00000677  0000b509  RWIX
+  RAM                   00002400   00002000  00000144  00001ebc  RWIX
+  FLASH                 00004400   0000bb80  0000067b  0000b505  RWIX
   INT00                 0000ff80   00000002  00000000  00000002  RWIX
   INT01                 0000ff82   00000002  00000000  00000002  RWIX
   INT02                 0000ff84   00000002  00000000  00000002  RWIX
@@ -85,7 +85,7 @@ MEMORY CONFIGURATION
   INT61                 0000fffa   00000002  00000002  00000000  RWIX
   INT62                 0000fffc   00000002  00000002  00000000  RWIX
   RESET                 0000fffe   00000002  00000002  00000000  RWIX
-  FLASH2                00010000   00014400  00000a02  000139fe  RWIX
+  FLASH2                00010000   00014400  00000a16  000139ea  RWIX
 
 
 SECTION ALLOCATION MAP
@@ -93,7 +93,7 @@ SECTION ALLOCATION MAP
  output                                  attributes/
 section   page    origin      length       input sections
 --------  ----  ----------  ----------   ----------------
-.bss       0    00002400    000000a3     UNINITIALIZED
+.bss       0    00002400    000000a4     UNINITIALIZED
                   00002400    00000020     (.common:address)
                   00002420    00000020     (.common:answer)
                   00002440    0000000c     (.common:address1)
@@ -109,65 +109,66 @@ section   page    origin      length       input sections
                   00002494    00000002     (.common:k)
                   00002496    00000002     (.common:n_letters)
                   00002498    00000002     (.common:u)
-                  0000249a    00000001     (.common:contador)
-                  0000249b    00000001     (.common:dis_ok)
-                  0000249c    00000001     (.common:enviar)
-                  0000249d    00000001     (.common:estat)
-                  0000249e    00000001     (.common:get_address)
-                  0000249f    00000001     (.common:lost)
-                  000024a0    00000001     (.common:master_detected)
-                  000024a1    00000001     (.common:match)
-                  000024a2    00000001     (.common:parameter1)
+                  0000249a    00000001     (.common:connection)
+                  0000249b    00000001     (.common:contador)
+                  0000249c    00000001     (.common:dis_ok)
+                  0000249d    00000001     (.common:enviar)
+                  0000249e    00000001     (.common:estat)
+                  0000249f    00000001     (.common:get_address)
+                  000024a0    00000001     (.common:lost)
+                  000024a1    00000001     (.common:master_detected)
+                  000024a2    00000001     (.common:match)
+                  000024a3    00000001     (.common:parameter1)
 
 .stack     0    00004360    000000a0     UNINITIALIZED
                   00004360    00000004     rts430x_lc_rd_eabi.lib : boot.c.obj (.stack)
                   00004364    0000009c     --HOLE--
 
 .text:_isr 
-*          0    00004400    000005ea     
-                  00004400    00000594     main.obj (.text:_isr:USCI_A0_ISR)
-                  00004994    0000001c     rts430x_lc_rd_eabi.lib : boot.c.obj (.text:_isr:_c_int00_noargs)
-                  000049b0    00000016     main.obj (.text:_isr:TIMER0_A0_ISR)
-                  000049c6    0000000e     main.obj (.text:_isr:Port_1)
-                  000049d4    0000000e     main.obj (.text:_isr:Port_2)
-                  000049e2    00000008     rts430x_lc_rd_eabi.lib : isr_trap.asm.obj (.text:_isr:__TI_ISR_TRAP)
+*          0    00004400    000005ee     
+                  00004400    00000598     main.obj (.text:_isr:USCI_A0_ISR)
+                  00004998    0000001c     rts430x_lc_rd_eabi.lib : boot.c.obj (.text:_isr:_c_int00_noargs)
+                  000049b4    00000016     main.obj (.text:_isr:TIMER0_A0_ISR)
+                  000049ca    0000000e     main.obj (.text:_isr:Port_1)
+                  000049d8    0000000e     main.obj (.text:_isr:Port_2)
+                  000049e6    00000008     rts430x_lc_rd_eabi.lib : isr_trap.asm.obj (.text:_isr:__TI_ISR_TRAP)
 
-.cinit     0    00004a66    00000012     
-                  00004a66    00000006     (.cinit..bss.load) [load image, compression = zero_init]
-                  00004a6c    00000004     (__TI_handler_table)
-                  00004a70    00000008     (__TI_cinit_table)
+.cinit     0    00004a6a    00000012     
+                  00004a6a    00000006     (.cinit..bss.load) [load image, compression = zero_init]
+                  00004a70    00000004     (__TI_handler_table)
+                  00004a74    00000008     (__TI_cinit_table)
 
 .binit     0    00004400    00000000     
 
 .init_array 
 *          0    00004400    00000000     UNINITIALIZED
 
-.const     0    000049ea    0000007b     
-                  000049ea    00000012     AT_Commands.obj (.const:.string:$P$T18$19)
-                  000049fc    0000000f     Functions.obj (.const:.string:$P$T0$1)
-                  00004a0b    00000001     --HOLE-- [fill = 0]
-                  00004a0c    00000008     AT_Commands.obj (.const:.string:$P$T10$11)
-                  00004a14    00000008     AT_Commands.obj (.const:.string:$P$T12$13)
-                  00004a1c    00000008     AT_Commands.obj (.const:.string:$P$T14$15)
-                  00004a24    00000008     AT_Commands.obj (.const:.string:$P$T2$3)
-                  00004a2c    00000008     AT_Commands.obj (.const:.string:$P$T4$5)
-                  00004a34    00000008     AT_Commands.obj (.const:.string:$P$T6$7)
-                  00004a3c    00000008     AT_Commands.obj (.const:.string:$P$T8$9)
-                  00004a44    00000005     AT_Commands.obj (.const:.string:$P$T3$4)
-                  00004a49    00000001     --HOLE-- [fill = 0]
-                  00004a4a    00000005     AT_Commands.obj (.const:.string:$P$T5$6)
-                  00004a4f    00000001     --HOLE-- [fill = 0]
-                  00004a50    00000004     AT_Commands.obj (.const:.string:$P$T19$20)
-                  00004a54    00000004     AT_Commands.obj (.const:.string:$P$T7$8)
-                  00004a58    00000003     AT_Commands.obj (.const:.string:$P$T15$16)
-                  00004a5b    00000001     --HOLE-- [fill = 0]
-                  00004a5c    00000002     AT_Commands.obj (.const:.string:$P$T0$1)
-                  00004a5e    00000002     AT_Commands.obj (.const:.string:$P$T1$2)
-                  00004a60    00000001     AT_Commands.obj (.const:.string:$P$T11$12)
-                  00004a61    00000001     --HOLE-- [fill = 0]
-                  00004a62    00000001     AT_Commands.obj (.const:.string:$P$T13$14)
-                  00004a63    00000001     --HOLE-- [fill = 0]
-                  00004a64    00000001     AT_Commands.obj (.const:.string:$P$T9$10)
+.const     0    000049ee    0000007b     
+                  000049ee    00000012     AT_Commands.obj (.const:.string:$P$T18$19)
+                  00004a00    0000000f     Functions.obj (.const:.string:$P$T0$1)
+                  00004a0f    00000001     --HOLE-- [fill = 0]
+                  00004a10    00000008     AT_Commands.obj (.const:.string:$P$T10$11)
+                  00004a18    00000008     AT_Commands.obj (.const:.string:$P$T12$13)
+                  00004a20    00000008     AT_Commands.obj (.const:.string:$P$T14$15)
+                  00004a28    00000008     AT_Commands.obj (.const:.string:$P$T2$3)
+                  00004a30    00000008     AT_Commands.obj (.const:.string:$P$T4$5)
+                  00004a38    00000008     AT_Commands.obj (.const:.string:$P$T6$7)
+                  00004a40    00000008     AT_Commands.obj (.const:.string:$P$T8$9)
+                  00004a48    00000005     AT_Commands.obj (.const:.string:$P$T3$4)
+                  00004a4d    00000001     --HOLE-- [fill = 0]
+                  00004a4e    00000005     AT_Commands.obj (.const:.string:$P$T5$6)
+                  00004a53    00000001     --HOLE-- [fill = 0]
+                  00004a54    00000004     AT_Commands.obj (.const:.string:$P$T19$20)
+                  00004a58    00000004     AT_Commands.obj (.const:.string:$P$T7$8)
+                  00004a5c    00000003     AT_Commands.obj (.const:.string:$P$T15$16)
+                  00004a5f    00000001     --HOLE-- [fill = 0]
+                  00004a60    00000002     AT_Commands.obj (.const:.string:$P$T0$1)
+                  00004a62    00000002     AT_Commands.obj (.const:.string:$P$T1$2)
+                  00004a64    00000001     AT_Commands.obj (.const:.string:$P$T11$12)
+                  00004a65    00000001     --HOLE-- [fill = 0]
+                  00004a66    00000001     AT_Commands.obj (.const:.string:$P$T13$14)
+                  00004a67    00000001     --HOLE-- [fill = 0]
+                  00004a68    00000001     AT_Commands.obj (.const:.string:$P$T9$10)
 
 RTC        0    0000ffd2    00000002     
                   0000ffd2    00000002     rts430x_lc_rd_eabi.lib : int41.asm.obj (.int41)
@@ -246,42 +247,42 @@ SYSNMI     0    0000fffc    00000002
 .reset     0    0000fffe    00000002     
                   0000fffe    00000002     rts430x_lc_rd_eabi.lib : boot.c.obj (.reset)
 
-.text      0    00010000    00000a02     
-                  00010000    00000250     Functions.obj (.text:config_SEND)
-                  00010250    000001a2     Functions.obj (.text:config_INITIAL)
-                  000103f2    00000084     AT_Commands.obj (.text:AT_CON)
-                  00010476    00000082     AT_Commands.obj (.text:AT_ADDR)
-                  000104f8    00000082     AT_Commands.obj (.text:AT_DISC)
-                  0001057a    00000082     AT_Commands.obj (.text:AT_RENEW2)
-                  000105fc    00000082     AT_Commands.obj (.text:AT_RESET2)
-                  0001067e    0000006c     AT_Commands.obj (.text:AT_IMME2)
-                  000106ea    0000006c     AT_Commands.obj (.text:AT_NOTI)
-                  00010756    0000006c     AT_Commands.obj (.text:AT_ROLE2)
-                  000107c2    00000062     main.obj (.text:main)
-                  00010824    0000005e     AT_Commands.obj (.text:AT_2)
-                  00010882    00000054     rts430x_lc_rd_eabi.lib : autoinit.c.obj (.text:__TI_auto_init_nobinit_nopinit_hold_wdt:__TI_auto_init_nobinit_nopinit_hold_wdt)
-                  000108d6    0000004a     Functions.obj (.text:SEND)
-                  00010920    0000003e     Functions.obj (.text:init_GPIOs)
-                  0001095e    0000002a     Functions.obj (.text:init_UART)
-                  00010988    00000024     rts430x_lc_rd_eabi.lib : copy_zero_init.c.obj (.text:decompress:ZI:__TI_zero_init_nomemset:__TI_zero_init_nomemset)
-                  000109ac    00000016                            : memset.c.obj (.text:memset)
-                  000109c2    00000014     Functions.obj (.text:init_Timer)
-                  000109d6    00000014     rts430x_lc_rd_eabi.lib : memcpy.c.obj (.text:memcpy)
-                  000109ea    0000000c     Functions.obj (.text:TxUAC0)
-                  000109f6    00000006     rts430x_lc_rd_eabi.lib : exit.c.obj (.text:abort)
-                  000109fc    00000004                            : pre_init.c.obj (.text:_system_pre_init)
-                  00010a00    00000002                            : startup.c.obj (.text:_system_post_cinit)
+.text      0    00010000    00000a16     
+                  00010000    00000260     Functions.obj (.text:config_SEND)
+                  00010260    000001a6     Functions.obj (.text:config_INITIAL)
+                  00010406    00000084     AT_Commands.obj (.text:AT_CON)
+                  0001048a    00000082     AT_Commands.obj (.text:AT_ADDR)
+                  0001050c    00000082     AT_Commands.obj (.text:AT_DISC)
+                  0001058e    00000082     AT_Commands.obj (.text:AT_RENEW2)
+                  00010610    00000082     AT_Commands.obj (.text:AT_RESET2)
+                  00010692    0000006c     AT_Commands.obj (.text:AT_IMME2)
+                  000106fe    0000006c     AT_Commands.obj (.text:AT_NOTI)
+                  0001076a    0000006c     AT_Commands.obj (.text:AT_ROLE2)
+                  000107d6    00000062     main.obj (.text:main)
+                  00010838    0000005e     AT_Commands.obj (.text:AT_2)
+                  00010896    00000054     rts430x_lc_rd_eabi.lib : autoinit.c.obj (.text:__TI_auto_init_nobinit_nopinit_hold_wdt:__TI_auto_init_nobinit_nopinit_hold_wdt)
+                  000108ea    0000004a     Functions.obj (.text:SEND)
+                  00010934    0000003e     Functions.obj (.text:init_GPIOs)
+                  00010972    0000002a     Functions.obj (.text:init_UART)
+                  0001099c    00000024     rts430x_lc_rd_eabi.lib : copy_zero_init.c.obj (.text:decompress:ZI:__TI_zero_init_nomemset:__TI_zero_init_nomemset)
+                  000109c0    00000016                            : memset.c.obj (.text:memset)
+                  000109d6    00000014     Functions.obj (.text:init_Timer)
+                  000109ea    00000014     rts430x_lc_rd_eabi.lib : memcpy.c.obj (.text:memcpy)
+                  000109fe    0000000c     Functions.obj (.text:TxUAC0)
+                  00010a0a    00000006     rts430x_lc_rd_eabi.lib : exit.c.obj (.text:abort)
+                  00010a10    00000004                            : pre_init.c.obj (.text:_system_pre_init)
+                  00010a14    00000002                            : startup.c.obj (.text:_system_post_cinit)
 
 MODULE SUMMARY
 
        Module                 code   ro data   rw data
        ------                 ----   -------   -------
     .\
-       main.obj               1576   8         0      
-       AT_Commands.obj        1070   102       163    
-       Functions.obj          1220   15        0      
+       main.obj               1580   8         0      
+       AT_Commands.obj        1070   102       164    
+       Functions.obj          1240   15        0      
     +--+----------------------+------+---------+---------+
-       Total:                 3866   125       163    
+       Total:                 3890   125       164    
                                                       
     C:\ti\ccsv8\tools\compiler\ti-cgt-msp430_18.1.3.LTS\lib\rts430x_lc_rd_eabi.lib
        autoinit.c.obj         84     0         0      
@@ -317,18 +318,18 @@ MODULE SUMMARY
        Stack:                 0      0         160    
        Linker Generated:      0      18        0      
     +--+----------------------+------+---------+---------+
-       Grand Total:           4076   181       323    
+       Grand Total:           4100   181       324    
 
 
 LINKER GENERATED COPY TABLES
 
-__TI_cinit_table @ 00004a70 records: 1, size/record: 8, table size: 8
-	.bss: load addr=00004a66, load size=00000006 bytes, run addr=00002400, run size=000000a3 bytes, compression=zero_init
+__TI_cinit_table @ 00004a74 records: 1, size/record: 8, table size: 8
+	.bss: load addr=00004a6a, load size=00000006 bytes, run addr=00002400, run size=000000a4 bytes, compression=zero_init
 
 
 LINKER GENERATED HANDLER TABLE
 
-__TI_handler_table @ 00004a6c records: 1, size/record: 4, table size: 4
+__TI_handler_table @ 00004a70 records: 1, size/record: 4, table size: 4
 	index: 0, handler: __TI_zero_init
 
 
@@ -418,16 +419,16 @@ address   name
 00000732  ADC12MEM9                              
 00000733  ADC12MEM9_H                            
 00000732  ADC12MEM9_L                            
-00010824  AT_2                                   
-00010476  AT_ADDR                                
-000103f2  AT_CON                                 
-000104f8  AT_DISC                                
-0001067e  AT_IMME2                               
-000106ea  AT_NOTI                                
-0001057a  AT_RENEW2                              
-000105fc  AT_RESET2                              
-00010756  AT_ROLE2                               
-000109f6  C$$EXIT                                
+00010838  AT_2                                   
+0001048a  AT_ADDR                                
+00010406  AT_CON                                 
+0001050c  AT_DISC                                
+00010692  AT_IMME2                               
+000106fe  AT_NOTI                                
+0001058e  AT_RENEW2                              
+00010610  AT_RESET2                              
+0001076a  AT_ROLE2                               
+00010a0a  C$$EXIT                                
 000008c0  CBCTL0                                 
 000008c1  CBCTL0_H                               
 000008c0  CBCTL0_L                               
@@ -692,8 +693,8 @@ address   name
 0000012e  PMMRIE                                 
 0000012f  PMMRIE_H                               
 0000012e  PMMRIE_L                               
-000049c6  Port_1                                 
-000049d4  Port_2                                 
+000049ca  Port_1                                 
+000049d8  Port_2                                 
 00000158  RCCTL0                                 
 00000159  RCCTL0_H                               
 00000158  RCCTL0_L                               
@@ -752,7 +753,7 @@ address   name
 000004b6  RTCYEAR                                
 000004b7  RTCYEAR_H                              
 000004b6  RTCYEAR_L                              
-000108d6  SEND                                   
+000108ea  SEND                                   
 00000100  SFRIE1                                 
 00000101  SFRIE1_H                               
 00000100  SFRIE1_L                               
@@ -859,8 +860,8 @@ address   name
 000003e0  TB0EX0                                 
 000003ee  TB0IV                                  
 000003d0  TB0R                                   
-000049b0  TIMER0_A0_ISR                          
-000109ea  TxUAC0                                 
+000049b4  TIMER0_A0_ISR                          
+000109fe  TxUAC0                                 
 000005d0  UCA0ABCTL                              
 000005c6  UCA0BRW                                
 000005c7  UCA0BRW_H                              
@@ -1102,12 +1103,12 @@ address   name
 0000015c  WDTCTL_L                               
 00004400  __STACK_END                            
 000000a0  __STACK_SIZE                           
-00004a70  __TI_CINIT_Base                        
-00004a78  __TI_CINIT_Limit                       
-00004a6c  __TI_Handler_Table_Base                
-00004a70  __TI_Handler_Table_Limit               
-000049e2  __TI_ISR_TRAP                          
-00010882  __TI_auto_init_nobinit_nopinit_hold_wdt
+00004a74  __TI_CINIT_Base                        
+00004a7c  __TI_CINIT_Limit                       
+00004a70  __TI_Handler_Table_Base                
+00004a74  __TI_Handler_Table_Limit               
+000049e6  __TI_ISR_TRAP                          
+00010896  __TI_auto_init_nobinit_nopinit_hold_wdt
 0000ffd2  __TI_int41                             
 0000ffd4  __TI_int42                             
 0000ffd6  __TI_int43                             
@@ -1133,14 +1134,14 @@ address   name
 ffffffff  __TI_pprof_out_hndl                    
 ffffffff  __TI_prof_data_size                    
 ffffffff  __TI_prof_data_start                   
-00010988  __TI_zero_init_nomemset                
+0001099c  __TI_zero_init_nomemset                
 ffffffff  __c_args__                             
-00004994  _c_int00_noargs                        
+00004998  _c_int00_noargs                        
 0000fffe  _reset_vector                          
 00004360  _stack                                 
-00010a00  _system_post_cinit                     
-000109fc  _system_pre_init                       
-000109f6  abort                                  
+00010a14  _system_post_cinit                     
+00010a10  _system_pre_init                       
+00010a0a  abort                                  
 00002400  address                                
 00002440  address1                               
 0000244c  address2                               
@@ -1148,27 +1149,28 @@ ffffffff  __c_args__
 00002464  address4                               
 00002470  address_M                              
 00002420  answer                                 
-00010250  config_INITIAL                         
+00010260  config_INITIAL                         
 00010000  config_SEND                            
-0000249a  contador                               
-0000249b  dis_ok                                 
-0000249c  enviar                                 
-0000249d  estat                                  
-0000249e  get_address                            
+0000249a  connection                             
+0000249b  contador                               
+0000249c  dis_ok                                 
+0000249d  enviar                                 
+0000249e  estat                                  
+0000249f  get_address                            
 00002490  i                                      
-00010920  init_GPIOs                             
-000109c2  init_Timer                             
-0001095e  init_UART                              
+00010934  init_GPIOs                             
+000109d6  init_Timer                             
+00010972  init_UART                              
 00002492  j                                      
 00002494  k                                      
-0000249f  lost                                   
-000107c2  main                                   
-000024a0  master_detected                        
-000024a1  match                                  
-000109d6  memcpy                                 
-000109ac  memset                                 
+000024a0  lost                                   
+000107d6  main                                   
+000024a1  master_detected                        
+000024a2  match                                  
+000109ea  memcpy                                 
+000109c0  memset                                 
 00002496  n_letters                              
-000024a2  parameter1                             
+000024a3  parameter1                             
 0000248c  punter                                 
 00002498  u                                      
 0000247c  word_cap                               
@@ -1943,27 +1945,28 @@ address   name
 00002494  k                                      
 00002496  n_letters                              
 00002498  u                                      
-0000249a  contador                               
-0000249b  dis_ok                                 
-0000249c  enviar                                 
-0000249d  estat                                  
-0000249e  get_address                            
-0000249f  lost                                   
-000024a0  master_detected                        
-000024a1  match                                  
-000024a2  parameter1                             
+0000249a  connection                             
+0000249b  contador                               
+0000249c  dis_ok                                 
+0000249d  enviar                                 
+0000249e  estat                                  
+0000249f  get_address                            
+000024a0  lost                                   
+000024a1  master_detected                        
+000024a2  match                                  
+000024a3  parameter1                             
 00004360  _stack                                 
 00004400  USCI_A0_ISR                            
 00004400  __STACK_END                            
-00004994  _c_int00_noargs                        
-000049b0  TIMER0_A0_ISR                          
-000049c6  Port_1                                 
-000049d4  Port_2                                 
-000049e2  __TI_ISR_TRAP                          
-00004a6c  __TI_Handler_Table_Base                
-00004a70  __TI_CINIT_Base                        
-00004a70  __TI_Handler_Table_Limit               
-00004a78  __TI_CINIT_Limit                       
+00004998  _c_int00_noargs                        
+000049b4  TIMER0_A0_ISR                          
+000049ca  Port_1                                 
+000049d8  Port_2                                 
+000049e6  __TI_ISR_TRAP                          
+00004a70  __TI_Handler_Table_Base                
+00004a74  __TI_CINIT_Base                        
+00004a74  __TI_Handler_Table_Limit               
+00004a7c  __TI_CINIT_Limit                       
 0000ffd2  __TI_int41                             
 0000ffd4  __TI_int42                             
 0000ffd6  __TI_int43                             
@@ -1988,33 +1991,33 @@ address   name
 0000fffc  __TI_int62                             
 0000fffe  _reset_vector                          
 00010000  config_SEND                            
-00010250  config_INITIAL                         
-000103f2  AT_CON                                 
-00010476  AT_ADDR                                
-000104f8  AT_DISC                                
-0001057a  AT_RENEW2                              
-000105fc  AT_RESET2                              
-0001067e  AT_IMME2                               
-000106ea  AT_NOTI                                
-00010756  AT_ROLE2                               
-000107c2  main                                   
-00010824  AT_2                                   
-00010882  __TI_auto_init_nobinit_nopinit_hold_wdt
-000108d6  SEND                                   
-00010920  init_GPIOs                             
-0001095e  init_UART                              
-00010988  __TI_zero_init_nomemset                
-000109ac  memset                                 
-000109c2  init_Timer                             
-000109d6  memcpy                                 
-000109ea  TxUAC0                                 
-000109f6  C$$EXIT                                
-000109f6  abort                                  
-000109fc  _system_pre_init                       
-00010a00  _system_post_cinit                     
+00010260  config_INITIAL                         
+00010406  AT_CON                                 
+0001048a  AT_ADDR                                
+0001050c  AT_DISC                                
+0001058e  AT_RENEW2                              
+00010610  AT_RESET2                              
+00010692  AT_IMME2                               
+000106fe  AT_NOTI                                
+0001076a  AT_ROLE2                               
+000107d6  main                                   
+00010838  AT_2                                   
+00010896  __TI_auto_init_nobinit_nopinit_hold_wdt
+000108ea  SEND                                   
+00010934  init_GPIOs                             
+00010972  init_UART                              
+0001099c  __TI_zero_init_nomemset                
+000109c0  memset                                 
+000109d6  init_Timer                             
+000109ea  memcpy                                 
+000109fe  TxUAC0                                 
+00010a0a  C$$EXIT                                
+00010a0a  abort                                  
+00010a10  _system_pre_init                       
+00010a14  _system_post_cinit                     
 ffffffff  __TI_pprof_out_hndl                    
 ffffffff  __TI_prof_data_size                    
 ffffffff  __TI_prof_data_start                   
 ffffffff  __c_args__                             
 
-[837 symbols]
+[838 symbols]
