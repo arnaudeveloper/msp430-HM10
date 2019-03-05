@@ -176,124 +176,141 @@ void config_INITIAL()
 
 /*
  * config_SEND()
+ * This function is used to discover the master.
+ * 1st. Configure module as role master.
+ * 2nd. Discoverd all dispositives in a range.
+ * 3rd. Try to connect to each dispositive and ask if it is a master
+ *
  */
 void config_SEND()
 {
+    char x;                             //Counter loop "for"
 
-    __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
+    __delay_cycles(10000);              // Used to pause the data streaming and give enough time to process data
 
+    match=0;                            //Set match = 0
 
-    match=0;
-    while(match==0)   //IMME:
+    /* Set IMME=1. See datasheet */
+    while(match==0)                     // Resend the command is the communication fail
     {
-    n_letters=AT_IMME2(punter);
-    TA0CCTL0 = CCIE;                          //Iniciem el Timer
-    __bis_SR_register(LPM3_bits);   // Enter LPM0
+    n_letters=AT_IMME2(punter);         // AT_IMME command
+    TA0CCTL0 = CCIE;                    // Start Timer
+    __bis_SR_register(LPM3_bits);       // Enter LPM0
     }
 
-    __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
+    __delay_cycles(10000);              // Used to pause the data streaming and give enough time to process data
 
+    match=0;                            //Set match = 0
 
-    match=0;
-    while(match==0)   //ROLE:
+    /* Set ROLE=1. See datasheet */
+    while(match==0)                     // Resend the command is the communication fail
     {
-    n_letters=AT_ROLE2(punter);
-    TA0CCTL0 = CCIE;                          //Iniciem el Timer
-    __bis_SR_register(LPM3_bits);   // Enter LPM0
+    n_letters=AT_ROLE2(punter);         // AT_ROLE command
+    TA0CCTL0 = CCIE;                    // Start Timer
+    __bis_SR_register(LPM3_bits);       // Enter LPM0
     }
 
 
-    __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
-                                    //Prova de posar delay
+    __delay_cycles(10000);              // Used to pause the data streaming and give enough time to process data
 
-    match=0;
-    //DEBUG: El timer dona mol pel cul
-    TA0CCTL0 &= ~CCIE;                         // CCR0 interrupt disabled
-    dis_ok=TRUE;
+    match=0;                            // Set match = 0
 
-  //  while(match==0 && get_address==0)   //DISC:
-    while(match==0 || get_address==0)   //DISC:
+    /* The following lines ara used to launch the AT_DISC? command
+     * In that case we disable the timer and the detection of OK,
+     * in order to get improve the response detection.
+     * This command has a long response, so timer will interrupt
+     * and resend the command
+     */
+    TA0CCTL0 &= ~CCIE;                  // CCR0 interrupt disabled
+    dis_ok=TRUE;                        // Disabled OK detection
 
+    while(match==0 || get_address==0)   // Resend the command is the communication fail
     {
-    __delay_cycles(1000000);        //DEBUG: Amb breack points si que ho fa, sense no
-    n_letters=AT_DISC(punter);
-  //  TA0CCTL0 = CCIE;                          //Iniciem el Timer
-    __bis_SR_register(LPM3_bits);   // Enter LPM0
+    __delay_cycles(1000000);            // Used to pause the data streaming and give enough time to process data
+    n_letters=AT_DISC(punter);          // AT_DISC? command
+  //  TA0CCTL0 = CCIE;                          //Start Timer
+    __bis_SR_register(LPM3_bits);       // Enter LPM0
     }
 
-    __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
+    __delay_cycles(10000);              // Used to pause the data streaming and give enough time to process data
 
-//    match=0;
-//    while(match==0)   //CONN:
+    /* In order to use AT_CONN command. See datasheet */
+//    match=0;                          // Set match = 0
+//    while(match==0)                   // Resend the command is the communication fail
 //    {
-//    n_letters= AT_CONN(punter);
-//    TA0CCTL0 = CCIE;                          //Iniciem el Timer
-//    __bis_SR_register(LPM3_bits);   // Enter LPM0
+//    n_letters= AT_CONN(punter);       //AT_CONN command
+//    TA0CCTL0 = CCIE;                  //Start Timer
+//    __bis_SR_register(LPM3_bits);     // Enter LPM0
 //    }
 
-    match=0;
-    while(match==0)   //CONN:
-    {
-    n_letters= AT_CON(punter,address2);
-    TA0CCTL0 = CCIE;                          //Iniciem el Timer
-    __bis_SR_register(LPM3_bits);   // Enter LPM0
-    }
 
-    __delay_cycles(500000);        //DEBUG: Amb breack points si que ho fa, sense no
+    //DEBUG: Utilitzar la variable contador per saber a quants dispositius ens hem de connectar
 
-    SEND();   //Enviem dades
-
-//    match=0;
-//    while(match==0)   //CONN:
+//    for(x=contador;x>0;x--)
 //    {
-    n_letters= AT_2(punter);        //Ho utilitzem per desconnectar-se
-//    TA0CCTL0 = CCIE;                          //Iniciem el Timer
-//    __bis_SR_register(LPM3_bits);   // Enter LPM0
+//        //Codi
 //    }
 
-    __delay_cycles(500000);        //DEBUG: Amb breack points si que ho fa, sense no
+    match=0;                            // Set match = 0
+    x=0;
 
-    match=0;
-    while(match==0)   //CONN:
+    /* Set AT_CON*/
+    while(match==0)                     // Resend the command is the communication fail
     {
-    n_letters= AT_CON(punter,address3);
-    TA0CCTL0 = CCIE;                          //Iniciem el Timer
-    __bis_SR_register(LPM3_bits);   // Enter LPM0
+    n_letters= AT_CON(punter,address2); // AT_CON0 command. Connect to addres2
+    TA0CCTL0 = CCIE;                    // Start Timer
+    __bis_SR_register(LPM3_bits);       // Enter LPM0
+    if(x>10)match=1;                   // Used for bad communications
+    x++;
     }
 
-    __delay_cycles(500000);        //DEBUG: Amb breack points si que ho fa, sense no
+    __delay_cycles(500000);             // Used to pause the data streaming and give enough time to process data
 
-    SEND();   //Enviem dades
+    /* Send data and disonnect*/
+    SEND();
+    n_letters= AT_2(punter);            //Used to cut off communication
 
+    __delay_cycles(500000);             // Used to pause the data streaming and give enough time to process data
 
-//    match=0;
-//    while(match==0)   //CONN:
-//    {
-    n_letters= AT_2(punter);
-//    TA0CCTL0 = CCIE;                          //Iniciem el Timer
-//    __bis_SR_register(LPM3_bits);   // Enter LPM0
-//    }
+    match=0;                            // Set match = 0
+    x=0;
 
-    __delay_cycles(500000);        //DEBUG: Amb breack points si que ho fa, sense no
-
-    match=0;
-    while(match==0)   //CONN:
+    while(match==0)                     // Resend the command is the communication fail
     {
-    n_letters= AT_CON(punter,address4);
-    TA0CCTL0 = CCIE;                          //Iniciem el Timer
-    __bis_SR_register(LPM3_bits);   // Enter LPM0
+    n_letters= AT_CON(punter,address3); // AT_CON0 command. Connect to addres3
+    TA0CCTL0 = CCIE;                    // Start Timer
+    __bis_SR_register(LPM3_bits);       // Enter LPM0
+    if(x>10)match=1;                   // Used for bad communications
+    x++;
     }
 
-    __delay_cycles(500000);        //DEBUG: Amb breack points si que ho fa, sense no
+    __delay_cycles(500000);             // Used to pause the data streaming and give enough time to process data
 
-    //Configuracio completa
+    /* Send data and disonnect*/
+    SEND();
+    n_letters= AT_2(punter);            //Used to cut off communication
 
-    SEND();   //Enviem dades
+    __delay_cycles(500000);             // Used to pause the data streaming and give enough time to process data
 
-    n_letters= AT_2(punter);
+    match=0;                            // Set match = 0
+    x=0;
 
-    __delay_cycles(500000);        //DEBUG: Amb breack points si que ho fa, sense no
+    while(match==0)                     // Resend the command is the communication fail
+    {
+    n_letters= AT_CON(punter,address4); // AT_CON0 command. Connect to addres4
+    TA0CCTL0 = CCIE;                    // Start el Timer
+    __bis_SR_register(LPM3_bits);       // Enter LPM0
+    if(x>10)match=1;                   // Used for bad communications
+    x++;
+    }
 
+    __delay_cycles(500000);             // Used to pause the data streaming and give enough time to process data
+
+    /* Send data and disonnect*/
+    SEND();
+    n_letters= AT_2(punter);            //Used to cut off communication
+
+    __delay_cycles(500000);             // Used to pause the data streaming and give enough time to process data
 
 
 }

@@ -34,7 +34,7 @@
 /*
  * main
  * 1st. Initial config
- * 2on. Enter in an infinite loop.
+ * 2nd. Enter in an infinite loop.
  *      In this state program is go to sleep, wake up by an interrupt timer and toogle a LED continuosly.
  *      An interrupt could change the default state for transmit data, or establish connection with another device.
  *      There are 3 possible states:
@@ -123,6 +123,7 @@ __interrupt void USCI_A0_ISR(void)
           P1OUT ^= 0x01;                            // ON LED P1.0
           answer[0]=answer[j];
           j=1;//Ja hem omplert la posico zero d'answer
+              //DEBUG: hauria de ser j=0, ja que al final incrementem el valor de j
 
       }
 

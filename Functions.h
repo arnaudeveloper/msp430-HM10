@@ -31,6 +31,10 @@ char address3[12];      // MAC address 2
 
 char address4[12];      // MAC address 3
 
+char address_M[12];     // Master MAC address
+
+unsigned int contador;  // Used for count the number of MAC address captured
+
 char match;             // Used for matching a desired/correct answer
 
 char get_address;       // Used for inform of the acquisition of a MAC address
@@ -61,7 +65,6 @@ char enviar;
 char *punter;
 
 
-unsigned int contador;  // Used for count the number of MAC address captured
 
 
 
