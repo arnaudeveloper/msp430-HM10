@@ -254,7 +254,7 @@ int AT_DISC(char *punter)
 int AT_CONN(char *punter, char dis)
 {
     int i=0;
-    char s[1]=dis;
+    char s[1]=dis;  //DEBUG: No l'entenc?¿
 
     byte bCount,bPacketLength;
 //    byte TxBuffer[]={'A','T','+','C','O','N','N','0'}; //En connectem al dispositiu 1

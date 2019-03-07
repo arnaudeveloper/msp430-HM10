@@ -84,6 +84,10 @@ void config_INITIAL();
 void config_SEND();
 
 void SEND();
+
+void send_rol();
+
+void send_ack();
 //void DISCONNECT();
 
 void TxUAC0(byte TXData);

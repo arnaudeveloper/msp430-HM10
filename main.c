@@ -87,6 +87,21 @@ int main(void)
               config_INITIAL();
               estat=0;
               break;
+          case 4:
+              //Codi pel mode esclau, per respondre les preguntes que li fa el master
+              P1OUT ^= 0x01;                            // ON LED P1.0
+              //resposta llegir answer
+              switch (answer[2])
+              {
+                  case 'M': //master?
+
+                      send_rol();
+                      break;
+              }
+
+
+
+              break;
           default:
               //codi
               TA0CCTL0 = CCIE;                //Iniciem el Timer
@@ -136,6 +151,7 @@ __interrupt void USCI_A0_ISR(void)
               {
                   //Codi per resposndre a la pregunta
                   P1OUT ^= 0x01;                            // ON LED P1.0
+                  estat = 4;
 
               }
           }

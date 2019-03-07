@@ -266,10 +266,13 @@ void config_SEND()
 //    }
 
     //Cambiem la velocitat del rellotge per donar mes temps de resposta
+    //TODO: Fins aqui OK.
     TA0CCR0 = 12800;    //PROVA, sembla que guai
 
     match=0;                            // Set match = 0
     x=0;
+    connection = FALSE;
+    lost=0;
 
 
     /* Set AT_CON*/
@@ -290,11 +293,18 @@ void config_SEND()
 
     __delay_cycles(500000);             // Used to pause the data streaming and give enough time to process data
 
+    //TODO: DEBUG: dona un fals positiu. Surt com si s'hagues connectat en el dipostiu pero en realitat no estableix connexio.
+    //      Aixo passa amb alguns dispostius Bluetooth que no son el HM-10
+    //      Es queda penjat
+    //SOLUCIO: possible solucio es implementar la resposta com a forma de control
     if(connection)      //ens serveix per detectar si hem sortit pq hem fet una connexio o pq a passat l'estona
     {
+        //DEBUG: ok ens hem connectat, però si on rebem resposta no es un modol que volguem
         /* Send data and disonnect*/
         SEND();
-        //DEBUG: ESPERAR LA RESPOSTA
+        //DEBUG: ESPERAR LA RESPOSTA. Es penja i no se on va?¿
+        ///TODO: DEBUG: no rep correctament la resposta!!! (del msp)
+        //DEBUG: si la rep actua correctament i continua amb el procediment normal
     //    TA0CCTL0 = CCIE;                    // DEBUG: Per si de cas
         __bis_SR_register(LPM3_bits);       // DEBUG: Aquesta lina es perillosa ja que si l'enviem a dormir sense estar segur que la connexio es fiable, potser no rebra mai una resposta
         if(master_detected)
@@ -308,61 +318,92 @@ void config_SEND()
             TA0CCTL0 = CCIE;                    // Start Timer
             __bis_SR_register(LPM3_bits);       // Enter LPM0
         }
+        //DEBUG: Ha saltat, tot i tenir la connexio?¿ I no ha enviat res?¿
     }
-
-    //Ho fico adalt
-////    n_letters= AT_2(punter);            //Used to cut off communication
-//    //DEBUG: hauriem d'esperar rebre LOST
-//    while(lost==0)                     // Resend the command is the communication fail
-//    {
-//    n_letters= AT_2(punter);            //Used to cut off communication
-//    TA0CCTL0 = CCIE;                    // Start Timer
-//    __bis_SR_register(LPM3_bits);       // Enter LPM0
-////    if(x>10)match=1;                   // Used for bad communications
-////    x++;
-//    }
 
     __delay_cycles(500000);             // Used to pause the data streaming and give enough time to process data
 
     connection = FALSE;
     match=0;                            // Set match = 0
     x=0;
+    lost=0;     //DEBUG, sino no es desconnecta!!
 
     while(match==0)                     // Resend the command is the communication fail
     {
-    n_letters= AT_CON(punter,address3); // AT_CON0 command. Connect to addres3
-    TA0CCTL0 = CCIE;                    // Start Timer
-    __bis_SR_register(LPM3_bits);       // Enter LPM0
-    if(x>10)match=1;                   // Used for bad communications
-    x++;
+        //DEBUG: WAIT FOR A RESPONSE!!
+        n_letters= AT_CON(punter,address3); // AT_CON0 command. Connect to addres2
+        TA0CCTL0 = CCIE;                    // Start Timer
+        __bis_SR_register(LPM3_bits);       // Enter LPM0
+        if(x>10)match=1;                   // Used for bad communications
+        x++;
+
+//        __delay_cycles(100000);             // Used to pause the data streaming and give enough time to process data
     }
 
     __delay_cycles(500000);             // Used to pause the data streaming and give enough time to process data
 
-    /* Send data and disonnect*/
-    SEND();
-    n_letters= AT_2(punter);            //Used to cut off communication
+    if(connection)      //ens serveix per detectar si hem sortit pq hem fet una connexio o pq a passat l'estona
+    {
+        /* Send data and disonnect*/
+        SEND();
+        //DEBUG: ESPERAR LA RESPOSTA
+    //    TA0CCTL0 = CCIE;                    // DEBUG: Per si de cas
+        __bis_SR_register(LPM3_bits);       // DEBUG: Aquesta lina es perillosa ja que si l'enviem a dormir sense estar segur que la connexio es fiable, potser no rebra mai una resposta
+        if(master_detected)
+        {
+            memcpy(address_M, address3,12);
+        }
+
+        while(lost==0)                     // Resend the command is the communication fail
+        {
+            n_letters= AT_2(punter);            //Used to cut off communication
+            TA0CCTL0 = CCIE;                    // Start Timer
+            __bis_SR_register(LPM3_bits);       // Enter LPM0
+        }
+    }
+
+
 
     __delay_cycles(500000);             // Used to pause the data streaming and give enough time to process data
 
+    connection = FALSE;
     match=0;                            // Set match = 0
     x=0;
+    lost=0;
 
     while(match==0)                     // Resend the command is the communication fail
     {
-    n_letters= AT_CON(punter,address4); // AT_CON0 command. Connect to addres4
-    TA0CCTL0 = CCIE;                    // Start el Timer
-    __bis_SR_register(LPM3_bits);       // Enter LPM0
-    if(x>10)match=1;                   // Used for bad communications
-    x++;
+        //DEBUG: WAIT FOR A RESPONSE!!
+        n_letters= AT_CON(punter,address4); // AT_CON0 command. Connect to addres2
+        TA0CCTL0 = CCIE;                    // Start Timer
+        __bis_SR_register(LPM3_bits);       // Enter LPM0
+        if(x>10)match=1;                   // Used for bad communications
+        x++;
+
+//        __delay_cycles(100000);             // Used to pause the data streaming and give enough time to process data
     }
 
     __delay_cycles(500000);             // Used to pause the data streaming and give enough time to process data
 
-    /* Send data and disonnect*/
-    SEND();
-    n_letters= AT_2(punter);            //Used to cut off communication
+    if(connection)      //ens serveix per detectar si hem sortit pq hem fet una connexio o pq a passat l'estona
+    {
+        /* Send data and disonnect*/
+        SEND();
+        //DEBUG: ESPERAR LA RESPOSTA
+    //    TA0CCTL0 = CCIE;                    // DEBUG: Per si de cas
+        __bis_SR_register(LPM3_bits);       // DEBUG: Aquesta lina es perillosa ja que si l'enviem a dormir sense estar segur que la connexio es fiable, potser no rebra mai una resposta
+        if(master_detected)
+        {
+            memcpy(address_M, address4,12);
+        }
 
+        while(lost==0)                     // Resend the command is the communication fail
+        {
+            n_letters= AT_2(punter);            //Used to cut off communication
+            TA0CCTL0 = CCIE;                    // Start Timer
+            __bis_SR_register(LPM3_bits);       // Enter LPM0
+        }
+    }
     __delay_cycles(500000);             // Used to pause the data streaming and give enough time to process data
 
 
@@ -388,6 +429,37 @@ void SEND()
     memcpy(TxBuffer+3,address1,12); //Enviem l'adresa
 
     bPacketLength = sizeof(TxBuffer);
+    for(bCount=0; bCount<bPacketLength; bCount++)       //Aquest bucle es el que envia la trama al Modul Robot.
+    {
+        TxUAC0(TxBuffer[bCount]);
+    }
+
+    while(UCA1STAT & UCBUSY);                           //Espera fins que s'hagi transmes l'ulTim byte.
+}
+
+void send_rol()
+{
+    byte bCount,bPacketLength;
+    byte TxBuffer[15]={'#','!','M'};
+
+    memcpy(TxBuffer+3,address1,12); //Enviem l'adresa
+
+    bPacketLength = sizeof(TxBuffer);
+    for(bCount=0; bCount<bPacketLength; bCount++)       //Aquest bucle es el que envia la trama al Modul Robot.
+    {
+        TxUAC0(TxBuffer[bCount]);
+    }
+
+    while(UCA1STAT & UCBUSY);                           //Espera fins que s'hagi transmes l'ulTim byte.
+}
+
+void send_ack()
+{
+    byte bCount,bPacketLength;
+    byte TxBuffer[15]={'#','!'};
+
+    bPacketLength = sizeof(TxBuffer);
+
     for(bCount=0; bCount<bPacketLength; bCount++)       //Aquest bucle es el que envia la trama al Modul Robot.
     {
         TxUAC0(TxBuffer[bCount]);
