@@ -99,6 +99,8 @@ int main(void)
                       break;
               }
 
+              estat=0;      //retorna a l'estat normal un cop enviada la resposta
+
 
 
               break;

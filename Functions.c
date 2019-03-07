@@ -269,10 +269,16 @@ void config_SEND()
     //TODO: Fins aqui OK.
     TA0CCR0 = 12800;    //PROVA, sembla que guai
 
+    dis_ok=FALSE;                        // Enable OK detection
+
+
     match=0;                            // Set match = 0
     x=0;
     connection = FALSE;
     lost=0;
+
+    __delay_cycles(500000);             // Used to pause the data streaming and give enough time to process data
+
 
 
     /* Set AT_CON*/
@@ -304,6 +310,7 @@ void config_SEND()
         SEND();
         //DEBUG: ESPERAR LA RESPOSTA. Es penja i no se on va?¿
         ///TODO: DEBUG: no rep correctament la resposta!!! (del msp)
+        // Introduir un bucle while que permeti reenviar i detectar si hem perdut la connexio
         //DEBUG: si la rep actua correctament i continua amb el procediment normal
     //    TA0CCTL0 = CCIE;                    // DEBUG: Per si de cas
         __bis_SR_register(LPM3_bits);       // DEBUG: Aquesta lina es perillosa ja que si l'enviem a dormir sense estar segur que la connexio es fiable, potser no rebra mai una resposta
@@ -314,6 +321,8 @@ void config_SEND()
 
         while(lost==0)                     // Resend the command is the communication fail
         {
+            __delay_cycles(500000);             // Used to pause the data streaming and give enough time to process data
+
             n_letters= AT_2(punter);            //Used to cut off communication
             TA0CCTL0 = CCIE;                    // Start Timer
             __bis_SR_register(LPM3_bits);       // Enter LPM0
@@ -383,6 +392,9 @@ void config_SEND()
 //        __delay_cycles(100000);             // Used to pause the data streaming and give enough time to process data
     }
 
+//    memset(&answer,0, sizeof answer);     //Reset of the answer variable
+
+
     __delay_cycles(500000);             // Used to pause the data streaming and give enough time to process data
 
     if(connection)      //ens serveix per detectar si hem sortit pq hem fet una connexio o pq a passat l'estona
@@ -426,6 +438,9 @@ void SEND()
     byte bCount,bPacketLength;
     byte TxBuffer[15]={'#','?','M'};
 
+    //memset(&answer,0, sizeof answer);     //Reset of the answer variable
+
+//    memset(&)
     memcpy(TxBuffer+3,address1,12); //Enviem l'adresa
 
     bPacketLength = sizeof(TxBuffer);
