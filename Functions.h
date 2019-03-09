@@ -67,7 +67,9 @@ char dis_ok;            // Used for disable the detection of OK??
 
 char enviar;
 
-char *punter;
+//char *punter;
+static char *pointer;
+
 
 
 

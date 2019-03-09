@@ -160,6 +160,7 @@ __interrupt void USCI_A0_ISR(void)
           if(answer[1]=='!')//resposta
           {
               //Codi per detectar la resposta
+              match=TRUE;
               //Codi per detectar la pregunta
               if(answer[2]=='M')//Ens pregunten si som master
               {
