@@ -73,7 +73,7 @@ int main(void)
           case 1:
               /* In that case, discover the other Bluetooth devices*/
               config_DISC();
-              estat=0;
+              estat=2;
               break;
           case 2:
               /* In that case, return to initial configure, slave rol*/
@@ -109,7 +109,7 @@ int main(void)
               break;
           }
       }
-    }
+}
 
 //Echo back RX charcter, confirm TX buffer is ready first
 #pragma vector=USCI_A0_VECTOR

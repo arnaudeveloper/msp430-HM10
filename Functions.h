@@ -48,6 +48,7 @@ char master_detected;   // Used to indicate if it is a master
 char get_address;       // Used for inform of the acquisition of a MAC address
                         // Combined with match is used to control the resend of the AT command
 
+
 unsigned int i,j,k,u;   // Variables used to count
                         // i: Successive data to '+' count. (Always the AT response is like: OK+[DATA]. Except in AT alone commmand.
                         // j: RX data count

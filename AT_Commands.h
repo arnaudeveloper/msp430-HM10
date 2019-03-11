@@ -33,18 +33,4 @@ int AT_CONN(char *punter, char dis);
 int AT_CON(char *punter, char addrex[12]);
 
 
-//void AT_ROLE();
-
-//int AT_NOTI_0(char *punter);
-
-//void AT_ROLE();
-
-//void AT_IMME();
-
-//void AT_RESET();
-
-//void AT_RENEW();
-
-//void AT();
-
 #endif /* AT_COMMANDS_H_ */

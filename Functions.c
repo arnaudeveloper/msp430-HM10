@@ -34,7 +34,6 @@ void init_UART()
 void init_Timer()
 {
     TA0CCTL0 &= ~CCIE;                          // CCR0 interrupt disabled
-//    TA0CCR0 = 3200;
     TA0CCR0 = 12800;
     TA0CTL = TASSEL_1 + MC_1 + TACLR;         // ACLK, upmode, clear TAR
 }
@@ -201,10 +200,10 @@ void config_DISC()
 
     __delay_cycles(10000);              // Used to pause the data streaming and give enough time to process data
 
-    match=0;                            //Set match = 0
+    match=0;                            // Set match = 0
 
     /* Set IMME=1. See datasheet */
-    while(match==0)                     // Resend the command is the communication fail
+    while(match==0)                     // Resend the command if the communication fail
     {
     n_letters=AT_IMME2(pointer);        // AT_IMME command
     TA0CCTL0 = CCIE;                    // Start Timer
@@ -213,10 +212,10 @@ void config_DISC()
 
     __delay_cycles(10000);              // Used to pause the data streaming and give enough time to process data
 
-    match=0;                            //Set match = 0
+    match=0;                            // Set match = 0
 
     /* Set ROLE=1. See datasheet */
-    while(match==0)                     // Resend the command is the communication fail
+    while(match==0)                     // Resend the command if the communication fail
     {
     n_letters=AT_ROLE2(pointer);        // AT_ROLE command
     TA0CCTL0 = CCIE;                    // Start Timer
@@ -233,10 +232,11 @@ void config_DISC()
      * This command has a long response, so timer will interrupt
      * and resend the command
      */
+
     TA0CCTL0 &= ~CCIE;                  // CCR0 interrupt disabled
     dis_ok=TRUE;                        // Disabled OK detection
 
-    while(match==0 || get_address==0)   // Resend the command is the communication fail
+    while(match==0 || get_address==0)   // Resend the command if the communication fail
     {
     __delay_cycles(1000000);            // Used to pause the data streaming and give enough time to process data
     n_letters=AT_DISC(pointer);         // AT_DISC? command
@@ -265,10 +265,10 @@ void config_DISC()
 //        n_letters= AT_2(pointer);            //Used to cut off communication
 //    }
 
-    //TODO: Fins aqui OK.
-    /* Change timer CCR to get more time for processing */
-    //DEBUG: I si ho faig desdel principi?
-//    TA0CCR0 = 12800;
+
+    /* The folowing lines are used to connect and check if the module is a master */
+
+    /* Start trying connect to every device */
 
     dis_ok=FALSE;                        // Enable OK detection
 
@@ -277,7 +277,6 @@ void config_DISC()
     connection = FALSE;
     lost=FALSE;
     master_detected= FALSE;
-
 
     __delay_cycles(500000);             // Used to pause the data streaming and give enough time to process data
 
@@ -476,7 +475,7 @@ void config_DISC()
                 __bis_SR_register(LPM3_bits);       // Enter LPM0
             }
         }
-    }
+    }//End of 3rd address
 
 }//End of config_DISC()
 
