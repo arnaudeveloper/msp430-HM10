@@ -14,6 +14,8 @@
 
 typedef unsigned char byte;
 
+/* Global variables */
+
 char answer[32];        //Used for capture RX packets from HM-10
 
 char word_cap[8];       //Used for capture successive data to '+' in an AT response
@@ -33,14 +35,15 @@ char address4[12];      // MAC address 3
 
 char address_M[12];     // Master MAC address
 
-char contador;  // Used for count the number of MAC address captured
+char contador;          // Used for count the number of MAC address captured
 
 char match;             // Used for matching a desired/correct answer
 
 char lost;              // Per indicar que em perdut una connexio
+
 char connection;        // Per indicar que hem realitzat una connexio
 
-char master_detected;   // Per indicar que hem trobat el master
+char master_detected;   // Used to indicate if it is a master
 
 char get_address;       // Used for inform of the acquisition of a MAC address
                         // Combined with match is used to control the resend of the AT command
@@ -57,23 +60,18 @@ char estat;             // Used to save the state.
 
 int n_letters;
 
-//char dis_ok=FALSE;
-//char get_address=FALSE;
-//char enviar = FALSE;
-
 char dis_ok;            // Used for disable the detection of OK??
 
 
 
-char enviar;
+char enviar;            //
 
-//char *punter;
-static char *pointer;
-
+static char *pointer;   // Used to point the first character of the word_check array
 
 
 
 
+/* Functions */
 
 void init_UART();
 
@@ -83,7 +81,7 @@ void init_GPIOs();
 
 void config_INITIAL();
 
-void config_SEND();
+void config_DISC();
 
 void SEND();
 

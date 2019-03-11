@@ -71,43 +71,41 @@ int main(void)
           switch(estat)
           {
           case 1:
-              //Codi per connectarse
-              config_SEND();
+              /* In that case, discover the other Bluetooth devices*/
+              config_DISC();
               estat=0;
               break;
           case 2:
-              //codi per desconnectarse
+              /* In that case, return to initial configure, slave rol*/
               config_INITIAL();
               estat=0;
               break;
           case 3:
-              //codi per connectarse enviar i desconectarse
-              config_SEND();
+              /* In that case, 1st is connected to a specific MAC address, send data and cut the communication */
+              //DEBUG: picar codi
+              config_DISC();
               SEND();
               config_INITIAL();
               estat=0;
               break;
           case 4:
-              //Codi pel mode esclau, per respondre les preguntes que li fa el master
-              P1OUT ^= 0x01;                            // ON LED P1.0
-              //resposta llegir answer
+              /*In that case, sends the answer after analyze the question*/
+              /*Analyze the 2nd position of the answer array*/
               switch (answer[2])
               {
                   case 'M': //master?
 
-                      send_rol();
+                      send_rol();       //Answer
                       break;
               }
 
-              estat=0;      //retorna a l'estat normal un cop enviada la resposta
-
-
-
+              /*Return to normal state after answer*/
+              estat=0;
               break;
           default:
-              //codi
-              TA0CCTL0 = CCIE;                //Iniciem el Timer
-              __bis_SR_register(LPM3_bits);   // Enter LPM0
+              /*Default code for infinite loop*/
+              TA0CCTL0 = CCIE;                  // Start Timer
+              __bis_SR_register(LPM3_bits);     // Enter LPM0
               break;
           }
       }
@@ -137,47 +135,42 @@ __interrupt void USCI_A0_ISR(void)
       /* Used to detect the owner protocol */
       if(answer[j]=='#')
       {
-          P1OUT ^= 0x01;                            // ON LED P1.0
           answer[0]=answer[j];
-//          j=1;//Ja hem omplert la posico zero d'answer
-          j=0; //DEBUG: hauria de ser j=0, ja que al final incrementem el valor de j
+          j=0;                  // Start to build the array. At the end j will increase
 
       }
 
-      if(answer[0]=='#')
+      if(answer[0]=='#')    // Symbol to start the protocol
       {
-          if(answer[1]=='?')//Pregunta
+          if(answer[1]=='?')    // Question
           {
-              //Codi per detectar la pregunta
-              if(answer[2]=='M')//Ens pregunten si som master
+              if(answer[2]=='M')    // Are you a master?
               {
-                  //Codi per resposndre a la pregunta
-                  P1OUT ^= 0x01;                            // ON LED P1.0
+                  /* Change "estat" to 4, for answer the question */
                   estat = 4;
-
               }
+              //Code...
           }
-          if(answer[1]=='!')//resposta
+
+          if(answer[1]=='!')    // Answer
           {
-              //Codi per detectar la resposta
               match=TRUE;
-              //Codi per detectar la pregunta
-              if(answer[2]=='M')//Ens pregunten si som master
+
+              if(answer[2]=='M')    // It is a master
               {
-                  //Codi per resposndre a la pregunta
-                  P1OUT ^= 0x01;                            // ON LED P1.0
-                  master_detected = TRUE; //Per identificar que hem trobat el master
+                  /* It is a master, so we must to save the MAC address */
+                  master_detected = TRUE;
 
                   i=j=k=0;      //Reset
-                  memset(&answer,0, sizeof answer);     //Reset of the answer variable
-                  memset(&word_cap,0,sizeof word_cap);  //Reset of the word_cap variable
-
-                  __bic_SR_register_on_exit(LPM3_bits);
-
+                  memset(&answer,0, sizeof answer);     // Reset of the answer variable
+                  memset(&word_cap,0,sizeof word_cap);  // Reset of the word_cap variable
+                  __bic_SR_register_on_exit(LPM3_bits); // Exit LPM
 
               }
+              //Code...
           }
-      }
+          //Code...
+      }// End of owner protocol
 
       /* Used to capture an "OK" response from HM-10 */
       if(answer[j-1]=='O' && answer[j]=='K')
@@ -198,7 +191,7 @@ __interrupt void USCI_A0_ISR(void)
               __bic_SR_register_on_exit(LPM3_bits);
           }
           break;
-      }//Fi if OK
+      }//End of OK
 
 
       /*
