@@ -2,7 +2,10 @@
  * Functions.c
  *
  *  Created on: 3 de des. 2018
- *      Author: arnau
+ *      Author: arnaudeveloper
+ *      Email: developerarnau@gmail.com
+ *      License: GNU General Public License v3.0
+ *      https://github.com/arnaudeveloper/msp430-HM10
  */
 
 #include <msp430.h>

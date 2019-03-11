@@ -1,8 +1,11 @@
 /*
  * AT_Commands.h
  *
- *  Created on: 4 de març 2019
- *      Author: arnau
+ *  Created on: 3 de des. 2018
+ *      Author: arnaudeveloper
+ *      Email: developerarnau@gmail.com
+ *      License: GNU General Public License v3.0
+ *      https://github.com/arnaudeveloper/msp430-HM10
  */
 #include <msp430.h>
 
