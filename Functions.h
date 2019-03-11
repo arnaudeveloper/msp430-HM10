@@ -39,9 +39,9 @@ char contador;          // Used for count the number of MAC address captured
 
 char match;             // Used for matching a desired/correct answer
 
-char lost;              // Per indicar que em perdut una connexio
+char lost;              // Used to indicate that the connection has benn lost
 
-char connection;        // Per indicar que hem realitzat una connexio
+char connection;        // Used to indicate that we have a connection
 
 char master_detected;   // Used to indicate if it is a master
 
@@ -88,7 +88,6 @@ void SEND();
 void send_rol();
 
 void send_ack();
-//void DISCONNECT();
 
 void TxUAC0(byte TXData);
 

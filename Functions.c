@@ -33,11 +33,9 @@ void init_UART()
  */
 void init_Timer()
 {
-//    P1DIR |= 0x01;                            // P1.0 output
     TA0CCTL0 &= ~CCIE;                          // CCR0 interrupt disabled
-//    TA0CCR0 = 50000;
-    TA0CCR0 = 3200;
-//    TA0CTL = TASSEL_2 + MC_1 + TACLR;         // SMCLK, upmode, clear TAR
+//    TA0CCR0 = 3200;
+    TA0CCR0 = 12800;
     TA0CTL = TASSEL_1 + MC_1 + TACLR;         // ACLK, upmode, clear TAR
 }
 
@@ -97,85 +95,85 @@ void config_INITIAL()
 
     i=j=k=u=0;
 
-    contador =0; //Variable per contar les adreces trobades
-
-
-    //DEBUG: Falta crear una resposta per quan passa un cert temps i la UART no ha respost
+    contador = 0;
     match=0;
-    while(match==0)   //AT: Sembla que ho fa correcte
+
+    /* AT command */
+    while(match==0)
     {
     n_letters=AT_2(pointer);
-    TA0CCTL0 = CCIE;                          //Iniciem el Timer
-    __bis_SR_register(LPM3_bits);   // Enter LPM0
+    TA0CCTL0 = CCIE;                    // Start Timer
+    __bis_SR_register(LPM3_bits);       // Enter LPM
     }
 
-    __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
-
-
+    __delay_cycles(10000);
     match=0;
-    while(match==0)   //RENEW: Sembla que ho fa correcte
+
+    /* RENEW command */
+    while(match==0)
     {
     n_letters=AT_RENEW2(pointer);
-    TA0CCTL0 = CCIE;                          //Iniciem el Timer
-    __bis_SR_register(LPM3_bits);   // Enter LPM0
+    TA0CCTL0 = CCIE;                    // Start Timer
+    __bis_SR_register(LPM3_bits);       // Enter LPM
     }
 
-    __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
-
-
+    __delay_cycles(10000);
     match=0;
-    while(match==0)   //RESET: Sembla que ho fa correcte
+
+    /* RESET command */
+    while(match==0)
     {
     n_letters=AT_RESET2(pointer);
-    TA0CCTL0 = CCIE;                          //Iniciem el Timer
-    __bis_SR_register(LPM3_bits);   // Enter LPM0
+    TA0CCTL0 = CCIE;                    // Start Timer
+    __bis_SR_register(LPM3_bits);       // Enter LPM
     }
 
-    __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
-
-
+    __delay_cycles(10000);
     match=0;
-    while(match==0)   //DEBUG: Sembla que ho fa correcte
+
+    /* AT command*/
+    while(match==0)
     {
     n_letters=AT_2(pointer);
-    TA0CCTL0 = CCIE;                          //Iniciem el Timer
-    __bis_SR_register(LPM3_bits);   // Enter LPM0
+    TA0CCTL0 = CCIE;                    // Start Timer
+    __bis_SR_register(LPM3_bits);       // Enter LPM
     }
 
-    __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
-
+    __delay_cycles(10000);
     match=0;
-    while(match==0)   //DEBUG: Sembla que ho fa correcte
+
+    /* NOTI command */
+    while(match==0)
     {
     n_letters=AT_NOTI(pointer);
-    TA0CCTL0 = CCIE;                          //Iniciem el Timer
-    __bis_SR_register(LPM3_bits);   // Enter LPM0
+    TA0CCTL0 = CCIE;                    // Start Timer
+    __bis_SR_register(LPM3_bits);       // Enter LPM
     }
 
-    __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
-
+    __delay_cycles(10000);
     match=0;
-    while(match==0)   //DEBUG: Sembla que ho fa correcte
+
+    /* AT command*/
+    while(match==0)
     {
     n_letters=AT_2(pointer);
-    TA0CCTL0 = CCIE;                          //Iniciem el Timer
-    __bis_SR_register(LPM3_bits);   // Enter LPM0
+    TA0CCTL0 = CCIE;                    // Start Timer
+    __bis_SR_register(LPM3_bits);       // Enter LPM0
     }
 
-    __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
-
-//    TA0CCTL0 &= ~CCIE;                         // CCR0 interrupt disabled
-
+    __delay_cycles(10000);
     match=0;
-    while(match==0)   //DEBUG: Sembla que ho fa correcte
+
+    /* ADDR command */
+    while(match==0)
     {
-    __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
+    __delay_cycles(10000);
     n_letters=AT_ADDR(pointer);
-    TA0CCTL0 = CCIE;                          //Iniciem el Timer
-    __bis_SR_register(LPM3_bits);   // Enter LPM0
+    TA0CCTL0 = CCIE;                    // Start Timer
+    __bis_SR_register(LPM3_bits);       // Enter LPM0
     }
 
-    __delay_cycles(10000);        //DEBUG: Amb breack points si que ho fa, sense no
+    __delay_cycles(10000);
 
 }
 
@@ -208,7 +206,7 @@ void config_DISC()
     /* Set IMME=1. See datasheet */
     while(match==0)                     // Resend the command is the communication fail
     {
-    n_letters=AT_IMME2(pointer);         // AT_IMME command
+    n_letters=AT_IMME2(pointer);        // AT_IMME command
     TA0CCTL0 = CCIE;                    // Start Timer
     __bis_SR_register(LPM3_bits);       // Enter LPM0
     }
@@ -270,7 +268,7 @@ void config_DISC()
     //TODO: Fins aqui OK.
     /* Change timer CCR to get more time for processing */
     //DEBUG: I si ho faig desdel principi?
-    TA0CCR0 = 12800;
+//    TA0CCR0 = 12800;
 
     dis_ok=FALSE;                        // Enable OK detection
 
@@ -286,14 +284,12 @@ void config_DISC()
     /* Set AT_CON*/
     while(match==0)                     // Resend the command is the communication fail
     {
-        n_letters= AT_CON(pointer,address2); // AT_CON0 command. Connect to addres2
-        TA0CCTL0 = CCIE;                    // Start Timer
-        __bis_SR_register(LPM3_bits);       // Enter LPM0
-        if(x>10)match=1;                   // Used for bad communications
+        n_letters= AT_CON(pointer,address2);    // AT_CON0 command. Connect to addres2
+        TA0CCTL0 = CCIE;                        // Start Timer
+        __bis_SR_register(LPM3_bits);           // Enter LPM0
+        if(x>10)match=1;                        // Used for bad communications
         x++;
     }
-    //Si x>10 significa que no hem pogut establir connexio
-    //Si connection = TRUE, significa que em establait connexio
 
     __delay_cycles(500000);             // Used to pause the data streaming and give enough time to process data
 
@@ -334,7 +330,6 @@ void config_DISC()
         else
         {
             /* If it is a master, save the address*/
-
             if(master_detected)
             {
                 memcpy(address_M, address2,12);
@@ -399,7 +394,6 @@ void config_DISC()
         }
         else
         {
-
             if(master_detected)
             {
                 memcpy(address_M, address3,12);
@@ -424,7 +418,6 @@ void config_DISC()
     lost=0;
 
     __delay_cycles(500000);                     // Used to pause the data streaming and give enough time to process data
-
 
     while(match==0)                             // Resend the command is the communication fail
     {
@@ -485,14 +478,14 @@ void config_DISC()
         }
     }
 
-}
+}//End of config_DISC()
 
 /*
  * TxUAC0(byte TXData)
  */
 void TxUAC0(byte TXData)
 {
-    while (!(UCA0IFG & UCTXIFG)); //Espera a que estigui preparat el buffer de transmissio.
+    while (!(UCA0IFG & UCTXIFG));   //Wait until TX buffer will be ready
     UCA0TXBUF = TXData;
 }
 
@@ -504,18 +497,16 @@ void SEND()
     byte bCount,bPacketLength;
     byte TxBuffer[15]={'#','?','M'};
 
-    //memset(&answer,0, sizeof answer);     //Reset of the answer variable
-
-//    memset(&)
-    memcpy(TxBuffer+3,address1,12); //Enviem l'adresa
+    memcpy(TxBuffer+3,address1,12);     //Send the address
 
     bPacketLength = sizeof(TxBuffer);
-    for(bCount=0; bCount<bPacketLength; bCount++)       //Aquest bucle es el que envia la trama al Modul Robot.
+    for(bCount=0; bCount<bPacketLength; bCount++)
     {
         TxUAC0(TxBuffer[bCount]);
     }
 
-    while(UCA1STAT & UCBUSY);                           //Espera fins que s'hagi transmes l'ulTim byte.
+    /* Wait until last byte has been transmited*/
+    while(UCA1STAT & UCBUSY);
 }
 
 void send_rol()
@@ -523,15 +514,16 @@ void send_rol()
     byte bCount,bPacketLength;
     byte TxBuffer[15]={'#','!','M'};
 
-    memcpy(TxBuffer+3,address1,12); //Enviem l'adresa
+    memcpy(TxBuffer+3,address1,12);     //Send address
 
     bPacketLength = sizeof(TxBuffer);
-    for(bCount=0; bCount<bPacketLength; bCount++)       //Aquest bucle es el que envia la trama al Modul Robot.
+    for(bCount=0; bCount<bPacketLength; bCount++)
     {
         TxUAC0(TxBuffer[bCount]);
     }
 
-    while(UCA1STAT & UCBUSY);                           //Espera fins que s'hagi transmes l'ulTim byte.
+    /* Wait until last byte has been transmited*/
+    while(UCA1STAT & UCBUSY);
 }
 
 void send_ack()
@@ -541,27 +533,16 @@ void send_ack()
 
     bPacketLength = sizeof(TxBuffer);
 
-    for(bCount=0; bCount<bPacketLength; bCount++)       //Aquest bucle es el que envia la trama al Modul Robot.
+    for(bCount=0; bCount<bPacketLength; bCount++)
     {
         TxUAC0(TxBuffer[bCount]);
     }
 
-    while(UCA1STAT & UCBUSY);                           //Espera fins que s'hagi transmes l'ulTim byte.
+    /* Wait until last byte has been transmited*/
+    while(UCA1STAT & UCBUSY);
 }
 
-//void DISCONNECT()
-//{
-//    byte bCount,bPacketLength;
-//    byte TxBuffer[]={'D','I','S','C','O','N','N','E','C','T','D','I','S','C','O','N','N','E','C','T','D','I','S','C','O','N','N','E','C','T','D','I','S','C','O','N','N','E','C','T','D','I','S','C','O','N','N','E','C','T','D','I','S','C','O','N','N','E','C','T','D','I','S','C','O','N','N','E','C','T','D','I','S','C','O','N','N','E','C','T','D','I','S','C','O','N','N','E','C','T'};
-//
-//    bPacketLength = sizeof(TxBuffer);
-//    for(bCount=0; bCount<bPacketLength; bCount++)       //Aquest bucle es el que envia la trama al Modul Robot.
-//    {
-//        TxUAC0(TxBuffer[bCount]);
-//    }
-//
-//    while(UCA1STAT & UCBUSY);                           //Espera fins que s'hagi transmes l'ulTim byte.
-//}
+
 
 
 
