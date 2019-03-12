@@ -2,15 +2,15 @@
 Basic library for msp430F5529LP and HM-10 Bluetooth module
 
 ## Table of Contents  
-1. [Introduction](#Introduction)  
-2. [How to establish connection between two or more dispositives](#1) 
-3. [How to create your own protocol](#2)
-3.1 [Find the master](#2.1)
+1. [Introduction](#1)  
+2. [How to establish connection between two or more dispositives](#2) 
+3. [How to create your own protocol](#3)
+3.1 [Find the master](#3.1)
 4. [How to add more AT commands](#3)
 
-<a name="Introduction"/>
+<a name="1"/>
 
-## Introduction
+## 1. Introduction
 In this repository you will find the code to discover other HM-10 modules, connect to them and cut off the communication to return initial configuration.
 
 I use the following AT commands
@@ -31,15 +31,15 @@ The TX it's tedious but easy, you only must to pick the correct letters and send
 
 On the other hand RX has been the most difficult part for the same reason of the AT commands format.Therefore, almost all code is "bare metal".
 
-<a name="1"/>
+<a name="2"/>
 
-## How to establish connection between two or more dispositives
+## 2. How to establish connection between two or more dispositives
 
 _"The connection always will be point-to-point, so you could connect to every module, but not at the same time or send a broadcast meassage."_
 
-<a name="2"/>
+<a name="3"/>
 
-## How to create your own protocol
+## 3. How to create your own protocol
 
 In this part we will explain how (and where) to create your own protocol.
 
@@ -90,9 +90,9 @@ Once __`#`__ has been captured and stored in position 0 of the `answer[]` array,
       }// End of owner protocol
       
  ```
-<a name="2.1"/>
+<a name="3.1"/>
 
-### Find the master
+### 3.1 Find the master
 
 Find the master is the "game" used for `config_DISC()` to scan around and discoverd an HM-10 master module.
 For example, if you launch `config_DISC()` after a connection has been established master will send `#?m[MAC]` like "You're a master? and the MAC of the master sender.
@@ -140,9 +140,9 @@ The reciver will recive this data, and after the detection in the folowing lines
 
 
 
-<a name="3"/>
+<a name="4"/>
 
-## How to add more AT commands
+## 4. How to add more AT commands
 
 
 
