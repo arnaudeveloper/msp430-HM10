@@ -5,7 +5,8 @@ Basic library for msp430F5529LP and HM-10 Bluetooth module
 1. [Introduction](#1)  
 2. [How to establish connection between two or more dispositives](#2) 
 3. [How to create your own protocol](#3)
-3.1 [Find the master](#3.1)
+      
+      3.1 [Find the master](#3.1)
 4. [How to add more AT commands](#3)
 
 <a name="1"/>
