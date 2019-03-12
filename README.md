@@ -2,11 +2,14 @@
 Basic library for msp430F5529LP and HM-10 Bluetooth module
 
 ## Table of Contents  
-1. [Introduction](#1)  
-2. [How to establish connection between two or more dispositives](#2) 
+1. [Introduction](#1)
+
+2. [How to establish connection between two or more dispositives](#2)
+
 3. [How to create your own protocol](#3)
       
       3.1 [Find the master](#3.1)
+      
 4. [How to add more AT commands](#3)
 
 <a name="1"/>
@@ -95,8 +98,13 @@ Once __`#`__ has been captured and stored in position 0 of the `answer[]` array,
 
 ### 3.1 Find the master
 
+> _TIP: To establish a connection, the module that needs to establish this connection must change its master role. That does not mean that the module is a teacher. In other words, we differentiate the module that a teacher must be because he needs to take this role to send data, from the "real teacher" of the network, who is a teacher because we have decided on the code_
+
 Find the master is the "game" used for `config_DISC()` to scan around and discoverd an HM-10 master module.
-For example, if you launch `config_DISC()` after a connection has been established master will send `#?m[MAC]` like "You're a master? and the MAC of the master sender.
+
+I will use this function to explain how it works "my own protocol".
+
+If you launch `config_DISC()` after a connection has been established master will send `#?m[MAC]` like "You're a master? And the MAC of the master sender.
 
 The reciver will recive this data, and after the detection in the folowing lines:
       
