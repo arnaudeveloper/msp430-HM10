@@ -1,9 +1,11 @@
 # msp430-HM10
 Basic library for msp430F5529LP and HM-10 Bluetooth module
 
-##### Table of Contents  
+## Table of Contents  
 [Introduction](#Introduction)  
-[How to establish connection between two or more dispositives](#1)  
+[How to establish connection between two or more dispositives](#1) 
+[How to create your own protocol](#2)
+[How to add more AT commands](#3)
 
 <a name="Introduction"/>
 
@@ -33,6 +35,15 @@ On the other hand RX has been the most difficult part for the same reason of the
 ## How to establish connection between two or more dispositives
 
 _"The connection always will be point-to-point, so you could connect to every module, but not at the same time or send a broadcast meassage."_
+
+<a name="2"/>
+
+## How to create your own protocol
+
+<a name="3"/>
+
+## How to add more AT commands
+
 
 
 
