@@ -1,6 +1,7 @@
 # msp430-HM10
 Basic library for msp430F5529LP and HM-10 Bluetooth module
 
+## Introduction
 In this repository you will find the code to discover other HM-10 modules, connect to them and cut off the communication to return initial configuration.
 
 I use the following AT commands
@@ -20,5 +21,9 @@ In one hand, there are the differents functions to send via UART. On the other h
 The TX it's tedious but easy, you only must to pick the correct letters and send via UART. The tedious part is because the AT commands format, that it isn't coherent and tricky to use in c.
 
 On the other hand RX has been the most difficult part for the same reason of the AT commands format.Therefore, almost all code is "bare metal".
+
+## How to establish connection between two or more dispositives
+
+_"The connection always will be point-to-point, so you could connect to every module, but not at the same time or send a broadcast meassage."_
 
 
