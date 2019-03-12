@@ -98,13 +98,13 @@ Once __`#`__ has been captured and stored in position 0 of the `answer[]` array,
 
 ### 3.1 Find the master
 
-> _TIP: To establish a connection, the module that needs to establish this connection must change its master role. That does not mean that the module is a teacher. In other words, we differentiate the module that a teacher must be because he needs to take this role to send data, from the "real teacher" of the network, who is a teacher because we have decided on the code_
+> _TIP: To establish a connection the module that need to establish this connection must change his role to master. That doesn't mean that the module it's a master. In other words, we differentiate the module that it's a master because it needs take this role, of the "real master" of the net because we have decided on the code_
 
 Find the master is the "game" used for `config_DISC()` to scan around and discoverd an HM-10 master module.
 
 I will use this function to explain how it works "my own protocol".
 
-If you launch `config_DISC()` after a connection has been established master will send `#?m[MAC]` like "You're a master? And the MAC of the master sender.
+If you launch `config_DISC()` after a connection has been established sender will send __#?m[MAC]__ like "You're a master?", and the MAC of the master sender, all of this with `SEND()`function.
 
 The reciver will recive this data, and after the detection in the folowing lines:
       
@@ -122,7 +122,20 @@ The reciver will recive this data, and after the detection in the folowing lines
               //Code...
           }
  ```
- Will send the answer, in that case `#!M`. The sender will
+ If the reciver it's a HM-10 plus master, will send the answer, in that case `#!M`.
+ 
+ ```c
+           case 4:
+              /*In that case, sends the answer after analyze the question*/
+              /*Analyze the 2nd position of the answer array*/
+              switch (answer[2])
+              {
+                  case 'M': //master?
+
+                      send_rol();       //Answer
+                      break;
+              }
+  ```
  
  ```c
           if(answer[1]=='!')    // Answer
