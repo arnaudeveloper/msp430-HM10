@@ -5,6 +5,7 @@ Basic library for msp430F5529LP and HM-10 Bluetooth module
 1. [Introduction](#Introduction)  
 2. [How to establish connection between two or more dispositives](#1) 
 3. [How to create your own protocol](#2)
+3.1 [Find the master](#2.1)
 4. [How to add more AT commands](#3)
 
 <a name="Introduction"/>
@@ -42,7 +43,7 @@ _"The connection always will be point-to-point, so you could connect to every mo
 
 In this part we will explain how (and where) to create your own protocol.
 
-For this protocol I use **`#`** to indicate the start of the my own data. There is a __`if`__ used to detect this symbol and start the capturing of the data.
+For this protocol I use __`#`__ to indicate the start of the my own data. There is a __`if`__ used to detect this symbol and start the capturing of the data.
 
 ```c  
       /* Used to detect the owner protocol */
@@ -51,11 +52,9 @@ For this protocol I use **`#`** to indicate the start of the my own data. There 
           answer[0]=answer[j];
           j=0;                  // Start to build the array. At the end j will increase
 
-      }
-      
-      
-```
-Once __`#`__ has been captured and stored in position 0 of the answer[] array, the following data will be analayzed.
+      }    
+ ```
+Once __`#`__ has been captured and stored in position 0 of the `answer[]` array, the following data will be analayzed.
 
 ```c
       if(answer[0]=='#')    // Symbol to start the protocol
@@ -70,7 +69,7 @@ Once __`#`__ has been captured and stored in position 0 of the answer[] array, t
               //Code...
           }
           
-                    if(answer[1]=='!')    // Answer
+          if(answer[1]=='!')    // Answer
           {
               match=TRUE;
 
@@ -91,10 +90,11 @@ Once __`#`__ has been captured and stored in position 0 of the answer[] array, t
       }// End of owner protocol
       
  ```
-
+<a name="2.1"/>
 
 ### Find the master
-In this example, image....
+
+Find the master is the "game" used for `config_DISC()` to scan around and discoverd an HM-10 master module.
 For example, if you launch `config_DISC()` after a connection has been established master will send `#?m[MAC]` like "You're a master? and the MAC of the master sender.
 
 The reciver will recive this data, and after the detection in the folowing lines:
