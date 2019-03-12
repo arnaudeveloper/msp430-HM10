@@ -40,6 +40,52 @@ _"The connection always will be point-to-point, so you could connect to every mo
 
 ## How to create your own protocol
 
+```c
+
+      /* Used to detect the owner protocol */
+      if(answer[j]=='#')
+      {
+          answer[0]=answer[j];
+          j=0;                  // Start to build the array. At the end j will increase
+
+      }
+
+      if(answer[0]=='#')    // Symbol to start the protocol
+      {
+          if(answer[1]=='?')    // Question
+          {
+              if(answer[2]=='M')    // Are you a master?
+              {
+                  /* Change "estat" to 4, for answer the question */
+                  estat = 4;
+              }
+              //Code...
+          }
+
+          if(answer[1]=='!')    // Answer
+          {
+              match=TRUE;
+
+              if(answer[2]=='M')    // It is a master
+              {
+                  /* It is a master, so we must to save the MAC address */
+                  master_detected = TRUE;
+
+                  i=j=k=0;      //Reset
+                  memset(&answer,0, sizeof answer);     // Reset of the answer variable
+                  memset(&word_cap,0,sizeof word_cap);  // Reset of the word_cap variable
+                  __bic_SR_register_on_exit(LPM3_bits); // Exit LPM
+
+              }
+              //Code...
+          }
+          //Code...
+      }// End of owner protocol
+      
+ ```
+
+
+
 <a name="3"/>
 
 ## How to add more AT commands
