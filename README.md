@@ -44,13 +44,17 @@ In this part we will explain how (and where) to create your own protocol.
 
 For this protocol I use **#** to indicate the start of the my own data. There is a __"if"__ used to detect this symbol and start the capturing of the data.
 
-```c  /* Used to detect the owner protocol */
+```c  
+      /* Used to detect the owner protocol */
       if(answer[j]=='#')
       {
           answer[0]=answer[j];
           j=0;                  // Start to build the array. At the end j will increase
 
-      }```
+      }
+```
+Once **#** has been captured, the following data will be analayzed.
+
       
 ```c
 
