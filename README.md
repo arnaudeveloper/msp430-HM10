@@ -39,7 +39,7 @@ On the other hand RX has been the most difficult part for the same reason of the
 
 ## 2. How to establish connection between two or more dispositives
 
-_"The connection always will be point-to-point, so you could connect to every module, but not at the same time or send a broadcast meassage."_
+> _The connection always will be point-to-point, so you could connect to every module, but not at the same time or send a broadcast meassage._
 
 <a name="3"/>
 
