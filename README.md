@@ -40,6 +40,10 @@ _"The connection always will be point-to-point, so you could connect to every mo
 
 ## How to create your own protocol
 
+In this part we will explain how (and where) to create your own protocol.
+
+For this protocol I use *#* to indicate the start of the my own data. There is a if used to detect this symbol and start the capturing of the data.
+
 ```c
 
       /* Used to detect the owner protocol */
@@ -49,6 +53,9 @@ _"The connection always will be point-to-point, so you could connect to every mo
           j=0;                  // Start to build the array. At the end j will increase
 
       }
+```
+      
+      ```c
 
       if(answer[0]=='#')    // Symbol to start the protocol
       {
