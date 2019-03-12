@@ -42,7 +42,7 @@ _"The connection always will be point-to-point, so you could connect to every mo
 
 In this part we will explain how (and where) to create your own protocol.
 
-For this protocol I use **#** to indicate the start of the my own data. There is a __"if"__ used to detect this symbol and start the capturing of the data.
+For this protocol I use **`#`** to indicate the start of the my own data. There is a __`if`__ used to detect this symbol and start the capturing of the data.
 
 ```c  
       /* Used to detect the owner protocol */
@@ -52,9 +52,52 @@ For this protocol I use **#** to indicate the start of the my own data. There is
           j=0;                  // Start to build the array. At the end j will increase
 
       }
+      
+      
 ```
-Once **#** has been captured, the following data will be analayzed.
+Once __`#`__ has been captured and stored in position 0 of the answer[] array, the following data will be analayzed.
 
+```c
+      if(answer[0]=='#')    // Symbol to start the protocol
+      {
+          if(answer[1]=='?')    // Question
+          {
+              if(answer[2]=='M')    // Are you a master?
+              {
+                  /* Change "estat" to 4, for answer the question */
+                  estat = 4;
+              }
+              //Code...
+          }
+          
+                    if(answer[1]=='!')    // Answer
+          {
+              match=TRUE;
+
+              if(answer[2]=='M')    // It is a master
+              {
+                  /* It is a master, so we must to save the MAC address */
+                  master_detected = TRUE;
+
+                  i=j=k=0;      //Reset
+                  memset(&answer,0, sizeof answer);     // Reset of the answer variable
+                  memset(&word_cap,0,sizeof word_cap);  // Reset of the word_cap variable
+                  __bic_SR_register_on_exit(LPM3_bits); // Exit LPM
+
+              }
+              //Code...
+          }
+          //Code...
+      }// End of owner protocol
+      
+ ```
+
+
+### Find the master
+In this example, image....
+For example, if you launch `config_DISC()` after a connection has been established master will send `#?m[MAC]` like "You're a master? and the MAC of the master sender.
+
+The reciver will recive this data, and after the detection in the folowing lines:
       
 ```c
 
@@ -69,7 +112,10 @@ Once **#** has been captured, the following data will be analayzed.
               }
               //Code...
           }
-
+ ```
+ Will send the answer, in that case `#!M`. The sender will
+ 
+ ```c
           if(answer[1]=='!')    // Answer
           {
               match=TRUE;
