@@ -17,7 +17,7 @@ Thease commands are basic to initialize the module, do a scan, and connect to a 
 
 In one hand, there are the differents functions to send via UART. On the other hand, there are the RX UART reception and analysis.
 
-The TX it's tedious but easy, you only must to pick the correct letters and send via UART. The tedios part is because the AT commands format, that it's not coherent and tricky to use in c.
+The TX it's tedious but easy, you only must to pick the correct letters and send via UART. The tedios part is because the AT commands format, that it isn't coherent and tricky to use in c.
 
 On the other hand RX has been the most difficult part for the same reason of the AT commands format.Therefore, almost all code is "bare metal".
 
