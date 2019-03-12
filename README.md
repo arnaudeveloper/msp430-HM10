@@ -105,7 +105,16 @@ Find the master is the "game" used for `config_DISC()` to scan around and discov
 I will use this function to explain how it works "my own protocol".
 
 If you launch `config_DISC()` after a connection has been established sender will send __#?m[MAC]__ like "You're a master?", and the MAC of the master sender, all of this with `SEND()`function.
-
+```c
+        while(match==0)
+        {
+            SEND();                             // Send ACK
+            TA0CCTL0 = CCIE;                    // Start Timer
+            __bis_SR_register(LPM3_bits);
+            if(x>10)match=1;                   // Used for bad communications
+            x++;
+        }
+ ```
 The reciver will recive this data, and after the detection in the folowing lines:
       
 ```c
@@ -122,7 +131,7 @@ The reciver will recive this data, and after the detection in the folowing lines
               //Code...
           }
  ```
- If the reciver it's a HM-10 plus master, will send the answer, in that case `#!M`.
+If the receiver is an HM-10 module and also master, will send the answer, in that case `#!M`.
  
  ```c
            case 4:
@@ -136,6 +145,7 @@ The reciver will recive this data, and after the detection in the folowing lines
                       break;
               }
   ```
+  Once the original sender have recived the answer, will be analyzed in the same way.
  
  ```c
           if(answer[1]=='!')    // Answer
@@ -156,9 +166,9 @@ The reciver will recive this data, and after the detection in the folowing lines
               //Code...
           }
           //Code...
-      }// End of owner protocol
-      
+      }// End of owner protocol      
  ```
+ In that case we use global variables to change the state. In that case case `master_dectected` will change to `TRUE`, and the MAC addres will be stored.
 
 
 
