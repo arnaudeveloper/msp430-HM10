@@ -87,11 +87,15 @@ void config_INITIAL();
 
 void config_DISC();
 
+void connect_ARDU();
+
 void SEND();
 
 void send_rol();
 
 void send_ack();
+
+void send_hello();
 
 void TxUAC0(byte TXData);
 

@@ -74,22 +74,21 @@ int main(void)
           switch(estat)
           {
           case 1:
-              /* In that case, discover the other Bluetooth devices*/
-              config_DISC();
-              estat=2;
-              break;
-          case 2:
               /* In that case, return to initial configure, slave rol*/
               config_INITIAL();
               estat=0;
               break;
-          case 3:
-              /* In that case, 1st is connected to a specific MAC address, send data and cut the communication */
-              //DEBUG: picar codi
+          case 2:
+              /* In that case, discover the other Bluetooth devices*/
               config_DISC();
-              SEND();
-              config_INITIAL();
-              estat=0;
+              estat=1;
+              break;
+          case 3:
+              /* In that case, 1st is connected to a specific MAC address and send data */
+              //DEBUG: picar codi
+              connect_ARDU();
+              send_hello();
+              estat=1;
               break;
           case 4:
               /*In that case, sends the answer after analyze the question*/
@@ -522,7 +521,8 @@ __interrupt void USCI_A0_ISR(void)
 __interrupt void Port_1(void)
 {
    P1IFG &= ~BIT1;      // Clear the flag
-   estat=1;             // Change state to connect
+   estat=2;             // Change state to connect
+//   estat=3;             // Change state to connect
    P1IE |= BIT1;        // Enable interrupt for Button P1.1
 }
 

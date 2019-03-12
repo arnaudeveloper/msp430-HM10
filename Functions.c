@@ -482,6 +482,139 @@ void config_DISC()
 
 }//End of config_DISC()
 
+
+/*
+ * connect_ARDU()
+ */
+void connect_ARDU()
+{
+    char x;                                 //Counter loop "for"
+
+    char address_static[12]={'6','0','6','4','0','5','C','F','C','D','4','F'};
+
+    pointer = &word_check[0];
+
+    __delay_cycles(10000);              // Used to pause the data streaming and give enough time to process data
+
+    match=0;                            // Set match = 0
+
+    /* Set IMME=1. See datasheet */
+    while(match==0)                     // Resend the command if the communication fail
+    {
+    n_letters=AT_IMME2(pointer);        // AT_IMME command
+    TA0CCTL0 = CCIE;                    // Start Timer
+    __bis_SR_register(LPM3_bits);       // Enter LPM0
+    }
+
+    __delay_cycles(10000);              // Used to pause the data streaming and give enough time to process data
+
+    match=0;                            // Set match = 0
+
+    /* Set ROLE=1. See datasheet */
+    while(match==0)                     // Resend the command if the communication fail
+    {
+    n_letters=AT_ROLE2(pointer);        // AT_ROLE command
+    TA0CCTL0 = CCIE;                    // Start Timer
+    __bis_SR_register(LPM3_bits);       // Enter LPM0
+    }
+
+    __delay_cycles(10000);              // Used to pause the data streaming and give enough time to process data
+
+    /* The following lines ara used to launch the AT_DISC? command
+     * In that case we disable the timer and the detection of OK,
+     * in order to get improve the response detection.
+     * This command has a long response, so timer will interrupt
+     * and resend the command
+     */
+
+    TA0CCTL0 &= ~CCIE;                  // CCR0 interrupt disabled
+    dis_ok=TRUE;                        // Disabled OK detection
+
+    while(match==0 || get_address==0)   // Resend the command if the communication fail
+    {
+    __delay_cycles(1000000);            // Used to pause the data streaming and give enough time to process data
+    n_letters=AT_DISC(pointer);         // AT_DISC? command
+  //  TA0CCTL0 = CCIE;                          //Start Timer
+    __bis_SR_register(LPM3_bits);       // Enter LPM0
+    }
+
+    __delay_cycles(5000000);              // Used to pause the data streaming and give enough time to process data
+
+
+
+    dis_ok=FALSE;                        // Enable OK detection
+
+    match=FALSE;                            // Set match = 0
+    x=0;
+    connection = FALSE;
+    lost=FALSE;
+    master_detected= FALSE;
+
+    __delay_cycles(500000);                     // Used to pause the data streaming and give enough time to process data
+
+    while(match==0)                             // Resend the command is the communication fail
+    {
+        n_letters= AT_CON(pointer,address_static);    // AT_CON0 command. Connect to addres4
+        TA0CCTL0 = CCIE;                        // Start Timer
+        __bis_SR_register(LPM3_bits);           // Enter LPM0
+        if(x>10)match=1;                        // Used for bad communications
+        x++;
+    }
+
+    __delay_cycles(500000);                     // Used to pause the data streaming and give enough time to process data
+
+    /*
+    if(connection)
+    {
+        x=0;
+        match=0;
+
+        while(match==0)
+        {
+            SEND();
+            TA0CCTL0 = CCIE;
+            __bis_SR_register(LPM3_bits);
+            if(x>10)match=1;                    // Used for bad communications
+            x++;
+        }
+
+        if(x>10)
+        {
+            match=0;
+
+            while(match==0 && lost==0)
+            {
+                pointer = &word_check[0];
+                n_letters=AT_2(pointer);
+                TA0CCTL0 = CCIE;                // Start el Timer
+                __bis_SR_register(LPM3_bits);   // Enter LPM0
+            }
+            P4OUT &= ~BIT7;                     //Green LED OFF
+
+        }
+        else
+        {
+            if(master_detected)
+            {
+                memcpy(address_M, address4,12);
+            }
+
+            while(lost==0)                      // Resend the command if the communication fail
+            {
+                pointer = &word_check[0];
+
+                __delay_cycles(500000);             // Used to pause the data streaming and give enough time to process data
+
+                n_letters= AT_2(pointer);           // Used to cut off communication
+                TA0CCTL0 = CCIE;                    // Start Timer
+                __bis_SR_register(LPM3_bits);       // Enter LPM0
+            }
+        }
+    }//End of CO0
+    */
+
+}//End of connect_ARDU()
+
 /*
  * TxUAC0(byte TXData)
  */
@@ -535,6 +668,21 @@ void send_ack()
 
     bPacketLength = sizeof(TxBuffer);
 
+    for(bCount=0; bCount<bPacketLength; bCount++)
+    {
+        TxUAC0(TxBuffer[bCount]);
+    }
+
+    /* Wait until last byte has been transmited*/
+    while(UCA1STAT & UCBUSY);
+}
+
+void send_hello()
+{
+    byte bCount,bPacketLength;
+    byte TxBuffer[15]={'#','H','E','L','L','O'};
+
+    bPacketLength = sizeof(TxBuffer);
     for(bCount=0; bCount<bPacketLength; bCount++)
     {
         TxUAC0(TxBuffer[bCount]);
