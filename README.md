@@ -36,6 +36,7 @@ The TX it's tedious but easy, you only must to pick the correct letters and send
 On the other hand RX has been the most difficult part for the same reason of the AT commands format.Therefore, almost all code is "bare metal".
 
 <a name="2"/>
+
 ## 2. How to establish connection between two or more dispositives
 
 > _The connection always will be point-to-point, so you could connect to every module, but not at the same time or send a broadcast meassage._
