@@ -49,6 +49,7 @@ This function works in the folowing way:
 1. Initializing the HM-10 module as master
 
   Setting AT+IMME1 and AT+ROLE1.
+  
 2. Discovering the MAC addresses around of Bluetooth modules
 
   With AT+DISC? command the microcontroler can discover up to 3 dispositves*
