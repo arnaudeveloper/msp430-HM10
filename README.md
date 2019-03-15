@@ -5,6 +5,8 @@ Basic library for msp430F5529LP and HM-10 Bluetooth module
 1. [Introduction](#1)
 
 2. [How to establish connection between two or more dispositives](#2)
+      
+      2.1 [Possibles reasons to unable establish a connection](#2.1)
 
 3. [How to create your own protocol](#3)
 
@@ -36,6 +38,7 @@ The TX code it's tedious but easy, you only must to pick the correct letters and
 On the other hand RX has been the most difficult part for the same reason of the AT commands format.Therefore, almost all code is "bare metal".
 
 <a name="2"/>
+
 ## 2. How to establish connection between two or more dispositives
 
 > _The connection always will be point-to-point, so you could connect to every module, but not at the same time or send a broadcast meassage._
@@ -157,7 +160,7 @@ if(connection)
 
 
 
-
+<a name="2.1"/>
 
   ### 2.1 Possibles reasons to unable establish a connection
 
