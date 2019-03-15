@@ -15,7 +15,7 @@ Basic library for msp430F5529LP and HM-10 Bluetooth module
 <a name="1"/>
 
 ## 1. Introduction
-In this repository you will find the code to discover other HM-10 modules, connect to them and cut off the communication to return initial configuration.
+In this repository you will find the code to discover other HM-10 modules, connect to them, send and recive data, and cut off the communication to return initial configuration.
 
 I use the following AT commands
 1. AT => OK,OK+LOST
@@ -31,12 +31,11 @@ Thease commands are basic to initialize the module, do a scan, and connect to a 
 
 In one hand, there are the differents functions to send via UART. On the other hand, there are the RX UART reception and analysis.
 
-The TX it's tedious but easy, you only must to pick the correct letters and send via UART. The tedious part is because the AT commands format, that it isn't coherent and tricky to use in c.
+The TX code it's tedious but easy, you only must to pick the correct letters and send via UART. The tedious part is because the AT commands format, that it isn't coherent and tricky to use in c.
 
 On the other hand RX has been the most difficult part for the same reason of the AT commands format.Therefore, almost all code is "bare metal".
 
 <a name="2"/>
-
 ## 2. How to establish connection between two or more dispositives
 
 > _The connection always will be point-to-point, so you could connect to every module, but not at the same time or send a broadcast meassage._
@@ -83,17 +82,88 @@ address[k]=answer[j];
 
 3. Try to connect and initialize a dialogue
 
-  If a conection cuold be established, initialize to know if it is a HM-10 and if it is the master of the net. (In the next section we talk in detail of how it works this protocol of "athentification")
+  If a conection could be established, initialize a dialogue to know if it is a HM-10 and if it is the master of the net. (In the next section we talk in detail of how it works this protocol of "athentification")
+  ```c
+/* Set AT_CON*/
+while(match==0)                     // Resend the command is the communication fail
+{
+    n_letters= AT_CON(pointer,address2);    // AT_CON0 command. Connect to addres2
+    TA0CCTL0 = CCIE;                        // Start Timer
+    __bis_SR_register(LPM3_bits);           // Enter LPM0
+    if(x>10)match=1;                        // Used for bad communications
+    x++;
+}
+```
+
 
 4. Succesful connection
 
+  Once a connection has been established, we need to check if are trying to connect to a HM-10 module, or on the other hand is other kind of Bluetooth dispositve.
+```c
+/* If connection = TRUE, a connection has been established*/
+if(connection)
+{
+    /* Initiate the protocol to know if we have connected to a correct module */
+    x=0;
+    match=0;
+
+    while(match==0)
+    {
+        SEND();                             // Send ACK
+        TA0CCTL0 = CCIE;                    // Start Timer
+        __bis_SR_register(LPM3_bits);
+        if(x>10)match=1;                   // Used for bad communications
+        x++;
+    }
+
+    /* If we have connected to the correct module x<10 */
+    if(x>10)
+    {
+        /* We have connected to an incorrect module. Therefore, disconnect */
+        match=0;
+        while(match==0 && lost==0)
+        {
+            pointer = &word_check[0];
+            n_letters=AT_2(pointer);
+            TA0CCTL0 = CCIE;
+            __bis_SR_register(LPM3_bits);
+        }
+        /* Sometimes we recive OK before LOST.
+         * If we recive OK this indicates that the connection has been cut,
+         * but Green LED will be TURN-ON, so TURN-OFF
+         */
+        P4OUT &= ~BIT7;   //Green LED OFF
+    }
+    else
+    {
+        /* If it is a master, save the address*/
+        if(master_detected)
+        {
+            memcpy(address_M, address2,12);
+        }
+
+        while(lost==0)                          // Resend the command is the communication fail
+        {
+            pointer = &word_check[0];
+            __delay_cycles(500000);             // Used to pause the data streaming and give enough time to process data
+            n_letters= AT_2(pointer);           // Used to cut off communication
+            TA0CCTL0 = CCIE;                    // Start Timer
+            __bis_SR_register(LPM3_bits);       // Enter LPM0
+        }
+    }
+}// End of 1st address
+```
   If the the reciver answer correctly the answer, the connection is done.
+
+
+
+
 
   ### 2.1 Possibles reasons to unable establish a connection
 
   1. Be sure that the other device are in slave role
 
-     If the module is in master role it cuoldn't be possible to estalish connection with this module. By defect the module return to slave role after send data.
+     If the module is in master role it cuoldn't be possible to estalish connection with this module. By default the module return to slave role after send data.
      
   2. Be sure that you are trying to connect to another HM-10 module
 
@@ -104,17 +174,19 @@ address[k]=answer[j];
 
  ## 3. How to create your own protocol
 
-In this part we will explain how (and where) to create your own protocol.
+In this part we will explain how (and where) to create your own protocol. The main idea is that when we have been established a connection, start a communication between each module.
+
 
 For this protocol I use __`#`__ to indicate the start of the my own data. There is a __`if`__ used to detect this symbol and start the capturing of the data.
 
+> The below code is part of the UART reception interrupt.
+> 
 ```c
       /* Used to detect the owner protocol */
       if(answer[j]=='#')
       {
           answer[0]=answer[j];
           j=0;                  // Start to build the array. At the end j will increase
-
       }
  ```
 Once __`#`__ has been captured and stored in position 0 of the `answer[]` array, the following data will be analayzed.
@@ -153,6 +225,16 @@ Once __`#`__ has been captured and stored in position 0 of the `answer[]` array,
       }// End of owner protocol
 
  ```
+
+ So, if you want to add some code, I recommend adding it below indicated lines. 
+ And be sure to reset all variables after ending data streming.
+ ```c
+ i=j=k=0;      //Reset
+ memset(&answer,0, sizeof answer);     // Reset of the answer variable
+ memset(&word_cap,0,sizeof word_cap);  // Reset of the word_cap variable
+ __bic_SR_register_on_exit(LPM3_bits); // Exit LPM
+ ```
+ 
 <a name="3.1"/>
 
 ### 3.1 Find the master
@@ -163,7 +245,7 @@ Find the master is the "game" used for `config_DISC()` to scan around and discov
 
 I will use this function to explain how it works "my own protocol".
 
-If you launch `config_DISC()` after a connection has been established sender will send __#?m[MAC]__ like "You're a master?", and the MAC of the master sender, all of this with `SEND()`function.
+If you launch `config_DISC()` after a connection has been established sender will send **#?m[MAC]** like "You're a master?", and the MAC of the master sender, all of this with `SEND()`function.
 ```c
         while(match==0)
         {
@@ -234,8 +316,3 @@ If the receiver is an HM-10 module and also master, will send the answer, in tha
 <a name="4"/>
 
 ## 4. How to add more AT commands
-
-
-
-
-
