@@ -86,7 +86,15 @@ address[k]=answer[j];
 ```
 (*)As you can see in the image you only need to add more else if, and others global variables.
 
+After launch AT+DISC? command you will see the captured MAC address in the following global varaibles
+
 ![imagen](https://user-images.githubusercontent.com/38794634/54521762-decfcf00-496b-11e9-903a-f1ddfc0da529.png)
+
+In that example:
+      - address2 = 90E202020A47
+      - address3= 341513CE6FF6
+      - address4= 606405CFCD4F
+
 
 
 3. Try to connect and initialize a dialogue
