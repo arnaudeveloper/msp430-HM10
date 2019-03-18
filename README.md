@@ -54,7 +54,7 @@ This function works in the folowing way:
 
 2. Discovering the MAC addresses around of Bluetooth modules
 
-  With AT+DISC? command the microcontroler can discover up to 3 dispositves*
+  With `AT+DISC?` command the microcontroler can discover up to 3 dispositves*
 
 ```c
 /* Capturing the address */
@@ -86,7 +86,7 @@ address[k]=answer[j];
 ```
 (*)As you can see in the image you only need to add more else if, and others global variables.
 
-After launch AT+DISC? command you will see the captured MAC address in the following global varaibles
+After launch `AT+DISC?` command you will see the captured MAC address in the following global varaibles
 
 ![imagen](https://user-images.githubusercontent.com/38794634/54521762-decfcf00-496b-11e9-903a-f1ddfc0da529.png)
 
@@ -99,7 +99,7 @@ In that example:
 
 3. Try to connect and initialize a dialogue
 
-  Once you have a MAC address, you could try to connect it. To do this you must send AT+CO0[MAC] command.
+  Once you have a MAC address, you could try to connect it. To do this you must send `AT+CO` command.
   ```c
 /* Set AT_CON*/
 while(match==0)                     // Resend the command is the communication fail
