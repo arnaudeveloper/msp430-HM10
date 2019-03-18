@@ -1,5 +1,7 @@
 # msp430-HM10
 Basic library for msp430F5529LP and HM-10 Bluetooth module
+![imagen](https://user-images.githubusercontent.com/38794634/54521270-de830400-496a-11e9-90ee-7a19d0b0e352.png)
+![imagen](https://user-images.githubusercontent.com/38794634/54521841-15a5e500-496c-11e9-94d9-9d324cdc18e1.png)
 
 ## Table of Contents
 1. [Introduction](#1)
@@ -84,6 +86,9 @@ address[k]=answer[j];
 ```
 (*)As you can see in the image you only need to add more else if, and others global variables.
 
+![imagen](https://user-images.githubusercontent.com/38794634/54521762-decfcf00-496b-11e9-903a-f1ddfc0da529.png)
+
+
 3. Try to connect and initialize a dialogue
 
   If a conection could be established, initialize a dialogue to know if it is a HM-10 and if it is the master of the net. (In the next section we talk in detail of how it works this protocol of "athentification")
@@ -158,6 +163,10 @@ if(connection)
 }// End of 1st address
 ```
   If the the reciver answer correctly the answer, the connection is done.
+  
+  ![imagen](https://user-images.githubusercontent.com/38794634/54521806-fd35ca80-496b-11e9-97b4-410812b62095.png)
+
+  
 
 
 
