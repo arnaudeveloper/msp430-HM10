@@ -12,7 +12,7 @@ Basic library for msp430F5529LP and HM-10 Bluetooth module
 
 3. [How to create your own protocol](#3)
 
-      3.1 [Find the master](#3.1)
+      3.1 [Example: "Find the master"](#3.1)
 
 4. [How to add more AT commands](#3)
 
@@ -258,7 +258,7 @@ Once __`#`__ has been captured and stored in position 0 of the `answer[]` array,
 
 <a name="3.1"/>
 
-### 3.1 Find the master
+### 3.1 Example: "Find the master"
 
 > _To establish a connection the module that need to establish this connection must change his role to master. That doesn't mean that the module it's a master. In other words, we differentiate the module that it's a master because it needs take this role, of the "real master" of the net because we have decided on the code_
 
