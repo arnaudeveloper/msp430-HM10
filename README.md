@@ -6,9 +6,9 @@ Basic library for msp430F5529LP and HM-10 Bluetooth module
 ## Table of Contents
 1. [Introduction](#1)
 
-2. [How to establish connection between two or more dispositives](#2)
+2. [How to establish connection between two or more devices](#2)
 
-      2.1 [Possibles reasons to unable establish a connection](#2.1)
+      2.1 [Possible reasons to unable establish a connection](#2.1)
 
 3. [How to create your own protocol](#3)
 
@@ -19,7 +19,7 @@ Basic library for msp430F5529LP and HM-10 Bluetooth module
 <a name="1"/>
 
 ## 1. Introduction
-In this repository you will find the code to discover other HM-10 modules, connect to them, send and recive data, and cut off the communication to return initial configuration.
+In this repository you will find the code to discover other HM-10 modules, connect to them, send and receive data, and cut off the communication to return initial configuration.
 
 I use the following AT commands
 1. AT => OK,OK+LOST
@@ -31,30 +31,31 @@ I use the following AT commands
 7. AT+CO => OK+CONN
 8. AT+CON (commented)
 
-Thease commands are basic to initialize the module, do a scan, and connect to a discovered module or static MAC.
+These commands are basic to initialize the module, do a scan, and connect to a discovered module or static MAC.
 
-In one hand, there are the differents functions to send via UART. On the other hand, there are the RX UART reception and analysis.
+In one hand, there are the different functions to send via UART. On the other hand, there are the RX UART reception and analysis.
 
 The TX code it's tedious but easy, you only must to pick the correct letters and send via UART. The tedious part is because the AT commands format, that it isn't coherent and tricky to use in c.
 
-On the other hand RX has been the most difficult part for the same reason of the AT commands format.Therefore, almost all code is "bare metal".
+On the other hand, RX has been the most difficult part for the same reason of the AT commands format.Therefore, almost all code is "bare metal".
 
 <a name="2"/>
 
-## 2. How to establish connection between two or more dispositives
+## 2. How to establish connection between two or more devices
 
-> _The connection always will be point-to-point, so you could connect to every module, but not at the same time or send a broadcast meassage._
+> _The connection always will be point-to-point, so you could connect to every module, but not at the same time or send a broadcast message._
 
-To establish a connection first you need to configure the module in master rol to start a communication with other modules.
+To establish a connection first you need to configure the module in master role to start a communication with other modules.
 For this objective you can use  `config_DISC()`.
-This function works in the folowing way:
+This function works in the following way:
+
 1. Initializing the HM-10 module as master
 
   Setting AT+IMME1 and AT+ROLE1.
 
 2. Discovering the MAC addresses around of Bluetooth modules
 
-  With `AT+DISC?` command the microcontroler can discover up to 3 dispositves*
+  With `AT+DISC?` command the microcontroller can discover up to 3 devices*
 
 ```c
 /* Capturing the address */
@@ -84,9 +85,9 @@ address[k]=answer[j];
      }
      //Code...
 ```
-(*)As you can see in the image you only need to add more else if, and others global variables.
+(*) As you can see in the image you only need to add more else if, and others global variables.
 
-After launch `AT+DISC?` command you will see the captured MAC address in the following global varaibles
+After launch `AT+DISC?` command you will see the captured MAC address in the following global variables.
 
 ![imagen](https://user-images.githubusercontent.com/38794634/54521762-decfcf00-496b-11e9-903a-f1ddfc0da529.png)
 
@@ -112,7 +113,7 @@ while(match==0)                     // Resend the command is the communication f
 }
 ```
 
-4. Succesful connection
+4. Successful connection
 
   If a connection has been established, we need to check if are trying to connect to a HM-10 module, or on the other hand is other kind of Bluetooth device.
 ```c
@@ -169,7 +170,7 @@ if(connection)
     }
 }// End of 1st address
 ```
-  If the the reciver answer correctly the answer, the connection is done and if it is a master we will save the MAC address.
+  If the receiver answers correctly the answer, the connection is done and if it is a master, we will save the MAC address.
 
   ![imagen](https://user-images.githubusercontent.com/38794634/54521806-fd35ca80-496b-11e9-97b4-410812b62095.png)
 
@@ -179,15 +180,15 @@ if(connection)
 
 <a name="2.1"/>
 
-  ### 2.1 Possibles reasons to unable establish a connection
+  ### 2.1 Possible reasons to unable establish a connection
 
-  1. Be sure that the other device are in slave role
+  1. Be sure that the other device is in slave role
 
-     If the module is in master role it couldn't be possible to estalish connection with this module. By default the module return to slave role after send data.
+     If the module is in master role it couldn't be possible to establish connection with this module. By default, the module returns  to slave role after send data.
 
   2. Be sure that you are trying to connect to another HM-10 module
 
-     Theoretically it could be possible to connect with differents Bluetooth modules of that HM-10, but it has not been studied in this work and is out of the scope.
+     Theoretically it could be possible to connect with different Bluetooth modules of that HM-10, but it has not been studied in this work and is out of the scope.
 
 
 <a name="3"/>
@@ -197,7 +198,7 @@ if(connection)
 In this part we will explain how (and where) to create your own protocol. The main idea is that when we have been established a connection, start a communication between each module.
 
 
-For this protocol I use __`#`__ to indicate the start of the my own data. There is a __`if`__ used to detect this symbol and start the capturing of the data.
+For this protocol I use __`#`__ to indicate the start of my own data. There is an __`if`__ used to detect this symbol and start the capturing of the data.
 
 > The below code is part of the UART reception interrupt.
 
@@ -209,7 +210,7 @@ For this protocol I use __`#`__ to indicate the start of the my own data. There 
           j=0;                  // Start to build the array. At the end j will increase
       }
  ```
-Once __`#`__ has been captured and stored in position 0 of the `answer[]` array, the following data will be analayzed.
+Once __`#`__ has been captured and stored in position 0 of the `answer[]` array, the following data will be analysed.
 
 ```c
       if(answer[0]=='#')    // Symbol to start the protocol
@@ -247,7 +248,7 @@ Once __`#`__ has been captured and stored in position 0 of the `answer[]` array,
  ```
 
  So, if you want to add some code, I recommend adding it below indicated lines.
- And be sure to reset all variables after ending data streming.
+ And be sure to reset all variables after ending data streaming.
  ```c
  i=j=k=0;      //Reset
  memset(&answer,0, sizeof answer);     // Reset of the answer variable
@@ -261,7 +262,7 @@ Once __`#`__ has been captured and stored in position 0 of the `answer[]` array,
 
 > _To establish a connection the module that need to establish this connection must change his role to master. That doesn't mean that the module it's a master. In other words, we differentiate the module that it's a master because it needs take this role, of the "real master" of the net because we have decided on the code_
 
-Find the master is the "game" used for `config_DISC()` to scan around and discoverd an HM-10 master module.
+Find the master is the "game" used for `config_DISC()` to scan around and discovered an HM-10 master module.
 
 I will use this function to explain how it works "my own protocol".
 
@@ -276,7 +277,7 @@ If you launch `config_DISC()` after a connection has been established sender wil
             x++;
         }
  ```
-The reciver will recive this data, and after the detection in the folowing lines:
+The receiver will receive this data, and after the detection in the following lines:
 
 ```c
 
@@ -306,7 +307,7 @@ If the receiver is an HM-10 module and also master, will send the answer, in tha
                       break;
               }
   ```
-  Once the original sender have recived the answer, will be analyzed in the same way.
+  Once the original sender has received the answer, will be analysed in the same way.
 
  ```c
           if(answer[1]=='!')    // Answer
@@ -329,7 +330,7 @@ If the receiver is an HM-10 module and also master, will send the answer, in tha
           //Code...
       }// End of owner protocol
  ```
-In that case case `master_dectected` will change to `TRUE`, and the MAC addres will be stored.
+In that case `master_dectected` will change to `TRUE`, and the MAC address will be stored.
 
 
 
