@@ -14,7 +14,7 @@ Basic library for msp430F5529LP and HM-10 Bluetooth module
 
       3.1 [Example: "Find the master"](#3.1)
 
-4. [How to add more AT commands](#3)
+4. [How to add more AT commands](#4)
 
 <a name="1"/>
 
