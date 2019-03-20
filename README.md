@@ -1,18 +1,20 @@
 # msp430-HM10
 Basic library for msp430F5529LP and HM-10 Bluetooth module
-![imagen](https://user-images.githubusercontent.com/38794634/54521270-de830400-496a-11e9-90ee-7a19d0b0e352.png)
-![imagen](https://user-images.githubusercontent.com/38794634/54521841-15a5e500-496c-11e9-94d9-9d324cdc18e1.png)
 
 ## Table of Contents
 1. [Introduction](#1)
 
-2. [How to establish connection between two or more devices](#2)
+2. [Connectivity](#2)
 
-      2.1 [Possible reasons to unable establish a connection](#2.1)
+      2.1 [How to establish connection between two or more devices](#2.1)
 
-3. [How to create your own protocol](#3)
+      2.2 [Possible reasons to unable establish a connection](#2.2)
 
-      3.1 [Example: "Find the master"](#3.1)
+3. [Communication](#3)
+
+      3.1 [How to create your own protocol](#3.1)
+
+      3.2 [Example: "Find the master"](#3.2)
 
 4. [How to add more AT commands](#4)
 
@@ -41,7 +43,11 @@ On the other hand, RX has been the most difficult part for the same reason of th
 
 <a name="2"/>
 
-## 2. How to establish connection between two or more devices
+### 2 Connectivity
+
+<a name="2.1"/>
+
+### 2.1 How to establish connection between two or more devices
 
 > _The connection always will be point-to-point, so you could connect to every module, but not at the same time or send a broadcast message._
 
@@ -49,11 +55,11 @@ To establish a connection first you need to configure the module in master role 
 For this objective you can use  `config_DISC()`.
 This function works in the following way:
 
-1. Initializing the HM-10 module as master
+**1. Initializing the HM-10 module as master**
 
   Setting AT+IMME1 and AT+ROLE1.
 
-2. Discovering the MAC addresses around of Bluetooth modules
+**2. Discovering the MAC addresses around of Bluetooth modules**
 
   With `AT+DISC?` command the microcontroller can discover up to 3 devices*
 
@@ -98,7 +104,7 @@ In that example:
 
 
 
-3. Try to connect and initialize a dialogue
+**3. Try to connect and initialize a dialogue**
 
   Once you have a MAC address, you could try to connect it. To do this you must send `AT+CO` command.
   ```c
@@ -113,7 +119,7 @@ while(match==0)                     // Resend the command is the communication f
 }
 ```
 
-4. Successful connection
+**4. Successful connection**
 
   If a connection has been established, we need to check if are trying to connect to a HM-10 module, or on the other hand is other kind of Bluetooth device.
 ```c
@@ -178,9 +184,9 @@ if(connection)
 
 
 
-<a name="2.1"/>
+<a name="2.2"/>
 
-  ### 2.1 Possible reasons to unable establish a connection
+  ### 2.2 Possible reasons to unable establish a connection
 
   1. Be sure that the other device is in slave role
 
@@ -193,7 +199,11 @@ if(connection)
 
 <a name="3"/>
 
- ## 3. How to create your own protocol
+## 3. Communication
+
+<a name="3.1"/>
+
+ ### 3.1 How to create your own protocol
 
 In this part we will explain how (and where) to create your own protocol. The main idea is that when we have been established a connection, start a communication between each module.
 
@@ -256,9 +266,9 @@ Once __`#`__ has been captured and stored in position 0 of the `answer[]` array,
  __bic_SR_register_on_exit(LPM3_bits); // Exit LPM
  ```
 
-<a name="3.1"/>
+<a name="3.2"/>
 
-### 3.1 Example: "Find the master"
+### 3.2 Example: "Find the master"
 
 > _To establish a connection the module that need to establish this connection must change his role to master. That doesn't mean that the module it's a master. In other words, we differentiate the module that it's a master because it needs take this role, of the "real master" of the net because we have decided on the code_
 
