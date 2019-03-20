@@ -62,11 +62,9 @@ char parameter1;        // Used to capture the data parameter of a SET response
 
 char estat;             // Used to save the state.
 
-int n_letters;
+int n_letters;          //
 
-char dis_ok;            // Used for disable the detection of OK??
-
-
+char dis_ok;            // Used for disable the detection of OK
 
 char enviar;            //
 

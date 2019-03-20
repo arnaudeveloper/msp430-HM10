@@ -38,7 +38,7 @@ void init_Timer()
 {
     TA0CCTL0 &= ~CCIE;                          // CCR0 interrupt disabled
     TA0CCR0 = 12800;
-    TA0CTL = TASSEL_1 + MC_1 + TACLR;         // ACLK, upmode, clear TAR
+    TA0CTL = TASSEL_1 + MC_1 + TACLR;         // ACLK, up mode, clear TAR
 }
 
 /*
@@ -47,28 +47,28 @@ void init_Timer()
 void init_GPIOs()
 {
     //LED1
-    P1DIR |= BIT0;                            // P1.0 set as output
-    P1OUT |= BIT0;                          // P1.0 ON
+    P1DIR |= BIT0;              // P1.0 set as output
+    P1OUT |= BIT0;              // P1.0 ON
 
     //LED2
-    P4DIR |= BIT7;                            // P4.7 set as output
-    P4OUT &= ~BIT7;                          // P4.7 OFF
+    P4DIR |= BIT7;              // P4.7 set as output
+    P4OUT &= ~BIT7;             // P4.7 OFF
 
     //BUTTON 1
-    P1REN |= BIT1;              // Habilitem les reisitencies internes de pull-up i pull-down del pin P1.1 (el boto)
-    P1OUT |= BIT1;              //Seleccionem el mode pull-up per P1.1
+    P1REN |= BIT1;              // Enable internal resistors for P1.1
+    P1OUT |= BIT1;              // Set pull-up for P1.1
 
-    P1IE |= BIT1;               // Activem les interrupcions per P1.1
-    P1IES |= BIT1;              // Indiquem el canvi de High a Low per P1.1
-    P1IFG &= ~BIT1;             // Posem a zero la Flag del boto
+    P1IE |= BIT1;               // Enable interrupts for P1.1
+    P1IES |= BIT1;              // Set interrupt to falling flank for P1.1.
+    P1IFG &= ~BIT1;             // Set to zero button flag
 
     //BUTTON 2
-    P2REN |= BIT1;              // Habilitem les reisitencies internes de pull-up i pull-down del pin P2.1 (el boto)
-    P2OUT |= BIT1;              //Seleccionem el mode pull-up per P2.1
+    P2REN |= BIT1;              // Enable internal resistors for P2.1
+    P2OUT |= BIT1;              // Set pull-up for P2.1
 
-    P2IE |= BIT1;               // Activem les interrupcions per P2.1
-    P2IES |= BIT1;              // Indiquem el canvi de High a Low per P2.1
-    P2IFG &= ~BIT1;             // Posem a zero la Flag del boto
+    P2IE |= BIT1;               // Enable interrupts for P2.1
+    P2IES |= BIT1;              // Set interrupt to falling flank for P2.1.
+    P2IFG &= ~BIT1;             // Set to zero button flag
 
 
 
@@ -183,8 +183,8 @@ void config_INITIAL()
  * config_DISC()
  * This function is used to discover the master.
  * 1st. Configure module as role master.
- * 2nd. Discoverd all dispositives in a range.
- * 3rd. Try to connect to each dispositive and ask if it is a master
+ * 2nd. Discovery all devices in a range.
+ * 3rd. Try to connect to each device and ask if it is a master
  * 4th. If it's a master save MAC address
  * 5th. Cut off communication
  *
@@ -229,7 +229,7 @@ void config_DISC()
 
     match=0;                            // Set match = 0
 
-    /* The following lines ara used to launch the AT_DISC? command
+    /* The following lines are used to launch the AT_DISC? command
      * In that case we disable the timer and the detection of OK,
      * in order to get improve the response detection.
      * This command has a long response, so timer will interrupt
@@ -269,7 +269,7 @@ void config_DISC()
 //    }
 
 
-    /* The folowing lines are used to connect and check if the module is a master */
+    /* The following lines are used to connect and check if the module is a master */
 
     /* Start trying connect to every device */
 
@@ -304,8 +304,8 @@ void config_DISC()
 
         while(match==0)
         {
-            SEND();
-            TA0CCTL0 = CCIE;
+            SEND();                             // Send ACK
+            TA0CCTL0 = CCIE;                    // Start Timer
             __bis_SR_register(LPM3_bits);
             if(x>10)match=1;                   // Used for bad communications
             x++;
@@ -314,7 +314,7 @@ void config_DISC()
         /* If we have connected to the correct module x<10 */
         if(x>10)
         {
-            /* We have connected to an incorrect module. Disconnect*/
+            /* We have connected to an incorrect module. Therefore, disconnect */
             match=0;
             while(match==0 && lost==0)
             {
@@ -323,8 +323,8 @@ void config_DISC()
                 TA0CCTL0 = CCIE;
                 __bis_SR_register(LPM3_bits);
             }
-            /* Sometimes we recive OK before LOST.
-             * If we recive OK this indicates that the connection has been cut,
+            /* Sometimes we receive OK before LOST.
+             * If we receive OK this indicates that the connection has been cut,
              * but Green LED will be TURN-ON, so TURN-OFF
              */
             P4OUT &= ~BIT7;   //Green LED OFF
@@ -541,7 +541,6 @@ void connect_ARDU()
     __delay_cycles(5000000);              // Used to pause the data streaming and give enough time to process data
 
 
-
     dis_ok=FALSE;                        // Enable OK detection
 
     match=FALSE;                            // Set match = 0
@@ -562,56 +561,6 @@ void connect_ARDU()
     }
 
     __delay_cycles(500000);                     // Used to pause the data streaming and give enough time to process data
-
-    /*
-    if(connection)
-    {
-        x=0;
-        match=0;
-
-        while(match==0)
-        {
-            SEND();
-            TA0CCTL0 = CCIE;
-            __bis_SR_register(LPM3_bits);
-            if(x>10)match=1;                    // Used for bad communications
-            x++;
-        }
-
-        if(x>10)
-        {
-            match=0;
-
-            while(match==0 && lost==0)
-            {
-                pointer = &word_check[0];
-                n_letters=AT_2(pointer);
-                TA0CCTL0 = CCIE;                // Start el Timer
-                __bis_SR_register(LPM3_bits);   // Enter LPM0
-            }
-            P4OUT &= ~BIT7;                     //Green LED OFF
-
-        }
-        else
-        {
-            if(master_detected)
-            {
-                memcpy(address_M, address4,12);
-            }
-
-            while(lost==0)                      // Resend the command if the communication fail
-            {
-                pointer = &word_check[0];
-
-                __delay_cycles(500000);             // Used to pause the data streaming and give enough time to process data
-
-                n_letters= AT_2(pointer);           // Used to cut off communication
-                TA0CCTL0 = CCIE;                    // Start Timer
-                __bis_SR_register(LPM3_bits);       // Enter LPM0
-            }
-        }
-    }//End of CO0
-    */
 
 }//End of connect_ARDU()
 
@@ -640,7 +589,7 @@ void SEND()
         TxUAC0(TxBuffer[bCount]);
     }
 
-    /* Wait until last byte has been transmited*/
+    /* Wait until last byte has been transmitted*/
     while(UCA1STAT & UCBUSY);
 }
 
@@ -657,7 +606,7 @@ void send_rol()
         TxUAC0(TxBuffer[bCount]);
     }
 
-    /* Wait until last byte has been transmited*/
+    /* Wait until last byte has been transmitted*/
     while(UCA1STAT & UCBUSY);
 }
 
@@ -673,7 +622,7 @@ void send_ack()
         TxUAC0(TxBuffer[bCount]);
     }
 
-    /* Wait until last byte has been transmited*/
+    /* Wait until last byte has been transmitted*/
     while(UCA1STAT & UCBUSY);
 }
 
@@ -688,7 +637,7 @@ void send_hello()
         TxUAC0(TxBuffer[bCount]);
     }
 
-    /* Wait until last byte has been transmited*/
+    /* Wait until last byte has been transmitted*/
     while(UCA1STAT & UCBUSY);
 }
 

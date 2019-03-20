@@ -38,7 +38,7 @@
  * main
  * 1st. Initial config
  * 2nd. Enter in an infinite loop.
- *      In this state program is go to sleep, wake up by an interrupt timer and toogle a LED continuosly.
+ *      In this state program is go to sleep, wake up by an interrupt timer and toggle a LED continuously.
  *      An interrupt could change the default state for transmit data, or establish connection with another device.
  *      There are 3 possible states:
  *      1. Connections mode. In this mode the module establish an stable connection with another device.
@@ -53,7 +53,7 @@ int main(void)
     /*Initialize UART to establish communication between the HM-10 and msp430*/
     init_UART();
 
-    /* Initialize Timer for create a preiodic clock to wake up the msp
+    /* Initialize Timer for create a periodic clock to wake up the msp
     * This Timer is important because it's used in internal functions to resend AT commands
     * that have not been answered.
     * */
@@ -68,13 +68,13 @@ int main(void)
     /*Initial config for HM-10*/
     config_INITIAL();
 
-    /*Infinit loop*/
+    /*Infinite loop*/
     while(1)
       {
           switch(estat)
           {
           case 1:
-              /* In that case, return to initial configure, slave rol*/
+              /* In that case, return to initial configure, slave role*/
               config_INITIAL();
               estat=0;
               break;
@@ -85,7 +85,6 @@ int main(void)
               break;
           case 3:
               /* In that case, 1st is connected to a specific MAC address and send data */
-              //DEBUG: picar codi
               connect_ARDU();
               send_hello();
               estat=1;
@@ -113,7 +112,7 @@ int main(void)
       }
 }
 
-//Echo back RX charcter, confirm TX buffer is ready first
+//Echo back RX character, confirm TX buffer is ready first
 #pragma vector=USCI_A0_VECTOR
 __interrupt void USCI_A0_ISR(void)
 {
@@ -129,7 +128,7 @@ __interrupt void USCI_A0_ISR(void)
       answer[j] = UCA0RXBUF;				//RX data captured 
 											//Saved to answer[j]
 
-      if (j > sizeof answer-1)              //If RX data recived is greater than asnwer[], restart count.
+      if (j > sizeof answer-1)              //If RX data received is greater than answer[], restart count.
       {
         j = 0;
       }
@@ -239,7 +238,7 @@ __interrupt void USCI_A0_ISR(void)
                       match = FALSE;    // Total number are DIFFERENT
                   }
 
-                  /* The adquisition is over*/
+                  /* The acquisition is over*/
 
                   i=j=k=0;      //Reset
                   memset(&answer,0, sizeof answer);     //Reset of the answer variable
@@ -274,7 +273,7 @@ __interrupt void USCI_A0_ISR(void)
                       match = FALSE;    // Total number are DIFFERENT
                   }
 
-                  /* The adquisition is over*/
+                  /* The acquisition is over*/
 
                   i=j=k=0;      //Reset
                   memset(&answer,0, sizeof answer);     //Reset of the answer variable
@@ -329,7 +328,7 @@ __interrupt void USCI_A0_ISR(void)
 			      }
 
 			      /* Capturing the parameter
-			       * In that case all paramenters must be 1
+			       * In that case all parameters must be 1
 			       */
 			      else
 			      {
@@ -352,7 +351,7 @@ __interrupt void USCI_A0_ISR(void)
 			              match=FALSE;
 			          }
 
-			         //Reset all paramenters
+			         //Reset all parameters
                      i=j=k=0;
                      parameter1=0;
                      memset(&answer,0, sizeof answer);
@@ -363,10 +362,10 @@ __interrupt void USCI_A0_ISR(void)
 
 		//--DIS----
               /* If word_cap[] is equal to "DIS" we have a coincidence
-               * In taht case we have more possibilities
+               * In that case we have more possibilities
                * 1. DISCS: Start
                * 2. DISCE: End
-               * 3. DIS0[MAC]: differents values and lengths
+               * 3. DIS0[MAC]: different values and lengths
                *
                * Example: OK+DISCSOK+DIS0:90E202020A47OK+DIS0:341513CE6FF6OK+DIS0:90E202020100OK+DISCE
                *
@@ -386,7 +385,6 @@ __interrupt void USCI_A0_ISR(void)
                       }
 
 			          /*Capturing the Start*/
-			          //DEBUG: Aixo esta be?
 	                  if(word_cap[5]=='S')
 	                  {
 	                      i=k=j=0;                                  // Reset
@@ -434,7 +432,7 @@ __interrupt void USCI_A0_ISR(void)
                           /* Address captured */
                           get_address=TRUE;
 
-                          /* Saving MAC addres in a global variable*/
+                          /* Saving MAC address in a global variable*/
                           if(contador==0)
                           {
                               memcpy(address2, &address[2], 12);
@@ -450,6 +448,7 @@ __interrupt void USCI_A0_ISR(void)
                               memcpy(address4, &address[2], 12);
                               contador++;
                           }
+                          //Code...
 
                           match=FALSE;      //Only if we first captured an address we will finish the loop
 
@@ -489,7 +488,7 @@ __interrupt void USCI_A0_ISR(void)
               if(word_cap[0]=='L' && word_cap[1]=='O' && word_cap[2]=='S' && word_cap[3]=='T')
               {
                   /* Connection LOST*/
-                  lost = TRUE; //DEBUG: variable que serveix per controlar si em perdut la senyal
+                  lost = TRUE;
 
                   P4OUT &= ~BIT7;   //Green LED OFF
 
@@ -521,8 +520,8 @@ __interrupt void USCI_A0_ISR(void)
 __interrupt void Port_1(void)
 {
    P1IFG &= ~BIT1;      // Clear the flag
-   estat=2;             // Change state to connect
-//   estat=3;             // Change state to connect
+//   estat=2;             // Change state to disc
+   estat=3;             // Change state to connect to static MAC
    P1IE |= BIT1;        // Enable interrupt for Button P1.1
 }
 
@@ -531,8 +530,8 @@ __interrupt void Port_1(void)
 __interrupt void Port_2(void)
 {
    P2IFG &= ~BIT1;      // Clear the flag
-   estat=2;             // Change state to disconnect
-   P2IE |= BIT1;        // Enable interrupt for Botton P2.1
+   estat=1;             // Change state to initial
+   P2IE |= BIT1;        // Enable interrupt for Button P2.1
 }
 
 // Timer0 A0 interrupt service routine
