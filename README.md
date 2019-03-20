@@ -337,3 +337,111 @@ In that case `master_dectected` will change to `TRUE`, and the MAC address will 
 <a name="4"/>
 
 ## 4. How to add more AT commands
+
+>In order, to add more AT commands or change some of the existing, I higly reccomend follow the same structure that has been created.
+
+In one hand, there is the `AT_Commands.c` file. Here there are all the commands used to configure the module, for example AT+ROLE1.
+
+```c
+/*
+ * SEND: AT+ROLE1
+ * Used to set Role at 1 = master.
+ * The pointer global variable is used to save data to word_check[].
+ */
+int AT_ROLE2(char *punter)
+{
+    int i=0;
+
+    byte bCount,bPacketLength;
+    byte TxBuffer[]={'A','T','+','R','O','L','E','1'}; // Set master role.
+    byte word[]={'1'};
+
+    for(i=0;i< sizeof(word);i++)
+    {
+        *punter=word[i];
+        punter++;
+    }
+
+    bPacketLength = sizeof(TxBuffer);
+
+    /* This loop is used to send the data */
+    for(bCount=0; bCount<bPacketLength; bCount++)
+    {
+        TxUAC0(TxBuffer[bCount]);
+    }
+
+    while(UCA1STAT & UCBUSY);                           //Wait until last byte has been transmitted
+
+    return i;
+
+}
+```
+
+On the other hand, there is the code to capture this answer.
+
+Continuing with the AT+ROLE1, once we sended this command, th HM-10 device will answer with OK+SET1 if all it's OK.
+
+In the following lines there is the code to capture this answer.
+
+```c
+//--Set:---	  
+          /* If word_cap[] is equal to "Set:" we have a coincidence */
+    if(word_cap[0]=='S' && word_cap[1]=='e' && word_cap[2]=='t' && word_cap[3]==':')
+    {
+        /* Just move forward*/
+        if(answer[j]==':')
+        {
+            j++;
+            break;
+        }
+
+        /* Capturing the parameter
+         * In that case all parameters must be 1
+         */
+        else
+        {
+            parameter1=answer[j];
+
+            if(parameter1=='1')
+            {
+
+                match=TRUE;
+
+                  i=j=k=0;
+                  parameter1=0;
+                  memset(&answer,0, sizeof answer);
+                  memset(&word_cap,0,sizeof word_cap);
+                  __bic_SR_register_on_exit(LPM3_bits);
+                  break;
+            }
+            else
+            {
+                match=FALSE;
+            }
+
+           //Reset all parameters
+                 i=j=k=0;
+                 parameter1=0;
+                 memset(&answer,0, sizeof answer);
+                 memset(&word_cap,0,sizeof word_cap);
+                 __bic_SR_register_on_exit(LPM3_bits);
+        }
+    }//--End of SET--
+
+```
+
+Finally in `Functions.c` there are all the functions used.
+
+```c
+match=0;                            // Set match = 0
+
+/* Set ROLE=1. See datasheet */
+while(match==0)                     // Resend the command if the communication fail
+{
+n_letters=AT_ROLE2(pointer);        // AT_ROLE command
+TA0CCTL0 = CCIE;                    // Start Timer
+__bis_SR_register(LPM3_bits);       // Enter LPM0
+}
+```
+
+As you can see will match = 0 we send the command the command and enter in sleep mode waiting for the response. If the response doesn't arrive, the timer interrupt it will wake up and resend the command.
