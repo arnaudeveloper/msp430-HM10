@@ -55,11 +55,11 @@ To establish a connection first you need to configure the module in master role 
 For this objective you can use  `config_DISC()`.
 This function works in the following way:
 
-**1. Initializing the HM-10 module as master**
+1. Initializing the HM-10 module as master
 
   Setting AT+IMME1 and AT+ROLE1.
 
-**2. Discovering the MAC addresses around of Bluetooth modules**
+2. Discovering the MAC addresses around of Bluetooth modules
 
   With `AT+DISC?` command the microcontroller can discover up to 3 devices*
 
@@ -104,7 +104,7 @@ In that example:
 
 
 
-**3. Try to connect and initialize a dialogue**
+3. Try to connect and initialize a dialogue
 
   Once you have a MAC address, you could try to connect it. To do this you must send `AT+CO` command.
   ```c
@@ -119,7 +119,7 @@ while(match==0)                     // Resend the command is the communication f
 }
 ```
 
-**4. Successful connection**
+4. Successful connection
 
   If a connection has been established, we need to check if are trying to connect to a HM-10 module, or on the other hand is other kind of Bluetooth device.
 ```c
