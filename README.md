@@ -35,9 +35,9 @@ These commands are basic to initialize the module, do a scan, and connect to a d
 
 In one hand, there are the different functions to send via UART. On the other hand, there are the RX UART reception and analysis.
 
-The TX code it's tedious but easy, you only must to pick the correct letters and send via UART. The tedious part is because the AT commands format, that it isn't coherent and tricky to use in c.
+The TX code it's tedious but easy, you only must pick the correct letters and send via UART. The tedious part is because the AT commands format, that it isn't coherent and tricky to use in c.
 
-On the other hand, RX has been the most difficult part for the same reason of the AT commands format.Therefore, almost all code is "bare metal".
+On the other hand, RX has been the most difficult part for the same reason of the AT commands format. Therefore, almost all code is "bare metal".
 
 <a name="2"/>
 
@@ -231,7 +231,7 @@ Once __`#`__ has been captured and stored in position 0 of the `answer[]` array,
 
               if(answer[2]=='M')    // It is a master
               {
-                  /* It is a master, so we must to save the MAC address */
+                  /* It is a master, so we must save the MAC address */
                   master_detected = TRUE;
 
                   i=j=k=0;      //Reset
@@ -316,7 +316,7 @@ If the receiver is an HM-10 module and also master, will send the answer, in tha
 
               if(answer[2]=='M')    // It is a master
               {
-                  /* It is a master, so we must to save the MAC address */
+                  /* It is a master, so we must save the MAC address */
                   master_detected = TRUE;
 
                   i=j=k=0;      //Reset
@@ -338,7 +338,7 @@ In that case `master_dectected` will change to `TRUE`, and the MAC address will 
 
 ## 4. How to add more AT commands
 
->In order, to add more AT commands or change some of the existing, I higly reccomend follow the same structure that has been created.
+>In order, to add more AT commands or change some existing, I highly recommend follow the same structure that has been created.
 
 In one hand, there is the `AT_Commands.c` file. Here there are all the commands used to configure the module, for example AT+ROLE1.
 
@@ -379,12 +379,12 @@ int AT_ROLE2(char *punter)
 
 On the other hand, there is the code to capture this answer.
 
-Continuing with the AT+ROLE1, once we sended this command, th HM-10 device will answer with OK+SET1 if all it's OK.
+Continuing with the AT+ROLE1, once we sent this command, the HM-10 device will answer with OK+SET1 if all it's OK.
 
 In the following lines there is the code to capture this answer.
 
 ```c
-//--Set:---	  
+//--Set:---
           /* If word_cap[] is equal to "Set:" we have a coincidence */
     if(word_cap[0]=='S' && word_cap[1]=='e' && word_cap[2]=='t' && word_cap[3]==':')
     {
@@ -430,7 +430,7 @@ In the following lines there is the code to capture this answer.
 
 ```
 
-Finally in `Functions.c` there are all the functions used.
+Finally, in `Functions.c` there are all the functions used.
 
 ```c
 match=0;                            // Set match = 0
@@ -444,4 +444,4 @@ __bis_SR_register(LPM3_bits);       // Enter LPM0
 }
 ```
 
-As you can see will match = 0 we send the command the command and enter in sleep mode waiting for the response. If the response doesn't arrive, the timer interrupt it will wake up and resend the command.
+As you can see will match = 0 we send the command and enter in sleep mode waiting for the response. If the response doesn't arrive, the timer interrupt it will wake up and resend the command.
