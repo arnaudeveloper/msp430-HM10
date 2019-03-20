@@ -57,11 +57,11 @@ This function works in the following way:
 
 1. Initializing the HM-10 module as master
 
-  Setting AT+IMME1 and AT+ROLE1.
+      Setting AT+IMME1 and AT+ROLE1.
 
 2. Discovering the MAC addresses around of Bluetooth modules
 
-  With `AT+DISC?` command the microcontroller can discover up to 3 devices*
+      With `AT+DISC?` command the microcontroller can discover up to 3 devices*
 
 ```c
 /* Capturing the address */
@@ -106,7 +106,7 @@ In that example:
 
 3. Try to connect and initialize a dialogue
 
-  Once you have a MAC address, you could try to connect it. To do this you must send `AT+CO` command.
+      Once you have a MAC address, you could try to connect it. To do this you must send `AT+CO` command.
   ```c
 /* Set AT_CON*/
 while(match==0)                     // Resend the command is the communication fail
@@ -121,7 +121,7 @@ while(match==0)                     // Resend the command is the communication f
 
 4. Successful connection
 
-  If a connection has been established, we need to check if are trying to connect to a HM-10 module, or on the other hand is other kind of Bluetooth device.
+      If a connection has been established, we need to check if are trying to connect to a HM-10 module, or on the other hand is other kind of Bluetooth device.
 ```c
 /* If connection = TRUE, a connection has been established*/
 if(connection)
