@@ -1,7 +1,5 @@
 # msp430-HM10
 Basic library for msp430F5529LP and HM-10 Bluetooth module
-![imagen](https://user-images.githubusercontent.com/38794634/54521270-de830400-496a-11e9-90ee-7a19d0b0e352.png)
-![imagen](https://user-images.githubusercontent.com/38794634/54521841-15a5e500-496c-11e9-94d9-9d324cdc18e1.png)
 
 ## Table of Contents
 1. [Introduction](#1)
