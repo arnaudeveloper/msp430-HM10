@@ -45,6 +45,15 @@ On the other hand, RX has been the most difficult part for the same reason of th
 
 ### 2 Connectivity
 
+Basic connection.
+1. VCC to 3V
+2. GND to GND
+3. TXD to P3.4/UCA0RXD
+4. RXD to P3.3/UCA0TXD
+
+![imagen](https://user-images.githubusercontent.com/38794634/54671257-db684f00-4af5-11e9-85ce-713de54a51ea.png)
+
+
 <a name="2.1"/>
 
 ### 2.1 How to establish connection between two or more devices
