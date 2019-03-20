@@ -51,8 +51,7 @@ Basic connection.
 3. TXD to P3.4/UCA0RXD
 4. RXD to P3.3/UCA0TXD
 
-![imagen](https://user-images.githubusercontent.com/38794634/54671257-db684f00-4af5-11e9-85ce-713de54a51ea.png)
-
+![imagen](https://user-images.githubusercontent.com/38794634/54671781-e1aafb00-4af6-11e9-8d83-747c1efca9f2.png)
 
 <a name="2.1"/>
 
